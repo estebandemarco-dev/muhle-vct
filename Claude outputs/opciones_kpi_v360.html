@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KPIs Vista 360</title>
+<style>
+:root{--line:#E5E9F0;--txt:#334155;--mut:#64748b}
+*{box-sizing:border-box}
+body{margin:0;padding:24px;background:#f4f5f7;font-family:"Gotham","Gotham Book",-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--txt)}
+h1{font-size:18px;color:#66062D;margin:0 0 4px}
+h2{font-size:14px;margin:30px 0 4px;color:#25344C}
+p.n{font-size:12px;color:var(--mut);margin:0 0 12px}
+.row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.k{--c:#8C1D47;--t:#F6EAEF;position:relative;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .16s ease}
+.k:nth-child(2){--c:#4A4849;--t:#EFEFEF}
+.k:nth-child(3){--c:#CF6F92;--t:#FBEFF4}
+.k:nth-child(4){--c:#8E8C8D;--t:#F3F3F3}
+.lb{font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#4B586C;display:block}
+.v{font-size:22px;font-weight:700;color:#1f2937;line-height:1.15;display:block}
+.s{font-size:10.5px;color:var(--mut)}
+.ch{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;color:var(--c);transition:all .16s ease}
+.ch svg{width:14px;height:14px}
+.ic{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+/* A lateral */
+.a .k{background:#fff;border:1px solid var(--line);border-left:3px solid var(--c);border-radius:10px;padding:12px 12px 12px 14px}
+.a .ic{width:32px;height:32px;border-radius:8px;background:var(--t);color:var(--c)}
+.a .k:hover,.a .k.h{border-color:var(--c);background:var(--t);box-shadow:0 6px 16px rgba(15,23,42,.08);transform:translateY(-1px)}
+.a .k:hover .ch,.a .k.h .ch{background:var(--c);color:#fff}
+/* B superior + icono lleno */
+.b .k{background:#fff;border:1px solid var(--line);border-top:3px solid var(--c);border-radius:12px;padding:12px 14px}
+.b .ic{width:36px;height:36px;border-radius:10px;background:var(--c);color:#fff}
+.b .ch{background:var(--t)}
+.b .k:hover,.b .k.h{border-color:color-mix(in srgb,var(--c) 45%,#fff);border-top-color:var(--c);box-shadow:0 8px 20px color-mix(in srgb,var(--c) 18%,transparent);transform:translateY(-2px)}
+.b .k:hover .ch,.b .k.h .ch{background:var(--c);color:#fff}
+/* C compacta igual a grillas */
+.c .k{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.c .ic{width:34px;height:34px;border-radius:9px;background:var(--c);color:#fff}
+.c .body{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:10px;flex:1}
+.c .lb{text-transform:none;letter-spacing:0;font-size:11.5px;color:#25344C}
+.c .v{grid-row:1/3;grid-column:2}
+.c .k:hover,.c .k.h{border-color:var(--c);box-shadow:inset 0 -3px 0 var(--c),0 4px 12px rgba(15,23,42,.07)}
+.c .ch{display:none}
+/* D tinte */
+.d .k{background:var(--t);border:1px solid color-mix(in srgb,var(--c) 22%,#fff);border-radius:12px;padding:12px 14px}
+.d .ic{width:34px;height:34px;border-radius:50%;background:#fff;color:var(--c);box-shadow:0 1px 3px rgba(15,23,42,.08)}
+.d .lb{color:var(--c)}
+.d .k:hover,.d .k.h{border-color:var(--c);background:#fff;box-shadow:0 6px 16px rgba(15,23,42,.08)}
+.d .k:hover .ch,.d .k.h .ch{background:var(--c);color:#fff}
+@media(max-width:800px){.row{grid-template-columns:1fr 1fr}}
+</style></head><body>
+<h1>KPIs de la Vista 360: opciones</h1>
+<p class="n">Paleta institucional (bordó medio, grafito, bordó claro, gris medio). En cada opción la 2ª tarjeta muestra el estado <b>hover</b>; podés pasar el mouse por las demás. Alto ~60–64px (hoy ~90px). Aplicaría a todas las 360 (cliente, consultor, empleado, proveedor, proyecto) porque usan el mismo componente.</p>
+
+<script>
+const ICON={f:'<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>',c:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',d:'<circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8M12 18V6"/>',b:'<path d="M3 3v16a2 2 0 0 0 2 2h16M8 17v-3M13 17V9M18 17v-6"/>'};
+const K=[['f','Proyectos totales','1','0 activos'],['c','Proyectos activos','0','0% del total'],['d','Monto en curso','$0','proyectos activos'],['b','Avance promedio','0%','0 proyecto(s)']];
+const CH='<span class="ch"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></span>';
+function row(cls,title,desc,compact){
+ document.write('<h2>'+title+'</h2><p class="n">'+desc+'</p><div class="row '+cls+'">');
+ K.forEach((k,i)=>{const ic='<span class="ic"><svg viewBox="0 0 24 24">'+ICON[k[0]]+'</svg></span>';
+  const body=compact?'<span class="body"><span class="lb">'+k[1]+'</span><span class="v">'+k[2]+'</span><span class="s">'+k[3]+'</span></span>'
+   :'<span><span class="lb">'+k[1]+'</span><span class="v">'+k[2]+'</span><span class="s">'+k[3]+'</span></span>'+CH;
+  document.write('<div class="k'+(i==1?' h':'')+'">'+ic+body+'</div>');});
+ document.write('</div>');}
+row('a','Opción A · Acento lateral','Tarjeta blanca con borde fino y franja de color a la izquierda. Hover: borde del color, fondo con tinte muy suave, flecha llena.');
+row('b','Opción B · Acento superior + ícono lleno','La más parecida a la actual (franja arriba) pero con colores institucionales e ícono lleno. Hover: borde y sombra del color, se eleva, flecha llena.');
+row('c','Opción C · Igual a los KPIs de las grillas','Misma tarjeta que Clientes (coherencia total). Hover: borde del color y subrayado inferior; sin flecha.',true);
+row('d','Opción D · Tinte suave con borde','Fondo con tinte del color y borde suave; título en el color. Hover: pasa a blanco con borde del color y flecha llena.');
+</script>
+</body></html>

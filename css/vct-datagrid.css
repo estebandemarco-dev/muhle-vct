@@ -1,4 +1,4 @@
-﻿/* vct-datagrid.css - v1
+/* vct-datagrid.css - v18 (badges azul/verde en Clientes y Consultores; filtros Estado y Eventual angostos; rentabilidad 360 institucional con mayor especificidad; tipografia y anillos del Inicio; tablas estaticas flexibles; rentabilidad institucional; encabezados centrados; normas en lista; KPIs del Inicio; escala tipografica general; columna Servicios sin recorte; kit de badges unificado, personas, tabla estatica; sin contador en el toolbar; separacion titulo/toolbar en tarjetas 360; servicios, normas, avance y menu de fila; ver al final: ESTANDAR DE TOOLBAR Y TIPOGRAFIA, KPIs de grillas y KPIs de Vista 360)
    ============================================================================
    Estilos del motor de grilla de MAIN (vct-datagrid.js). Autocontenido y
    namespaced .vctdg-*: no depende de las reglas de tablas/paginado de
@@ -483,4 +483,659 @@
     .vctdg-info{grid-column:1;grid-row:2;}
     .vctdg-size{grid-column:2;grid-row:2;}
     .vctdg-size span{display:none;}
+}
+
+
+/* ============================================================================
+   ESTANDAR DE TOOLBAR Y TIPOGRAFIA (v5) - aplica a TODAS las grillas
+   ----------------------------------------------------------------------------
+   - Un solo alto para todo el toolbar = alto del boton "Nuevo" (--dg-ctl-h):
+     buscador, filtros, Excel, PDF y Nuevo.
+   - Orden: buscador primero a la izquierda, filtros a continuacion; contador
+     y botones a la derecha (el orden lo arma vct-datagrid.js v4).
+   - Desplegables (filtros y "Registros por pagina") con el combo propio y un
+     estilo suave en hover / opcion elegida, en la linea del boton Nuevo.
+   - "Registros por pagina" abre siempre hacia abajo. El paginado no cambia.
+   - Se repite la clase (.vctdg.vctdg) para ganarle a las reglas genericas de
+     vct-main.css sin depender del orden de carga.
+   ============================================================================ */
+.vctdg{
+    --dg-ctl-h:30px;
+    --dg-ctl-radius:7px;
+    --dg-ctl-font:12px;
+    --dg-head-size:11px;
+    --dg-font-size:12px;
+    --dg-soft-bg:#FBF7F9;
+    --dg-soft-border:rgba(102,6,45,.32);
+}
+
+/* ---- Toolbar: buscador + filtros a la izquierda, herramientas a la derecha */
+.vctdg-toolbar{align-items:center;gap:10px 12px;}
+.vctdg-filters{gap:8px;flex:1 1 auto;}
+.vctdg-search{flex:0 1 300px;max-width:300px;min-width:200px;order:-1;}
+.vctdg-search svg{left:10px;width:15px;height:15px;}
+.vctdg-search input{
+    height:var(--dg-ctl-h);
+    padding:0 10px 0 31px;
+    border-radius:var(--dg-ctl-radius);
+    font-size:var(--dg-ctl-font);
+}
+.vctdg-tools{gap:8px;}
+.vctdg-meta{font-size:var(--dg-ctl-font);}
+
+/* Botones Excel / PDF: mismo alto y look que Nuevo */
+.vctdg-btn{
+    height:var(--dg-ctl-h);
+    padding:0 10px;
+    gap:6px;
+    border-color:#D7E0E9;
+    border-radius:var(--dg-ctl-radius);
+    font-size:var(--dg-ctl-font);
+    font-weight:600;
+    color:#25344C;
+}
+.vctdg-btn svg{width:15px;height:15px;}
+.vctdg-btn:hover{color:var(--dg-primary);background:var(--dg-soft-bg);border-color:var(--dg-primary);}
+
+/* Nuevo (y cualquier boton de accion puesto en el slot "actions"): mismo alto */
+.vctdg.vctdg .vctdg-tools .vct-btn{
+    height:var(--dg-ctl-h) !important;
+    min-height:var(--dg-ctl-h) !important;
+    border-radius:var(--dg-ctl-radius) !important;
+    font-size:var(--dg-ctl-font) !important;
+}
+
+/* Select nativo (fallback si no esta el combo propio) */
+.vctdg-select{
+    height:var(--dg-ctl-h);
+    border-radius:var(--dg-ctl-radius);
+    font-size:var(--dg-ctl-font);
+}
+.vctdg-size .vctdg-select{height:var(--dg-ctl-h);}
+
+/* ---- Combo propio dentro de la grilla (filtros y cantidad por pagina) */
+.vctdg.vctdg .vctdg-filters > .vct-custom-select{
+    flex:0 0 180px;
+    width:180px !important;
+    min-width:0;
+}
+.vctdg.vctdg .vct-custom-select-trigger{
+    height:var(--dg-ctl-h) !important;
+    min-height:var(--dg-ctl-h) !important;
+    padding:0 9px 0 11px !important;
+    border-color:#cbd5e1 !important;
+    border-radius:var(--dg-ctl-radius) !important;
+    font-size:var(--dg-ctl-font) !important;
+    font-weight:500 !important;
+}
+.vctdg.vctdg .vct-custom-select-trigger:hover{
+    border-color:var(--dg-soft-border) !important;
+    background:var(--dg-soft-bg) !important;
+}
+.vctdg.vctdg .vct-custom-select.is-open .vct-custom-select-trigger,
+.vctdg.vctdg .vct-custom-select-trigger:focus{
+    border-color:var(--dg-primary) !important;
+    background:#fff !important;
+    box-shadow:0 0 0 3px rgba(102,6,45,.08) !important;
+}
+.vctdg.vctdg .vct-custom-select-value{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.vctdg.vctdg .vct-custom-select-chevron{width:15px !important;height:15px !important;}
+/* Menu y opciones: mismo estilo que los desplegables de los formularios (v6), mas chico.
+   El menu se ensancha hasta 280px para que ninguna opcion pase a dos renglones. */
+.vctdg.vctdg .vct-custom-select-menu{
+    width:max-content !important;
+    min-width:100% !important;
+    max-width:280px !important;
+    padding:5px !important;
+    border:1px solid rgba(102,6,45,.22) !important;
+    border-radius:9px !important;
+    box-shadow:0 14px 34px rgba(15,23,42,.14),0 3px 10px rgba(102,6,45,.08) !important;
+}
+.vctdg.vctdg .vct-custom-select-option{
+    min-height:28px !important;
+    margin:1px 0 !important;
+    padding:5px 10px !important;
+    color:#334155 !important;
+    background:transparent !important;
+    border-radius:7px !important;
+    font-size:11.5px !important;
+    font-weight:500 !important;
+    white-space:nowrap !important;
+    box-shadow:none !important;
+}
+.vctdg.vctdg .vct-custom-select-option:hover,
+.vctdg.vctdg .vct-custom-select-option.is-focused{
+    color:var(--dg-primary) !important;
+    background:#F6E9EE !important;
+    padding-left:10px !important;
+}
+.vctdg.vctdg .vct-custom-select-option.is-selected,
+.vctdg.vctdg .vct-custom-select-option.is-selected:hover,
+.vctdg.vctdg .vct-custom-select-option.is-selected.is-focused{
+    color:#fff !important;
+    background:var(--dg-primary) !important;
+    font-weight:600 !important;
+    box-shadow:none !important;
+}
+
+/* "Registros por pagina": mismo combo, angosto y SIEMPRE hacia abajo */
+.vctdg.vctdg .vctdg-size > .vct-custom-select{
+    flex:0 0 72px;
+    width:72px !important;
+}
+.vctdg.vctdg .vctdg-size .vct-custom-select-menu,
+.vctdg.vctdg .vctdg-size .vct-custom-select.is-dropup .vct-custom-select-menu{
+    top:calc(100% + 4px) !important;
+    bottom:auto !important;
+    transform:translateY(-4px) !important;
+}
+.vctdg.vctdg .vctdg-size .vct-custom-select.is-open .vct-custom-select-menu{transform:translateY(0) !important;}
+/* valores centrados (boton y opciones) */
+.vctdg.vctdg .vctdg-size .vct-custom-select-menu{width:100% !important;min-width:100% !important;}
+.vctdg.vctdg .vctdg-size .vct-custom-select-option{justify-content:center !important;padding-left:6px !important;padding-right:6px !important;}
+.vctdg.vctdg .vctdg-size .vct-custom-select-option:hover,
+.vctdg.vctdg .vctdg-size .vct-custom-select-option.is-focused{padding-left:6px !important;}
+.vctdg.vctdg .vctdg-size .vct-custom-select-value{flex:1 1 auto;text-align:center !important;}
+
+/* ---- Tipografia de la tabla: cabecera 11px seminegrita, datos 12px */
+.vctdg-table{font-size:var(--dg-font-size);line-height:1.4;}
+.vctdg-table th{
+    font-size:var(--dg-head-size);
+    font-weight:600;
+    color:#475569;
+    letter-spacing:.01em;
+}
+.vctdg-table td{font-size:var(--dg-font-size);font-weight:400;color:#334155;}
+
+@media (max-width:768px){
+    .vctdg-search{flex:1 1 100%;max-width:none;}
+    .vctdg.vctdg .vctdg-filters > .vct-custom-select{flex:1 1 100%;width:100% !important;}
+}
+/* el footer (paginado, info y "Registros por pagina") conserva su tamano de letra */
+.vctdg-info,.vctdg-size{font-size:11px;}
+
+/* ============================================================================
+   KPIs DE LAS PANTALLAS CON GRILLA (v6) - .vct-soft-kpi
+   Tarjeta compacta en una linea: icono lleno en color + titulo/ayuda + valor.
+   Colores por posicion con la paleta institucional (tonos de bordo y gris del
+   Manual de Identidad, los mismos de los graficos); se ignoran is-blue/green...
+   Esta hoja la cargan las pantallas con grilla, asi que solo aplica ahi.
+   ============================================================================ */
+.vct-page-main .vct-soft-kpi-grid{gap:12px !important;margin:0 0 14px !important;}
+.vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi{
+    --kpi-c:#8C1D47;
+    min-height:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:12px !important;
+    padding:10px 14px !important;
+    background:#fff !important;
+    border:1px solid #E5E9F0 !important;
+    border-radius:12px !important;
+    box-shadow:0 1px 3px rgba(15,23,42,.04) !important;
+}
+.vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi:hover{transform:none !important;box-shadow:0 4px 12px rgba(15,23,42,.07) !important;}
+.vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi:nth-child(4n+1){--kpi-c:#8C1D47;--kpi-soft:#E7C9D5;}
+.vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi:nth-child(4n+2){--kpi-c:#4A4849;--kpi-soft:#D5D4D4;}
+.vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi:nth-child(4n+3){--kpi-c:#CF6F92;--kpi-soft:#F1CFDC;}
+.vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi:nth-child(4n+4){--kpi-c:#8E8C8D;--kpi-soft:#DEDDDD;}
+/* borde suave del color de cada KPI; hover: borde del color + subrayado inferior */
+.vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi{border-color:var(--kpi-soft,#E5E9F0) !important;transition:border-color .16s ease,box-shadow .16s ease !important;}
+.vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi:hover{
+    border-color:var(--kpi-c) !important;
+    box-shadow:inset 0 -3px 0 var(--kpi-c),0 4px 12px rgba(15,23,42,.07) !important;
+}
+.vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi .vct-soft-kpi-icon{
+    flex:0 0 34px !important;
+    width:34px !important;
+    height:34px !important;
+    border-radius:9px !important;
+    color:#fff !important;
+    background:var(--kpi-c) !important;
+}
+.vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi .vct-soft-kpi-icon svg{width:17px !important;height:17px !important;stroke-width:2 !important;}
+.vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi .vct-soft-kpi-copy{
+    flex:1 1 auto !important;
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    grid-template-areas:"lbl val" "hlp val" !important;
+    align-items:center !important;
+    column-gap:10px !important;
+    row-gap:1px !important;
+}
+.vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi .vct-soft-kpi-label{
+    grid-area:lbl !important;
+    color:#25344C !important;
+    font-size:11.5px !important;
+    font-weight:600 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+}
+.vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi .vct-soft-kpi-help{
+    grid-area:hlp !important;
+    color:#718096 !important;
+    font-size:10.5px !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+}
+.vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi .vct-soft-kpi-value{
+    grid-area:val !important;
+    color:#1f2937 !important;
+    font-size:22px !important;
+    font-weight:700 !important;
+    line-height:1 !important;
+    letter-spacing:-.3px !important;
+}
+@media (max-width:768px){
+    .vct-page-main .vct-soft-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:8px !important;}
+    .vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi{padding:8px 10px !important;gap:8px !important;}
+    .vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi .vct-soft-kpi-icon{flex-basis:28px !important;width:28px !important;height:28px !important;}
+    .vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi .vct-soft-kpi-value{font-size:18px !important;}
+    .vct-page-main .vct-soft-kpi-grid > .vct-soft-kpi .vct-soft-kpi-help{display:none !important;}
+}
+
+/* ============================================================================
+   KPIs DE VISTA 360 (v7) - .vct-360-visual-final .vct-360-stat
+   Opcion B: tarjeta blanca, franja superior e icono lleno del color, borde
+   suave del color; hover: borde y sombra del color, se eleva y la flecha se
+   llena. Colores por posicion con la paleta institucional (se ignora
+   data-vct-tone). Lo cargan todas las 360 (cliente, consultor, empleado,
+   proveedor, proyecto) porque todas incluyen vct-datagrid.css.
+   ============================================================================ */
+.vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat{
+    --vct-kpi-accent:#8C1D47;
+    --vct-kpi-tint:#F6EAEF;
+    --vct-kpi-soft:#E7C9D5;
+    min-height:0 !important;
+    grid-template-columns:36px minmax(0,1fr) 26px !important;
+    column-gap:12px !important;
+    padding:13px 12px 11px 14px !important;
+    background:#fff !important;
+    border:1px solid var(--vct-kpi-soft) !important;
+    border-radius:12px !important;
+    box-shadow:0 1px 3px rgba(15,23,42,.04) !important;
+    cursor:pointer;
+    transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease !important;
+}
+.vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat:nth-child(4n+2){--vct-kpi-accent:#4A4849;--vct-kpi-tint:#EFEFEF;--vct-kpi-soft:#D5D4D4;}
+.vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat:nth-child(4n+3){--vct-kpi-accent:#CF6F92;--vct-kpi-tint:#FBEFF4;--vct-kpi-soft:#F1CFDC;}
+.vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat:nth-child(4n+4){--vct-kpi-accent:#8E8C8D;--vct-kpi-tint:#F3F3F3;--vct-kpi-soft:#DEDDDD;}
+.vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat::before{
+    width:100% !important;
+    min-width:0 !important;
+    height:3px !important;
+    border-radius:0 !important;
+    background:var(--vct-kpi-accent) !important;
+}
+.vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat::after{
+    width:26px !important;
+    height:26px !important;
+    color:var(--vct-kpi-accent) !important;
+    background:var(--vct-kpi-tint) !important;
+    font-size:20px !important;
+    transition:background .16s ease,color .16s ease !important;
+}
+.vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat:hover{
+    transform:translateY(-2px) !important;
+    border-color:var(--vct-kpi-accent) !important;
+    box-shadow:0 8px 20px rgba(15,23,42,.09) !important;
+}
+.vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat:hover::after{
+    color:#fff !important;
+    background:var(--vct-kpi-accent) !important;
+}
+.vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat .vct-360-stat-icon{
+    width:36px !important;
+    height:36px !important;
+    min-width:36px !important;
+    max-width:36px !important;
+    border-radius:10px !important;
+    color:#fff !important;
+    background:var(--vct-kpi-accent) !important;
+}
+.vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat .vct-360-stat-icon > [data-vct-icon],
+.vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat .vct-360-stat-icon > [data-vct-icon] svg{
+    width:18px !important;
+    height:18px !important;
+    min-width:18px !important;
+    max-width:18px !important;
+}
+.vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat .vct-360-stat-label{
+    color:#4B586C !important;
+    font-size:10px !important;
+    font-weight:600 !important;
+    letter-spacing:.03em !important;
+}
+.vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat b{
+    margin-top:2px !important;
+    color:#1f2937 !important;
+    font-size:20px !important;
+    font-weight:700 !important;
+}
+.vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat small{
+    margin-top:2px !important;
+    color:#718096 !important;
+    font-size:10.5px !important;
+    font-weight:500 !important;
+}
+.vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat small::before{content:none !important;}
+@media (max-width:768px){
+    .vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat{
+        grid-template-columns:30px minmax(0,1fr) 22px !important;
+        column-gap:8px !important;
+        padding:11px 8px 9px 10px !important;
+    }
+    .vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat .vct-360-stat-icon{
+        width:30px !important;height:30px !important;min-width:30px !important;max-width:30px !important;border-radius:8px !important;
+    }
+    .vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat::after{width:22px !important;height:22px !important;font-size:17px !important;}
+    .vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat b{font-size:17px !important;}
+    .vct-360-visual-final.vct-360-visual-final .vct-360-stats-row > .vct-360-stat small{font-size:9.5px !important;}
+}
+
+/* ============================================================================
+   CONTENIDO DE CELDAS DE PROYECTO + MENU DE FILA (v8)
+   ============================================================================ */
+/* Servicios: 3 circulos fijos (Consultoria, Auditoria, Capacitacion) con el
+   icono del alta de proyecto; encendido con su color, apagado en gris. */
+.vctdg-svc-set{display:inline-flex;align-items:center;gap:4px;}
+.vctdg-svc{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:24px;height:24px;border-radius:50%;
+    color:#B5B3B4;background:#EFEFEF;
+}
+.vctdg-svc svg,.vctdg-svc [data-vct-icon]{width:13px;height:13px;}
+.vctdg-svc.is-on{color:#fff;}
+.vctdg-svc.is-on.is-co{background:#8C1D47;}
+.vctdg-svc.is-on.is-au{background:#4A4849;}
+.vctdg-svc.is-on.is-ca{background:#CF6F92;}
+/* Normas: etiquetas grises; "+N" con el resto en el tooltip */
+.vctdg-tags{display:flex;flex-wrap:wrap;gap:4px;}
+.vctdg-tag{
+    display:inline-block;max-width:100%;padding:2px 7px;border-radius:6px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    font-size:10.5px;font-weight:500;line-height:1.4;
+    color:#4A4849;background:#F3F3F3;border:1px solid #E2E1E1;
+}
+.vctdg-tag.is-more{color:#66062D;background:#F6EAEF;border-color:#E7C9D5;cursor:default;}
+/* Avance: barra + porcentaje en una linea */
+.vctdg-progress{display:flex;align-items:center;gap:8px;}
+.vctdg-progress-bar{flex:1 1 auto;height:6px;border-radius:99px;background:#eef2f6;overflow:hidden;}
+.vctdg-progress-bar > i{display:block;height:100%;background:#66062D;border-radius:99px;}
+.vctdg-progress > b{flex:0 0 auto;min-width:34px;text-align:right;font-size:11px;font-weight:600;color:#334155;}
+
+/* Menu de fila: boton de 3 puntos (ultima columna) + menu flotante */
+.vctdg .vct-row-menu-trigger[data-vctdg-rowmenu]{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:28px;height:28px;padding:0;
+    color:#475569;background:#fff;border:1px solid #D8E4EF;border-radius:6px;cursor:pointer;
+}
+.vctdg .vct-row-menu-trigger[data-vctdg-rowmenu]:hover,
+.vctdg .vct-row-menu-trigger[data-vctdg-rowmenu].is-open{color:#66062D;border-color:rgba(102,6,45,.32);background:#FBF7F9;}
+.vctdg-rowmenu-items{display:none !important;}
+.vctdg-rowmenu{
+    position:fixed;z-index:99990;min-width:170px;padding:5px;
+    background:#fff;border:1px solid rgba(102,6,45,.22);border-radius:9px;
+    box-shadow:0 14px 34px rgba(15,23,42,.14),0 3px 10px rgba(102,6,45,.08);
+    font-family:var(--vct-font,"Gotham","Gotham Book",-apple-system,"Segoe UI",Roboto,sans-serif);
+}
+.vctdg-rowmenu-item{
+    display:flex;align-items:center;gap:8px;width:100%;
+    min-height:30px;margin:1px 0;padding:6px 10px;
+    color:#334155;background:transparent;border:0;border-radius:7px;
+    font:inherit;font-size:12px;font-weight:500;text-align:left;white-space:nowrap;cursor:pointer;
+}
+.vctdg-rowmenu-item:hover,.vctdg-rowmenu-item:focus-visible{color:#66062D;background:#F6E9EE;outline:none;}
+.vctdg-rowmenu-icon{display:inline-flex;width:15px;height:15px;color:#66062D;}
+.vctdg-rowmenu-icon svg{width:15px;height:15px;}
+
+/* ============================================================================
+   v9: el total de registros ya figura abajo a la izquierda -> sin contador en
+   el toolbar. Grillas dentro de una tarjeta/pestana 360: titulo, linea fina,
+   espacio y recien ahi buscador / filtros / botones.
+   ============================================================================ */
+.vctdg-meta{display:none !important;}
+.vct-360-box.vctdg-in-box > .vct-360-box-head{
+    padding-bottom:12px !important;
+    margin-bottom:0 !important;
+    border-bottom:1px solid #EEF2F6 !important;
+}
+.vct-360-box.vctdg-in-box .vctdg-toolbar{margin-top:14px !important;}
+
+/* ============================================================================
+   v10: KIT DE BADGES UNIFICADO + celdas de proyecto/persona + tabla estatica
+   - Estado (.vct-360-badge / .vct-badge): pildora 20px, 10,5px seminegrita,
+     punto del color + fondo suave con borde (variante A, semantica suave).
+   - Servicios: .vctdg-svc (v8). Normas: .vctdg-tag (v8).
+   - .vctdg-static: tabla con el mismo diseno pero sin buscador/paginado
+     (p.ej. "Ultimos proyectos" del Resumen 360).
+   ============================================================================ */
+.vctdg .vct-360-badge,
+.vctdg .vct-badge{
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:5px !important;
+    height:20px !important;
+    min-width:0 !important;
+    padding:0 9px !important;
+    border:1px solid #E2E8F0 !important;
+    border-radius:999px !important;
+    font-size:10.5px !important;
+    font-weight:600 !important;
+    line-height:1 !important;
+    letter-spacing:0 !important;
+    text-transform:none !important;
+    white-space:nowrap !important;
+    color:#475569 !important;
+    background:#F1F5F9 !important;
+    box-shadow:none !important;
+}
+.vctdg .vct-360-badge::before,
+.vctdg .vct-badge::before{content:"";flex:0 0 6px;width:6px;height:6px;border-radius:50%;background:currentColor;}
+/* verde: activo / en curso */
+.vctdg .vct-360-badge.is-active,.vctdg .vct-360-badge.is-progress,
+.vctdg .vct-badge[data-vct-badge="ACTIVO"],.vctdg .vct-badge[data-vct-badge="ENCURSO"],.vctdg .vct-badge[data-vct-badge="success"]{
+    color:#166534 !important;background:#ECFDF3 !important;border-color:#BBF7D0 !important;}
+/* ambar: confirmado / planificado / pendiente */
+.vctdg .vct-360-badge.is-planned,
+.vctdg .vct-badge[data-vct-badge="CONFIRMADO"],.vctdg .vct-badge[data-vct-badge="PENDIENTE"],.vctdg .vct-badge[data-vct-badge="warning"]{
+    color:#92400E !important;background:#FFFBEB !important;border-color:#FDE68A !important;}
+/* naranja: pausado */
+.vctdg .vct-360-badge.is-paused,.vctdg .vct-badge[data-vct-badge="PAUSADO"]{
+    color:#9A3412 !important;background:#FFF7ED !important;border-color:#FED7AA !important;}
+/* gris: terminado / neutro / pasivo */
+.vctdg .vct-360-badge.is-done,.vctdg .vct-360-badge.is-neutral,
+.vctdg .vct-badge[data-vct-badge="TERMINADO"],.vctdg .vct-badge[data-vct-badge="PASIVO"]{
+    color:#475569 !important;background:#F1F5F9 !important;border-color:#E2E8F0 !important;}
+/* rojo: cancelado / inactivo / desafectado */
+.vctdg .vct-360-badge.is-cancel,.vctdg .vct-360-badge.is-inactive,
+.vctdg .vct-badge[data-vct-badge="CANCELADO"],.vctdg .vct-badge[data-vct-badge="DESAFECTADO"],.vctdg .vct-badge[data-vct-badge="danger"]{
+    color:#991B1B !important;background:#FEF2F2 !important;border-color:#FECACA !important;}
+/* borrador: contorno */
+.vctdg .vct-360-badge.is-draft,.vctdg .vct-badge[data-vct-badge="BORRADOR"]{
+    color:#64748B !important;background:#fff !important;border-color:#CBD5E1 !important;}
+
+/* Celda de proyecto: nombre hasta 2 renglones, referencia 1 renglon (tooltip con el texto completo) */
+.vctdg .vct-360-project-name{
+    display:-webkit-box !important;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;
+    font-size:12px !important;font-weight:600 !important;line-height:1.3 !important;color:#1f2937 !important;
+}
+.vctdg .vct-360-project-ref{
+    display:block !important;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    font-size:10.5px !important;color:#64748b !important;line-height:1.3 !important;
+}
+/* Personas (analista / consultor): avatar con iniciales + nombre */
+.vctdg-person{display:flex;align-items:center;gap:6px;min-width:0;}
+.vctdg-avatar{
+    flex:0 0 22px;display:inline-flex;align-items:center;justify-content:center;
+    width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;
+}
+.vctdg-avatar.is-a{color:#8C1D47;background:#F6EAEF;}
+.vctdg-avatar.is-c{color:#4A4849;background:#EFEFEF;}
+.vctdg-person-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px;}
+.vctdg-none{color:#94a3b8;}
+/* Tabla estatica dentro de una tarjeta 360 */
+.vct-360-box > .vctdg-static{margin-top:12px;}
+.vct-360-box > .vct-360-box-head + .vctdg-static{padding-top:0;}
+.vct-360-box:has(> .vctdg-static) > .vct-360-box-head{padding-bottom:12px !important;border-bottom:1px solid #EEF2F6 !important;}
+
+/* v11: la columna de Servicios son iconos -> nunca recortar ni poner "..." */
+.vctdg-svc-set{flex-wrap:nowrap;white-space:nowrap;}
+.vctdg-table td:has(> .vctdg-svc-set){overflow:visible !important;text-overflow:clip !important;white-space:nowrap !important;}
+
+/* ============================================================================
+   v12: ESCALA TIPOGRAFICA GENERAL (misma familia: Gotham / --vct-font)
+     Datos de tabla ............................ 10px
+     Referencia / subtitulo de una celda ........ 9px
+     Encabezados de tabla ...................... 10,5px (seminegrita)
+     Buscador, filtros, opciones, Excel/PDF/Nuevo 10,5px
+     Vista 360: datos de la tarjeta (CUIT...) .. 10px
+     Vista 360: nombres de pestanas ............ 10px
+     Vista 360: titulos de tarjeta/pestana ..... 10,5px bold
+   ============================================================================ */
+.vctdg{--dg-ctl-font:10.5px;--dg-head-size:10.5px;--dg-font-size:10px;}
+.vctdg-search input,.vctdg-select,.vctdg-btn{font-size:10.5px;}
+.vctdg.vctdg .vct-custom-select-trigger,
+.vctdg.vctdg .vct-custom-select-option{font-size:10.5px !important;}
+.vctdg.vctdg .vctdg-tools .vct-btn,
+.vctdg.vctdg .vctdg-tools .vct-btn span{font-size:10.5px !important;}
+.vctdg-table th{font-size:10.5px !important;}
+.vctdg-table td{font-size:10px !important;}
+.vctdg-person-name{font-size:10px;}
+.vctdg .vct-360-badge,.vctdg .vct-badge{font-size:10px !important;}
+.vctdg-tag{font-size:10px;}
+.vctdg-progress > b{font-size:10px;}
+.vctdg-rowmenu-item{font-size:10.5px;}
+/* Nombre de proyecto: sin recorte con "...", ocupa los renglones que necesite;
+   la referencia va debajo en 9px */
+.vctdg .vct-360-project-name{
+    display:block !important;-webkit-line-clamp:unset;line-clamp:unset;overflow:visible;
+    white-space:normal !important;overflow-wrap:anywhere;
+    font-size:10px !important;font-weight:600 !important;line-height:1.35 !important;
+}
+.vctdg .vct-360-project-ref{
+    white-space:normal !important;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;
+    font-size:9px !important;line-height:1.35 !important;
+}
+/* Personas: solo el circulo con iniciales; el nombre completo en el tooltip */
+.vctdg-avatar[title]{cursor:pointer;}
+.vctdg-avatar[title]:hover{box-shadow:0 0 0 2px #fff,0 0 0 3px currentColor;}
+/* Vista 360 */
+.vct-360-visual-final .vct-360-client-meta,
+.vct-360-visual-final .vct-360-client-meta > span{font-size:10px !important;}
+.vct-360-visual-final .vct-360-tabsbar button,
+.vct-360-visual-final .vct-360-tabsbar button span{font-size:10px !important;}
+.vct-360-visual-final .vct-360-box-head h3{font-size:10.5px !important;font-weight:700 !important;}
+
+/* ============================================================================
+   v13
+   - Normas (opcion 2): una por renglon con vineta bordo claro; mas de 3 -> "+N mas"
+     (el resto en el tooltip).
+   - Inicio / Dashboard (tambien es .vct-360-visual-final): mismos KPIs que la
+     Vista 360 pero sin la flecha, porque no navegan.
+   ============================================================================ */
+.vctdg-list{display:flex;flex-direction:column;gap:2px;line-height:1.4;}
+.vctdg-li{display:flex;align-items:baseline;gap:5px;font-size:10px;color:#334155;overflow-wrap:anywhere;}
+.vctdg-li::before{content:"";flex:0 0 5px;width:5px;height:5px;border-radius:50%;background:#CF6F92;transform:translateY(-1px);}
+.vctdg-li.is-more{color:#66062D;font-weight:600;cursor:default;}
+.vctdg-li.is-more::before{background:transparent;}
+
+[data-vct-inicio].vct-360-visual-final .vct-360-stats-row > .vct-360-stat{
+    grid-template-columns:36px minmax(0,1fr) !important;
+    cursor:default;
+}
+[data-vct-inicio].vct-360-visual-final .vct-360-stats-row > .vct-360-stat::after{display:none !important;content:none !important;}
+[data-vct-inicio].vct-360-visual-final .vct-360-stats-row > .vct-360-stat:hover{transform:none !important;}
+
+/* ============================================================================
+   v14: GRAFICOS DEL RESUMEN 360 (tipografia de leyendas)
+   - (v16) La barra "Acciones de proyectos activos" conserva sus colores originales.
+   - Rentabilidad: ver v16.
+   ============================================================================ */
+.vct-360-visual-final .vct-360-profitability-metrics span,
+.vct-360-visual-final .vct-360-profitability-legend,
+.vct-360-visual-final .vct-360-donut-legend{font-size:10px !important;}
+.vct-360-visual-final .vct-360-box-subtitle{font-size:10px !important;}
+
+/* v15: encabezados con .vct-text-center siempre centrados (le gana a reglas de th de la 360) */
+.vctdg .vctdg-table th.vct-text-center,
+.vctdg .vctdg-table td.vct-text-center{text-align:center !important;}
+.vctdg .vctdg-table td.vct-text-center .vctdg-person{justify-content:center;}
+
+/* ============================================================================
+   v16
+   - Tablas estaticas (Ultimos proyectos / Ultimas acciones): ancho de columnas
+     flexible segun el contenido (sin huecos), servicios y menu con ancho fijo.
+   - Personas centradas (inline-flex) en columnas centradas.
+   - Rentabilidad con la paleta institucional: costos grafito, margen bordo medio.
+   ============================================================================ */
+.vctdg-static .vctdg-table{table-layout:auto !important;}
+.vctdg-static .vctdg-table td,.vctdg-static .vctdg-table th{white-space:normal;}
+.vctdg-person{display:inline-flex;}
+.vctdg .vctdg-table td.vct-text-center > .vctdg-person{margin:0 auto;}
+/* (los colores de rentabilidad se definen en v17 con mayor especificidad) */
+
+/* ============================================================================
+   v17
+   - Rentabilidad (Resumen 360): paleta institucional, sin verde.
+     Costos = grafito #4A4849, Margen = bordo medio #8C1D47 (barra, leyenda,
+     monto y porcentaje). Selectores con [data-vct-entity-theme] para ganarle
+     a vct-main.css.
+   - Inicio / Dashboard: titulos y datos de graficos en 12px (las etiquetas que
+     ya estaban en 11px quedan en 11px); anillos centrados en su tarjeta.
+   ============================================================================ */
+.vct-360-visual-final .vct-360-panel[data-vct-entity-theme] .vct-360-profitability-track .is-cost,
+.vct-360-visual-final .vct-360-panel[data-vct-entity-theme] .vct-360-profitability-legend i.is-cost{background:#4A4849 !important;}
+.vct-360-visual-final .vct-360-panel[data-vct-entity-theme] .vct-360-profitability-track .is-margin,
+.vct-360-visual-final .vct-360-panel[data-vct-entity-theme] .vct-360-profitability-legend i.is-margin{background:#8C1D47 !important;}
+.vct-360-visual-final .vct-360-panel[data-vct-entity-theme] .vct-360-profitability-metrics b.is-positive,
+.vct-360-visual-final .vct-360-panel[data-vct-entity-theme] .vct-360-profitability-rate.is-positive b{color:#8C1D47 !important;}
+.vct-360-visual-final .vct-360-panel[data-vct-entity-theme] .vct-360-profitability-metrics b.is-negative,
+.vct-360-visual-final .vct-360-panel[data-vct-entity-theme] .vct-360-profitability-rate.is-negative b{color:#4A4849 !important;}
+
+/* Inicio: tipografia de graficos */
+[data-vct-inicio].vct-360-visual-final .vct-360-box-head h3{font-size:12px !important;font-weight:700 !important;}
+[data-vct-inicio].vct-360-visual-final .vct-360-box-subtitle{font-size:11px !important;}
+[data-vct-inicio] .vct-dash-box .vct-dash-vval{font-size:12px !important;}
+[data-vct-inicio] .vct-dash-box .vct-dash-vlbl{font-size:11px !important;}
+[data-vct-inicio] .vct-dash-box .vct-dash-hrow,
+[data-vct-inicio] .vct-dash-box .vct-dash-hlbl,
+[data-vct-inicio] .vct-dash-box .vct-dash-hval,
+[data-vct-inicio] .vct-dash-box .vct-dash-legend,
+[data-vct-inicio] .vct-dash-box .vct-dash-empty,
+[data-vct-inicio] .vct-dash-note,
+[data-vct-inicio] .vct-dash-aviso{font-size:12px !important;}
+[data-vct-inicio] .vct-dash-box .vct-dash-legend small{font-size:11px !important;}
+/* Inicio: anillos centrados vertical y horizontalmente en su tarjeta */
+[data-vct-inicio] .vct-dash-grid > .vct-dash-box{display:flex;flex-direction:column;}
+[data-vct-inicio] .vct-dash-grid > .vct-dash-box > .vct-ini-box-body{flex:1 1 auto;display:flex;flex-direction:column;}
+[data-vct-inicio] .vct-dash-box .vct-dash-donut-wrap{
+    flex:1 1 auto;
+    justify-content:center !important;
+    align-items:center !important;
+    padding-top:0 !important;
+    min-height:200px;
+}
+
+/* ============================================================================
+   v18: colores de badges por grilla + filtros angostos en Consultores
+   - Clientes: Pasivo en azul (mismo badge, tono azul).
+   - Consultores: Eventual "Si" azul, Sistema "Si" verde; Inactivo y "No" gris;
+     Activo verde (ya estaba).
+   - Consultores: filtros Estado y Eventual angostos para que el buscador y
+     los tres filtros entren en una sola linea.
+   ============================================================================ */
+.vctdg .vct-badge[data-vct-badge="PASIVO"],
+.vctdg td[data-label="Eventual"] .vct-badge.vct-badge-warning{
+    color:#1E40AF !important;background:#EFF6FF !important;border-color:#BFDBFE !important;}
+.vctdg td[data-label="Sistema"] .vct-badge.vct-badge-info{
+    color:#166534 !important;background:#ECFDF3 !important;border-color:#BBF7D0 !important;}
+.vctdg.vctdg .vctdg-filters > select[data-vct-dg-filter="estado"] + .vct-custom-select,
+.vctdg.vctdg .vctdg-filters > select[data-vct-dg-filter="eventual"] + .vct-custom-select{
+    flex:0 0 132px;width:132px !important;}
+@media (max-width:768px){
+    .vctdg.vctdg .vctdg-filters > select[data-vct-dg-filter="estado"] + .vct-custom-select,
+    .vctdg.vctdg .vctdg-filters > select[data-vct-dg-filter="eventual"] + .vct-custom-select{flex:1 1 100%;width:100% !important;}
 }

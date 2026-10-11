@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Últimos proyectos</title>
+<style>
+:root{--b:#66062D;--b1:#8C1D47;--b2:#CF6F92;--g1:#4A4849;--line:#E5E9F0;--txt:#334155;--mut:#64748b}
+*{box-sizing:border-box}
+body{margin:0;padding:24px;background:#f4f5f7;font-family:"Gotham","Gotham Book",-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--txt)}
+h1{font-size:18px;color:var(--b);margin:0 0 4px}
+h2{font-size:14px;margin:30px 0 4px;color:#25344C}
+p.n{font-size:12px;color:var(--mut);margin:0 0 10px;max-width:1000px}
+.box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.hd{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid #EEF2F6;margin-bottom:12px}
+.hd h3{margin:0;font-size:13px;color:#1f2937;display:flex;align-items:center;gap:8px}
+.hd a{font-size:11.5px;color:var(--b);font-weight:600}
+.card{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px}
+th{background:#f8fafc;color:#475569;font-size:11px;font-weight:600;text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid #eef2f6;vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.c{text-align:center}
+.pn{font-weight:600;color:#1f2937;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pr{font-size:10.5px;color:var(--mut);margin-top:2px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bd{display:inline-block;padding:3px 10px;border-radius:999px;font-size:10.5px;font-weight:600}
+.bd.ac{color:#166534;background:#dcfce7}.bd.cf{color:#92400e;background:#fef3c7}
+.av{display:flex;align-items:center;gap:8px}.bar{flex:1;height:6px;border-radius:99px;background:#eef2f6;overflow:hidden}.bar i{display:block;height:100%;background:var(--b)}
+.av b{font-size:11px;font-weight:600;min-width:32px;text-align:right}
+.per{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.pp{display:flex;align-items:center;gap:6px;min-width:0}
+.ini{flex:0 0 22px;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700}
+.ini.a{background:#F6EAEF;color:var(--b1)}.ini.c{background:#EFEFEF;color:var(--g1)}
+.nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px}
+.role{font-size:10px;color:var(--mut);display:block}
+.team{display:flex;flex-direction:column;gap:4px}
+.dt{font-size:11.5px;line-height:1.35;white-space:nowrap}.dt small{color:var(--mut);font-size:10px}
+.dots{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;border:1px solid #D8E4EF;background:#fff;color:#475569;font-size:16px;line-height:1}
+.svc{display:inline-flex;gap:3px}.svc i{display:inline-block;width:20px;height:20px;border-radius:50%;background:#EFEFEF}.svc i.on1{background:var(--b1)}.svc i.on3{background:var(--b2)}
+.rec{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:99px;font-size:10px;background:var(--b);color:#fff;vertical-align:middle}
+</style></head><body>
+<h1>"Últimos proyectos" del Resumen: opciones</h1>
+<p class="n">Base: la grilla de la pestaña Proyectos (misma celda de proyecto, mismo Estado, misma barra de Avance y los 3 puntos al final). Ejemplos con nombres y referencias largas: el nombre se corta en 2 renglones y la referencia en 1 (el texto completo queda en el tooltip).</p>
+
+<script>
+const R=[
+ ['(1343) Implementación integrada de Sistemas de Gestión de Calidad, Ambiente y Seguridad','Planta industrial Mercedes – segunda etapa con auditoría interna','ac','ACTIVO','EM','Esteban De Marco','MB','Martín Aja Borobio','09/10/2026','30/06/2027',12],
+ ['(1342) Formación de Auditores internos integrados (ISO 9001:2015, ISO 14001:2015 e ISO 45001:2018)','Curso in company para el equipo de calidad','ac','ACTIVO','EM','Esteban De Marco','MB','Martín Aja Borobio','08/10/2026','30/06/2027',11],
+ ['(1340) Soporte en el diseño de un SGC','Soporte en el Diseño de un SGC','cf','Confirmado','LB','Lucía Berra','','','08/10/2026','31/03/2027',0]];
+function cellP(r){return '<div class="pn" title="'+r[0]+'">'+r[0]+'</div><div class="pr" title="'+r[1]+'">'+r[1]+'</div>'}
+function av(r){return '<div class="av"><span class="bar"><i style="width:'+r[10]+'%"></i></span><b>'+r[10]+'%</b></div>'}
+function st(r){return '<span class="bd '+r[2]+'">'+r[3]+'</span>'}
+function pp(i,n,c){return n?'<span class="pp"><span class="ini '+c+'">'+i+'</span><span class="nm">'+n+'</span></span>':'<span class="nm" style="color:#94a3b8">-</span>'}
+const D='<span class="dots">⋮</span>';
+function table(title,desc,cols,head,row){
+ document.write('<h2>'+title+'</h2><p class="n">'+desc+'</p><div class="box"><div class="hd"><h3>▢ Últimos proyectos</h3><a>Ver todos</a></div><div class="card"><table><colgroup>'+cols.map(w=>'<col style="width:'+w+'">').join('')+'</colgroup><thead><tr>'+head+'</tr></thead><tbody>'+R.map(row).join('')+'</tbody></table></div></div>');}
+table('Opción A · Equipo y Período agrupados <span class="rec">recomendada</span>',
+ 'Proyecto | Equipo (analista y consultor en una celda) | Período (inicio → fin) | Estado | Avance | ⋮. Mismas columnas "de punta a punta" que Proyectos (Proyecto, Estado, Avance, ⋮); el medio cambia a lo que importa en el resumen: quién y cuándo. El nombre largo tiene lugar.',
+ ['38%','20%','12%','11%','14%','44px'],
+ '<th>Proyecto</th><th>Equipo</th><th>Período</th><th class="c">Estado</th><th>Avance</th><th></th>',
+ r=>'<tr><td>'+cellP(r)+'</td><td><div class="team">'+pp(r[4],r[5],'a')+pp(r[6],r[7],'c')+'</div></td><td><div class="dt">'+r[8]+'<br><small>al '+r[9]+'</small></div></td><td class="c">'+st(r)+'</td><td>'+av(r)+'</td><td class="c">'+D+'</td></tr>');
+table('Opción B · Columnas separadas (como hoy, reordenadas)',
+ 'Proyecto | Analista | Consultor | Inicio | Fin | Estado | Avance | ⋮. Es la grilla actual con el orden y los componentes nuevos. Con nombres largos el proyecto queda apretado (más renglones o más cortes).',
+ ['27%','15%','15%','9%','9%','10%','11%','44px'],
+ '<th>Proyecto</th><th>Analista</th><th>Consultor</th><th class="c">Inicio</th><th class="c">Fin</th><th class="c">Estado</th><th>Avance</th><th></th>',
+ r=>'<tr><td>'+cellP(r)+'</td><td>'+pp(r[4],r[5],'a')+'</td><td>'+pp(r[6],r[7],'c')+'</td><td class="c dt">'+r[8]+'</td><td class="c dt">'+r[9]+'</td><td class="c">'+st(r)+'</td><td>'+av(r)+'</td><td class="c">'+D+'</td></tr>');
+table('Opción C · Igual a la pestaña Proyectos + Equipo',
+ 'Proyecto | Servicios | Equipo | Estado | Avance | ⋮. Casi idéntica a la pestaña (agrega Equipo y saca Normas y fechas). Máxima coherencia, pero repite info que ya está a un click en la pestaña.',
+ ['36%','12%','22%','11%','14%','44px'],
+ '<th>Proyecto</th><th class="c">Servicios</th><th>Equipo</th><th class="c">Estado</th><th>Avance</th><th></th>',
+ r=>'<tr><td>'+cellP(r)+'</td><td class="c"><span class="svc"><i class="on1"></i><i></i><i'+(r[10]==11?' class="on3"':'')+'></i></span></td><td><div class="team">'+pp(r[4],r[5],'a')+pp(r[6],r[7],'c')+'</div></td><td class="c">'+st(r)+'</td><td>'+av(r)+'</td><td class="c">'+D+'</td></tr>');
+</script>
+</body></html>

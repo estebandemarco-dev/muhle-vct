@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grilla de proyectos</title>
+<style>
+:root{--b:#66062D;--b1:#8C1D47;--b2:#CF6F92;--g1:#4A4849;--g2:#8E8C8D;--line:#E5E9F0;--txt:#334155;--mut:#64748b}
+*{box-sizing:border-box}
+body{margin:0;padding:24px;background:#f4f5f7;font-family:"Gotham","Gotham Book",-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--txt)}
+h1{font-size:18px;color:var(--b);margin:0 0 4px}
+h2{font-size:14px;margin:30px 0 4px;color:#25344C}
+p.n{font-size:12px;color:var(--mut);margin:0 0 10px;max-width:980px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px}
+th{background:#f8fafc;color:#475569;font-size:11px;font-weight:600;text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+td{padding:10px;border-bottom:1px solid #eef2f6;vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tr:hover td{background:rgba(102,6,45,.03)}
+.c{text-align:center}
+.pn{font-weight:600;color:#1f2937;line-height:1.3}
+.pr{font-size:10.5px;color:var(--mut);margin-top:2px;line-height:1.3}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.sv{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:600;color:#fff;white-space:nowrap}
+.sv.co{background:var(--b1)}.sv.au{background:var(--g1)}.sv.ca{background:var(--b2)}
+.nm{display:inline-block;padding:2px 7px;border-radius:6px;font-size:10.5px;font-weight:500;color:#4A4849;background:#F3F3F3;border:1px solid #E2E1E1;white-space:nowrap}
+.nm.more{color:var(--b);background:#F6EAEF;border-color:#E7C9D5}
+.bd{display:inline-block;padding:3px 10px;border-radius:999px;font-size:10.5px;font-weight:600}
+.bd.ec{color:#166534;background:#dcfce7}.bd.te{color:#475569;background:#eef2f6}.bd.cf{color:#1e40af;background:#dbeafe}
+.av{display:flex;align-items:center;gap:8px}
+.bar{flex:1;height:6px;border-radius:99px;background:#eef2f6;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--b)}
+.av b{font-size:11px;font-weight:600;min-width:32px;text-align:right}
+.dot{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:10px;font-weight:700;color:#fff}
+.dot.off{background:#EFEFEF;color:#B5B3B4}
+.inline{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+/* entrada */
+a.lk{color:#1f2937;text-decoration:none;font-weight:600;cursor:pointer}
+a.lk:hover{color:var(--b);text-decoration:underline;text-underline-offset:3px}
+.ib{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;border:1px solid #D8E4EF;background:#F8FBFE;color:var(--b)}
+.ib svg,.mn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mn{position:relative;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;border:1px solid #D8E4EF;background:#fff;color:#475569}
+.pop{position:absolute;right:0;top:32px;background:#fff;border:1px solid rgba(102,6,45,.22);border-radius:9px;box-shadow:0 14px 34px rgba(15,23,42,.14);padding:5px;width:150px;text-align:left;z-index:2}
+.pop div{padding:6px 10px;border-radius:7px;font-size:11.5px;white-space:nowrap}
+.pop div:first-child{background:#F6E9EE;color:var(--b);font-weight:600}
+.two{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.mini{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
+.mini h3{font-size:12.5px;margin:0 0 6px;color:#25344C}
+.mini p{font-size:11.5px;color:var(--mut);margin:8px 0 0}
+.rec{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:99px;font-size:10px;background:var(--b);color:#fff;vertical-align:middle}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+</style></head><body>
+<h1>Grilla de Proyectos (Vista 360): opciones</h1>
+<p class="n">Datos de ejemplo. Servicios con color fijo por tipo (Consultoría bordó medio, Auditoría grafito, Capacitación bordó claro). Normas como etiqueta gris. Se quitan Inicio y Fin. Estado y Avance quedan.</p>
+
+<h2>Opción 1 · Columnas separadas: Proyecto | Servicios | Normas | Estado | Avance</h2>
+<p class="n">Lo más claro para filtrar y ordenar. Las normas se muestran hasta 2 y "+N" con el resto en el tooltip.</p>
+<div class="card"><table>
+<colgroup><col style="width:34%"><col style="width:18%"><col style="width:22%"><col style="width:11%"><col style="width:15%"></colgroup>
+<thead><tr><th>Proyecto</th><th>Servicios</th><th>Normas</th><th class="c">Estado</th><th>Avance</th></tr></thead>
+<tbody>
+<tr><td><div class="pn">(1213) Formación de Auditores internos integrados</div><div class="pr">ISO 9001:2015, ISO 14001:2015 e ISO 45001:2018</div></td>
+<td><div class="chips"><span class="sv ca">Capacitación</span></div></td>
+<td><div class="chips"><span class="nm">ISO 9001:2015</span><span class="nm">ISO 14001:2015</span><span class="nm more" title="ISO 45001:2018">+1</span></div></td>
+<td class="c"><span class="bd te">Terminado</span></td><td><div class="av"><span class="bar"><i style="width:100%"></i></span><b>100%</b></div></td></tr>
+<tr><td><div class="pn">(1288) Implementación SGC y auditoría de certificación</div><div class="pr">Planta Mercedes</div></td>
+<td><div class="chips"><span class="sv co">Consultoría</span><span class="sv au">Auditoría</span></div></td>
+<td><div class="chips"><span class="nm">ISO 9001:2015</span></div></td>
+<td class="c"><span class="bd ec">En curso</span></td><td><div class="av"><span class="bar"><i style="width:45%"></i></span><b>45%</b></div></td></tr>
+</tbody></table></div>
+
+<h2>Opción 2 · Compacta: todo dentro de la celda Proyecto | Estado | Avance</h2>
+<p class="n">Nombre, referencia y debajo los servicios y normas como etiquetas. Ocupa menos columnas; ideal para la pestaña y para pantallas angostas.</p>
+<div class="card"><table>
+<colgroup><col style="width:62%"><col style="width:14%"><col style="width:24%"></colgroup>
+<thead><tr><th>Proyecto</th><th class="c">Estado</th><th>Avance</th></tr></thead>
+<tbody>
+<tr><td><div class="pn">(1213) Formación de Auditores internos integrados</div><div class="pr">ISO 9001:2015, ISO 14001:2015 e ISO 45001:2018</div>
+<div class="inline"><span class="sv ca">Capacitación</span><span class="nm">ISO 9001:2015</span><span class="nm">ISO 14001:2015</span><span class="nm">ISO 45001:2018</span></div></td>
+<td class="c"><span class="bd te">Terminado</span></td><td><div class="av"><span class="bar"><i style="width:100%"></i></span><b>100%</b></div></td></tr>
+<tr><td><div class="pn">(1288) Implementación SGC y auditoría de certificación</div><div class="pr">Planta Mercedes</div>
+<div class="inline"><span class="sv co">Consultoría</span><span class="sv au">Auditoría</span><span class="nm">ISO 9001:2015</span></div></td>
+<td class="c"><span class="bd ec">En curso</span></td><td><div class="av"><span class="bar"><i style="width:45%"></i></span><b>45%</b></div></td></tr>
+</tbody></table></div>
+
+<h2>Opción 3 · Servicios como 3 indicadores fijos (C · A · F) | Normas | Estado | Avance</h2>
+<p class="n">Siempre 3 círculos en el mismo orden: encendido si el proyecto tiene ese servicio, apagado si no. Se compara de un vistazo entre filas.</p>
+<div class="card"><table>
+<colgroup><col style="width:38%"><col style="width:12%"><col style="width:22%"><col style="width:11%"><col style="width:17%"></colgroup>
+<thead><tr><th>Proyecto</th><th class="c">Servicios</th><th>Normas</th><th class="c">Estado</th><th>Avance</th></tr></thead>
+<tbody>
+<tr><td><div class="pn">(1213) Formación de Auditores internos integrados</div><div class="pr">ISO 9001:2015, ISO 14001:2015 e ISO 45001:2018</div></td>
+<td class="c"><span class="dot off" title="Consultoría">C</span> <span class="dot off" title="Auditoría">A</span> <span class="dot" style="background:var(--b2)" title="Capacitación">F</span></td>
+<td><div class="chips"><span class="nm">ISO 9001:2015</span><span class="nm">ISO 14001:2015</span><span class="nm more" title="ISO 45001:2018">+1</span></div></td>
+<td class="c"><span class="bd te">Terminado</span></td><td><div class="av"><span class="bar"><i style="width:100%"></i></span><b>100%</b></div></td></tr>
+<tr><td><div class="pn">(1288) Implementación SGC y auditoría de certificación</div><div class="pr">Planta Mercedes</div></td>
+<td class="c"><span class="dot" style="background:var(--b1)" title="Consultoría">C</span> <span class="dot" style="background:var(--g1)" title="Auditoría">A</span> <span class="dot off" title="Capacitación">F</span></td>
+<td><div class="chips"><span class="nm">ISO 9001:2015</span></div></td>
+<td class="c"><span class="bd ec">En curso</span></td><td><div class="av"><span class="bar"><i style="width:45%"></i></span><b>45%</b></div></td></tr>
+</tbody></table></div>
+
+<h2>Cómo entrar a la Vista 360 del proyecto (criterio único para todo el sistema)</h2>
+<div class="two">
+ <div class="mini"><h3>E1 · Click en el nombre <span class="rec">recomendado</span></h3>
+  <a class="lk">(1213) Formación de Auditores internos integrados</a>
+  <p>El nombre del proyecto es el enlace (bordó y subrayado al pasar el mouse). Funciona igual en grillas, Inicio, notificaciones y tarjetas, sin gastar una columna. Es lo que la gente prueba primero.</p></div>
+ <div class="mini"><h3>E2 · Ícono en la última columna</h3>
+  <span class="ib"><svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="1"/><path d="M18.9 12.4a1 1 0 0 0 0-.8 7.5 7.5 0 0 0-13.8 0 1 1 0 0 0 0 .8 7.5 7.5 0 0 0 13.8 0"/></svg></span>
+  <p>Como la grilla actual de Clientes (ícono 360). Muy visible, pero ocupa una columna y no sirve fuera de las grillas (Inicio, tarjetas).</p></div>
+ <div class="mini"><h3>E3 · Menú de tres puntos</h3>
+  <span class="mn"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg><span class="pop"><div>Ver proyecto</div><div>Editar</div><div>Lanzamiento</div></span></span>
+  <p style="margin-top:90px">Agrupa todas las acciones de la fila. Ordenado, pero entrar pasa a ser 2 clicks y queda escondido.</p></div>
+</div>
+</body></html>

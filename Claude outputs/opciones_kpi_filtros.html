@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Opciones KPIs y filtros</title>
+<style>
+:root{--b:#66062D;--b1:#8C1D47;--b2:#CF6F92;--g1:#4A4849;--g2:#8E8C8D;--soft:#FBF7F9;--line:#E5E9F0;--txt:#334155;--mut:#64748b}
+*{box-sizing:border-box}
+body{margin:0;padding:24px;background:#f4f5f7;font-family:"Gotham","Gotham Book",-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--txt)}
+h1{font-size:18px;color:var(--b);margin:0 0 4px}
+h2{font-size:14px;margin:34px 0 4px;color:#25344C}
+p.n{font-size:12px;color:var(--mut);margin:0 0 12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+.row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* ---- A: tarjeta compacta */
+.ka{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:0 1px 3px rgba(15,23,42,.04)}
+.ka i{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;color:#fff;flex:0 0 auto}
+.ka span{font-size:11px;color:var(--mut);display:block}
+.ka b{font-size:20px;color:#1f2937;line-height:1.1;display:block}
+.ka small{font-size:10.5px;color:var(--mut)}
+/* ---- B: acento superior */
+.kb{background:#fff;border:1px solid var(--line);border-top:3px solid;border-radius:10px;padding:10px 14px 11px}
+.kb .t{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--mut)}
+.kb b{font-size:22px;color:#1f2937;display:block;margin-top:2px}
+.kb small{font-size:10.5px;color:var(--mut)}
+/* ---- C: franja unica */
+.kc{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border:1px solid var(--line);border-radius:12px}
+.kc > div{display:flex;align-items:center;gap:10px;padding:10px 16px;border-left:1px solid var(--line)}
+.kc > div:first-child{border-left:0}
+.kc i{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;flex:0 0 auto}
+.kc b{font-size:18px;color:#1f2937}
+.kc span{font-size:11px;color:var(--mut);display:block}
+/* ---- D: tinte suave */
+.kd{display:flex;align-items:center;justify-content:space-between;border-radius:12px;padding:12px 14px}
+.kd span{font-size:11px;display:block;opacity:.85}
+.kd b{font-size:20px;display:block;line-height:1.15}
+.kd small{font-size:10.5px;opacity:.75}
+.kd i{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:#fff}
+/* ---- filtros */
+.tb{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap}
+.srch{width:260px;height:30px;border:1px solid #cbd5e1;border-radius:7px;font-size:12px;color:#94a3b8;display:flex;align-items:center;padding:0 10px;gap:6px}
+.dd{position:relative;width:180px}
+.trg{height:30px;border:1px solid #cbd5e1;border-radius:7px;display:flex;align-items:center;justify-content:space-between;padding:0 9px 0 11px;font-size:12px;background:#fff}
+.dd.open .trg{border-color:var(--b);box-shadow:0 0 0 3px rgba(102,6,45,.08)}
+.menu{margin-top:4px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px;box-shadow:0 10px 24px rgba(15,23,42,.10);min-width:100%;width:max-content;max-width:280px}
+.op{padding:5px 10px;border-radius:6px;font-size:11.5px;white-space:nowrap;min-height:27px;display:flex;align-items:center}
+/* A1: suave sin borde */
+.a1 .op.hov{background:var(--soft);color:var(--b)}
+.a1 .op.sel{background:rgba(102,6,45,.08);color:var(--b);font-weight:600}
+/* B1: como los forms, mas chico */
+.b1 .trg{border-radius:8px}
+.b1 .op.hov{background:#F6E9EE;color:var(--b)}
+.b1 .op.sel{background:var(--b);color:#fff;font-weight:600}
+.size{display:inline-block;width:72px;margin-left:16px}
+.size .op{justify-content:center}
+.lbl{font-size:11px;font-weight:600;color:#25344C;margin:0 0 6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:800px){.row,.kc,.two{grid-template-columns:1fr 1fr}}
+</style></head><body>
+<h1>Opciones de KPIs y filtros para las grillas</h1>
+<p class="n">Colores: tonos de bordó y gris de la paleta institucional (los mismos de los gráficos). Ejemplo con los KPIs de Clientes.</p>
+
+<h2>KPI · Opción A: tarjeta compacta (ícono lleno en color)</h2>
+<p class="n">Alto ~60px (hoy ~110px). Ícono en cuadrado de color, número 20px, subtítulo al lado.</p>
+<div class="row">
+ <div class="ka"><i style="background:var(--b1)"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></i><div><span>Total clientes</span><b>179</b><small>registrados</small></div></div>
+ <div class="ka"><i style="background:var(--g1)"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></svg></i><div><span>Activos</span><b>112</b><small>cartera vigente</small></div></div>
+ <div class="ka"><i style="background:var(--b2)"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/></svg></i><div><span>Pasivos</span><b>40</b><small>clientes pasivos</small></div></div>
+ <div class="ka"><i style="background:var(--g2)"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m17 8 5 5M22 8l-5 5"/></svg></i><div><span>Desafectados</span><b>27</b><small>fuera de cartera</small></div></div>
+</div>
+
+<h2>KPI · Opción B: tarjeta blanca con acento superior</h2>
+<p class="n">Alto ~70px. Raya de 3px arriba con el color; ícono chico en el mismo color.</p>
+<div class="row">
+ <div class="kb" style="border-top-color:var(--b1)"><div class="t">Total clientes<svg viewBox="0 0 24 24" style="color:var(--b1)"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><b>179</b><small>registrados</small></div>
+ <div class="kb" style="border-top-color:var(--g1)"><div class="t">Activos<svg viewBox="0 0 24 24" style="color:var(--g1)"><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></svg></div><b>112</b><small>cartera vigente</small></div>
+ <div class="kb" style="border-top-color:var(--b2)"><div class="t">Pasivos<svg viewBox="0 0 24 24" style="color:var(--b2)"><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/></svg></div><b>40</b><small>clientes pasivos</small></div>
+ <div class="kb" style="border-top-color:var(--g2)"><div class="t">Desafectados<svg viewBox="0 0 24 24" style="color:var(--g2)"><circle cx="9" cy="7" r="4"/><path d="m17 8 5 5M22 8l-5 5"/></svg></div><b>27</b><small>fuera de cartera</small></div>
+</div>
+
+<h2>KPI · Opción C: una sola franja con divisiones</h2>
+<p class="n">Alto ~50px, ocupa una sola tarjeta. La más compacta.</p>
+<div class="kc">
+ <div><i style="background:#F3E6EB;color:var(--b1)"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/></svg></i><div><span>Total clientes</span><b>179</b></div></div>
+ <div><i style="background:#ECECEC;color:var(--g1)"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></svg></i><div><span>Activos</span><b>112</b></div></div>
+ <div><i style="background:#F9ECF1;color:var(--b2)"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/></svg></i><div><span>Pasivos</span><b>40</b></div></div>
+ <div><i style="background:#F2F2F2;color:var(--g2)"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="m17 8 5 5M22 8l-5 5"/></svg></i><div><span>Desafectados</span><b>27</b></div></div>
+</div>
+
+<h2>KPI · Opción D: fondo con tinte suave</h2>
+<p class="n">Alto ~60px. Como hoy (fondo de color) pero más chico y con los tonos institucionales.</p>
+<div class="row">
+ <div class="kd" style="background:#F3E6EB;color:var(--b)"><div><span>Total clientes</span><b>179</b><small>registrados</small></div><i style="color:var(--b1)"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/></svg></i></div>
+ <div class="kd" style="background:#ECECEC;color:#2B2A2B"><div><span>Activos</span><b>112</b><small>cartera vigente</small></div><i style="color:var(--g1)"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></svg></i></div>
+ <div class="kd" style="background:#F9ECF1;color:var(--b1)"><div><span>Pasivos</span><b>40</b><small>clientes pasivos</small></div><i style="color:var(--b2)"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/></svg></i></div>
+ <div class="kd" style="background:#F2F2F2;color:var(--g1)"><div><span>Desafectados</span><b>27</b><small>fuera de cartera</small></div><i style="color:var(--g2)"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="m17 8 5 5M22 8l-5 5"/></svg></i></div>
+</div>
+
+<h2>Filtros · dos opciones</h2>
+<p class="n">Las dos con 30px de alto, opciones en 11,5px sin cortar en dos renglones (el menú se ensancha hasta 280px) y "Registros por página" centrado.</p>
+<div class="two">
+ <div class="card a1"><div class="lbl">Opción 1 · suave (la actual, sin el borde izquierdo)</div>
+  <div class="tb"><div class="srch">Buscar por razón social, CUIT...</div>
+   <div class="dd open"><div class="trg">Todas las condiciones <span>⌃</span></div>
+    <div class="menu"><div class="op sel">Todas las condiciones</div><div class="op">Consumidor Final</div><div class="op hov">Exento</div><div class="op">Monotributo</div><div class="op">Responsable Inscripto</div><div class="op">Responsable No Inscripto</div></div></div>
+   <div class="dd open size"><div class="trg">10 <span>⌃</span></div><div class="menu"><div class="op sel">10</div><div class="op hov">20</div><div class="op">50</div><div class="op">100</div></div></div>
+  </div></div>
+ <div class="card b1"><div class="lbl">Opción 2 · como los formularios (elegida en bordó lleno), más chica</div>
+  <div class="tb"><div class="srch">Buscar por razón social, CUIT...</div>
+   <div class="dd open"><div class="trg">Todas las condiciones <span>⌃</span></div>
+    <div class="menu"><div class="op sel">Todas las condiciones</div><div class="op">Consumidor Final</div><div class="op hov">Exento</div><div class="op">Monotributo</div><div class="op">Responsable Inscripto</div><div class="op">Responsable No Inscripto</div></div></div>
+   <div class="dd open size"><div class="trg">10 <span>⌃</span></div><div class="menu"><div class="op sel">10</div><div class="op hov">20</div><div class="op">50</div><div class="op">100</div></div></div>
+  </div></div>
+</div>
+</body></html>

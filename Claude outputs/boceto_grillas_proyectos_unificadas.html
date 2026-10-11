@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grillas de proyectos unificadas</title>
+<style>
+:root{--b:#66062D;--b1:#8C1D47;--b2:#CF6F92;--g1:#4A4849;--g2:#8E8C8D;--line:#E5E9F0;--txt:#334155;--mut:#64748b}
+*{box-sizing:border-box}
+body{margin:0;padding:24px;background:#f4f5f7;font-family:"Gotham","Gotham Book",-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--txt)}
+h1{font-size:18px;color:var(--b);margin:0 0 4px}
+h2{font-size:14px;margin:28px 0 6px;color:#25344C}
+p.n{font-size:12px;color:var(--mut);margin:0 0 10px;max-width:1040px}
+.box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.hd{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid #EEF2F6}
+.hd h3{margin:0;font-size:13px;color:#1f2937;display:flex;align-items:center;gap:8px}
+.hd a{font-size:11.5px;color:var(--b);font-weight:600}
+.ti{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:7px;background:#F6EAEF;color:var(--b)}
+.tb{display:flex;align-items:center;gap:8px;margin:14px 0 12px}
+.srch{width:280px;height:30px;border:1px solid #cbd5e1;border-radius:7px;font-size:12px;color:#94a3b8;display:flex;align-items:center;padding:0 10px}
+.sel{width:180px;height:30px;border:1px solid #cbd5e1;border-radius:7px;font-size:12px;display:flex;align-items:center;justify-content:space-between;padding:0 10px}
+.sp{flex:1}
+.btn{height:30px;padding:0 10px;border:1px solid #D7E0E9;border-radius:7px;font-size:12px;font-weight:600;color:#25344C;display:inline-flex;align-items:center;gap:6px;background:#fff}
+.card{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:12px}
+.tb + .card{margin-top:0}
+table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px}
+th{background:#f8fafc;color:#475569;font-size:11px;font-weight:600;text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid #eef2f6;vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tr:hover td{background:rgba(102,6,45,.03)}
+.c{text-align:center}
+.pn{font-weight:600;color:#1f2937;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pr{font-size:10.5px;color:var(--mut);margin-top:2px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* ===== KIT DE BADGES UNIFICADO ===== */
+/* servicio */
+.svc{display:inline-flex;gap:4px}
+.sv{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;color:#B5B3B4;background:#EFEFEF}
+.sv.on.co{color:#fff;background:var(--b1)}.sv.on.au{color:#fff;background:var(--g1)}.sv.on.ca{color:#fff;background:var(--b2)}
+/* norma */
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tg{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:6px;font-size:10.5px;font-weight:500;color:#4A4849;background:#F3F3F3;border:1px solid #E2E1E1;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.tg.more{color:var(--b);background:#F6EAEF;border-color:#E7C9D5}
+/* estado: misma forma y tipografia en todas las grillas */
+.st{display:inline-flex;align-items:center;gap:5px;height:20px;padding:0 9px;border-radius:999px;font-size:10.5px;font-weight:600;white-space:nowrap;border:1px solid transparent}
+.st::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+/* A: semantico suave */
+.A .st.ec{color:#166534;background:#ECFDF3;border-color:#BBF7D0}
+.A .st.cf{color:#92400E;background:#FFFBEB;border-color:#FDE68A}
+.A .st.pa{color:#9A3412;background:#FFF7ED;border-color:#FED7AA}
+.A .st.te{color:#475569;background:#F1F5F9;border-color:#E2E8F0}
+.A .st.ca{color:#991B1B;background:#FEF2F2;border-color:#FECACA}
+.A .st.bo{color:#64748B;background:#fff;border-color:#CBD5E1}
+/* B: institucional (tonos bordo / gris) */
+.B .st.ec{color:#fff;background:var(--b1)}
+.B .st.cf{color:var(--b1);background:#F6EAEF;border-color:#E7C9D5}
+.B .st.pa{color:#fff;background:var(--b2)}
+.B .st.te{color:#fff;background:var(--g1)}
+.B .st.ca{color:#4A4849;background:#EFEFEF;border-color:#D5D4D4;text-decoration:line-through}
+.B .st.bo{color:#6E6C6D;background:#fff;border-color:#D5D4D4}
+/* personas */
+.pp{display:flex;align-items:center;gap:6px;min-width:0}
+.ini{flex:0 0 22px;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700}
+.ini.a{background:#F6EAEF;color:var(--b1)}.ini.c{background:#EFEFEF;color:var(--g1)}
+.nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px}
+.none{color:#94a3b8}
+/* avance */
+.av{display:flex;align-items:center;gap:8px}.bar{flex:1;height:6px;border-radius:99px;background:#eef2f6;overflow:hidden}.bar i{display:block;height:100%;background:var(--b)}
+.av b{font-size:11px;font-weight:600;min-width:32px;text-align:right}
+.dots{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;border:1px solid #D8E4EF;background:#fff;color:#475569;font-size:16px;line-height:1}
+.kit{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start}
+.kit > div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.kit h4{margin:0 0 8px;font-size:11.5px;color:#25344C}
+.kit .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.spec{font-size:10.5px;color:var(--mut);margin-top:8px;max-width:330px}
+.foot{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--mut);margin-top:10px}
+</style></head><body>
+<h1>Grillas de proyectos unificadas (Resumen + pestaña Proyectos)</h1>
+<p class="n">Mismo esqueleto en las dos: celda de proyecto (nombre en 2 renglones, referencia en 1), Servicios con los 3 íconos del alta, Normas como etiqueta, Estado con un único diseño de badge, Avance con barra y los 3 puntos al final. El Resumen agrega Analista y Consultor; la pestaña suma buscador, filtro y Nuevo. Sin Inicio ni Fin.</p>
+
+<h2>Kit de badges (igual en todo el sistema)</h2>
+<div class="kit">
+ <div><h4>Servicios</h4><div class="row"><span class="svc" id="kitsvc"></span></div>
+  <div class="spec">Círculo 24px, ícono 13px. Encendido con su color fijo (Consultoría bordó medio, Auditoría grafito, Capacitación bordó claro); apagado gris. Tooltip con el nombre.</div></div>
+ <div><h4>Normas</h4><div class="row"><span class="tg">ISO 9001:2015</span><span class="tg">ISO 14001:2015</span><span class="tg more">+1</span></div>
+  <div class="spec">Etiqueta rectangular (radio 6), 20px de alto, 10,5px, gris. "+N" en bordó claro con el resto en el tooltip.</div></div>
+ <div class="A"><h4>Estados · variante A (semántica suave)</h4><div class="row" id="kitA"></div>
+  <div class="spec">Píldora 20px, 10,5px seminegrita, punto del color + fondo muy suave con borde. Se lee el estado por color "de semáforo".</div></div>
+ <div class="B"><h4>Estados · variante B (institucional)</h4><div class="row" id="kitB"></div>
+  <div class="spec">Misma forma; solo tonos de bordó y gris del Manual de Identidad. Más sobria, menos "semáforo".</div></div>
+</div>
+
+<div id="grids"></div>
+
+<script>
+const IC={co:'<path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/>',au:'<rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>',ca:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>'};
+const NM={co:'Consultoría',au:'Auditoría',ca:'Capacitación'};
+function svc(on){return '<span class="svc">'+['co','au','ca'].map(k=>'<span class="sv '+k+(on.includes(k)?' on':'')+'" title="'+NM[k]+'"><svg viewBox="0 0 24 24">'+IC[k]+'</svg></span>').join('')+'</span>'}
+const ST={ec:'En curso',cf:'Confirmado',pa:'Pausado',te:'Terminado',ca:'Cancelado',bo:'Borrador'};
+function st(k){return '<span class="st '+k+'">'+ST[k]+'</span>'}
+document.getElementById('kitsvc').outerHTML=svc(['co','ca']);
+document.getElementById('kitA').innerHTML=Object.keys(ST).map(st).join('');
+document.getElementById('kitB').innerHTML=Object.keys(ST).map(st).join('');
+const R=[
+ ['(1343) Implementación integrada de Sistemas de Gestión de Calidad, Ambiente y Seguridad','Planta industrial Mercedes – segunda etapa con auditoría interna',['co','au'],['ISO 9001:2015','ISO 14001:2015','ISO 45001:2018'],['EM','Esteban De Marco'],['MB','Martín Aja Borobio'],'ec',12],
+ ['(1342) Formación de Auditores internos integrados (ISO 9001:2015, ISO 14001:2015 e ISO 45001:2018)','Curso in company para el equipo de calidad',['ca'],['ISO 9001:2015','ISO 14001:2015','ISO 45001:2018'],['EM','Esteban De Marco'],['PA','Paula Mariel Alvarez'],'ec',11],
+ ['(1340) Soporte en el diseño de un SGC','Soporte en el Diseño de un SGC',['co'],['ISO 9001:2015'],['LB','Lucía Berra'],null,'cf',0],
+ ['(1170) Auditoría de seguimiento ISO 9001','',['au'],['ISO 9001:2015'],['LB','Lucía Berra'],['PA','Paula Mariel Alvarez'],'te',100]];
+function cellP(r){return '<div class="pn" title="'+r[0]+'">'+r[0]+'</div>'+(r[1]?'<div class="pr" title="'+r[1]+'">'+r[1]+'</div>':'')}
+function tags(a){return '<span class="tags">'+a.slice(0,2).map(x=>'<span class="tg" title="'+x+'">'+x+'</span>').join('')+(a.length>2?'<span class="tg more" title="'+a.slice(2).join(', ')+'">+'+(a.length-2)+'</span>':'')+'</span>'}
+function pp(p,c){return p?'<span class="pp"><span class="ini '+c+'">'+p[0]+'</span><span class="nm" title="'+p[1]+'">'+p[1]+'</span></span>':'<span class="none">-</span>'}
+function av(v){return '<div class="av"><span class="bar"><i style="width:'+v+'%"></i></span><b>'+v+'%</b></div>'}
+const D='<td class="c"><span class="dots">⋮</span></td>';
+const ICF='<span class="ti"><svg viewBox="0 0 24 24"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span>';
+function grids(v){
+ let h='<h2>Variante '+v+' de estados · Resumen → "Últimos proyectos"</h2><div class="box '+v+'"><div class="hd"><h3>'+ICF+'Últimos proyectos</h3><a>Ver todos</a></div><div class="card"><table>'+
+ '<colgroup><col style="width:27%"><col style="width:10%"><col style="width:17%"><col style="width:13%"><col style="width:13%"><col style="width:9%"><col style="width:11%"><col style="width:44px"></colgroup>'+
+ '<thead><tr><th>Proyecto</th><th class="c">Servicios</th><th>Normas</th><th>Analista</th><th>Consultor</th><th class="c">Estado</th><th>Avance</th><th></th></tr></thead><tbody>'+
+ R.map(r=>'<tr><td>'+cellP(r)+'</td><td class="c">'+svc(r[2])+'</td><td>'+tags(r[3])+'</td><td>'+pp(r[4],'a')+'</td><td>'+pp(r[5],'c')+'</td><td class="c">'+st(r[6])+'</td><td>'+av(r[7])+'</td>'+D+'</tr>').join('')+'</tbody></table></div></div>';
+ h+='<h2>Variante '+v+' de estados · Pestaña Proyectos</h2><div class="box '+v+'"><div class="hd"><h3>'+ICF+'Proyectos (4)</h3></div>'+
+ '<div class="tb"><span class="srch">Buscar proyecto, servicio, norma...</span><span class="sel">Todos los estados <span>⌄</span></span><span class="sp"></span><span class="btn">Excel</span><span class="btn">PDF</span><span class="btn">＋ Nuevo</span></div><div class="card"><table>'+
+ '<colgroup><col style="width:36%"><col style="width:11%"><col style="width:23%"><col style="width:11%"><col style="width:14%"><col style="width:44px"></colgroup>'+
+ '<thead><tr><th>Proyecto</th><th class="c">Servicios</th><th>Normas</th><th class="c">Estado</th><th>Avance</th><th></th></tr></thead><tbody>'+
+ R.map(r=>'<tr><td>'+cellP(r)+'</td><td class="c">'+svc(r[2])+'</td><td>'+tags(r[3])+'</td><td class="c">'+st(r[6])+'</td><td>'+av(r[7])+'</td>'+D+'</tr>').join('')+'</tbody></table></div>'+
+ '<div class="foot"><span>Mostrando 1 a 4 de 4 registro(s)</span><span>Registros por página: 10</span></div></div>';
+ return h;}
+document.getElementById('grids').innerHTML=grids('A')+grids('B');
+</script>
+</body></html>

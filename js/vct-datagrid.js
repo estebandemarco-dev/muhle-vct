@@ -1,4 +1,6 @@
-/* vct-datagrid.js - v1
+/* vct-datagrid.js - v7 (grilla dentro de tarjeta 360: clase vctdg-in-box; menu de fila de 3 puntos declarativo; toolbar estandar: buscador primero, filtros y "Registros por pagina" con el combo propio;
+   en una tarjeta 360 el boton de alta del encabezado pasa al toolbar como "Nuevo")
+   
    ============================================================================
    Motor de grilla unico para MAIN: busqueda, filtros, orden, paginado y export
    (Excel .xlsx / PDF con logo e imagenes via vct-export.js). Reemplaza a
@@ -117,6 +119,23 @@
         try { if (window.VCT && window.VCT.Toast && window.VCT.Toast.show) { window.VCT.Toast.show(msg, type || "warning"); return; } } catch (e) { /* noop */ }
         if (window.console) console.warn("[VCTDataGrid] " + msg);
     }
+    /* Combo propio de la plataforma (VCT.Select de vct-main.js) sobre un <select> nativo: el nativo
+       sigue siendo la fuente de verdad (value + evento change). Si ya tenia combo, se rehace. */
+    function enhanceSelect(sel) {
+        if (!sel || sel.getAttribute("data-vct-native") === "true") return;
+        if (!(window.VCT && VCT.Select && typeof VCT.Select.build === "function")) return;
+        sel.classList.add("vct-select");
+        var old = sel.nextElementSibling;
+        if (old && old.classList.contains("vct-custom-select")) old.parentNode.removeChild(old);
+        sel.removeAttribute("data-vct-select-ready");
+        VCT.Select.build(sel);
+    }
+    function syncSelect(sel) {
+        if (!sel || !(window.VCT && VCT.Select && typeof VCT.Select.sync === "function")) return;
+        var w = sel.nextElementSibling;
+        if (w && w.classList.contains("vct-custom-select")) VCT.Select.sync(sel, w);
+    }
+
     function isTrue(v) { return v === true || v === "1" || String(v).toLowerCase() === "true" || String(v).toUpperCase() === "SI"; }
     function debounce(fn, wait) {
         var t;
@@ -347,7 +366,7 @@
         var search = document.createElement("label");
         search.className = "vctdg-search";
         search.innerHTML = ICON.search + '<input type="search" autocomplete="off" aria-label="Buscar en la tabla" placeholder="' + esc(placeholder) + '">';
-        filtersBox.appendChild(search);
+        filtersBox.insertBefore(search, filtersBox.firstChild);   /* el buscador SIEMPRE primero, a la izquierda */
 
         var sortSel = document.createElement("select");
         sortSel.className = "vctdg-select vctdg-sortsel";
@@ -368,6 +387,13 @@
 
         host.insertBefore(toolbar, wrap);
         host.appendChild(footer);
+
+        /* filtros y cantidad por pagina: todos con el mismo combo (alto, hover y seleccion estandar) */
+        Array.prototype.forEach.call(filtersBox.querySelectorAll("select"), function (sel) {
+            if (sel === sortSel || sel.getAttribute("data-vct-select-ready") === "1") return;
+            enhanceSelect(sel);
+        });
+        enhanceSelect(footer.querySelector(".vctdg-size select"));
 
         /* cabeceras ordenables */
         var headRow = table.tHead && table.tHead.rows[table.tHead.rows.length - 1];
@@ -671,7 +697,7 @@
         state.el.meta.textContent = filtered.length + " " + state.unit;
         state.el.info.textContent = "Mostrando " + (filtered.length ? from + 1 : 0) + " a " + to + " de " + filtered.length + " registro(s)";
         state.el.pager.innerHTML = pages > 1 ? pagerHtml(state.page, pages) : "";
-        if (state.el.size.value !== String(state.pageSize)) state.el.size.value = String(state.pageSize);
+        if (state.el.size.value !== String(state.pageSize)) { state.el.size.value = String(state.pageSize); syncSelect(state.el.size); }
         state.el.btnExcel.disabled = state.el.btnPdf.disabled = total === 0;
 
         state.filtered = filtered;
@@ -830,6 +856,7 @@
                 var size = mq.matches ? 5 : state.baseSize;
                 if (mq.matches && !Array.prototype.some.call(state.el.size.options, function (o) { return o.value === "5"; })) {
                     state.el.size.insertAdjacentHTML("afterbegin", '<option value="5">5</option>');
+                    enhanceSelect(state.el.size);
                 }
                 state.pageSize = size;
                 state.page = 1;
@@ -842,6 +869,101 @@
     /* ------------------------------------------------------------------
        API publica + arranque
        ------------------------------------------------------------------ */
+    /* Tarjeta 360 (.vct-360-box) con una sola grilla: los botones del encabezado
+       (.vct-360-box-actions, p.ej. "Agregar" domicilio) pasan al toolbar, a la derecha
+       de Excel/PDF, con el mismo alto. Solo existen si el SP los dibujo (permiso del perfil).
+       El texto "Agregar" se unifica como "Nuevo". */
+    function adoptBoxActions(state) {
+        var box = state.host.closest ? state.host.closest(".vct-360-box") : null;
+        if (!box) return;
+        box.classList.add("vctdg-in-box");   /* linea fina bajo el titulo + espacio antes del toolbar (CSS) */
+        if (box.querySelectorAll("[data-vct-dg]").length !== 1) return;
+        var actions = null;
+        for (var i = 0; i < box.children.length; i++) {
+            if (box.children[i].classList.contains("vct-360-box-head")) { actions = box.children[i].querySelector(".vct-360-box-actions"); break; }
+        }
+        if (!actions || !actions.children.length) return;
+        var tools = state.el.toolbar.querySelector(".vctdg-tools");
+        while (actions.firstElementChild) {
+            var btn = actions.firstElementChild;
+            var spans = btn.querySelectorAll("span");
+            for (var j = 0; j < spans.length; j++) {
+                if (!spans[j].hasAttribute("data-vct-icon") && /^\s*agregar\s*$/i.test(spans[j].textContent)) spans[j].textContent = "Nuevo";
+            }
+            tools.appendChild(btn);
+        }
+        actions.hidden = true;
+    }
+
+    /* ------------------------------------------------------------------
+       Menu de fila (3 puntos, siempre ultima columna). Declarativo: el SP pone
+         <button class="vct-row-menu-trigger" data-vctdg-rowmenu>...</button>
+         <div class="vctdg-rowmenu-items" hidden> botones (VCT_MAIN_RENDER_ACTION) </div>
+       Los botones salen de PrmActions segun permisos del perfil (icono + texto).
+       El motor los muestra en un menu flotante; al elegir uno se dispara el
+       boton original, que atiende la plataforma (grid-action, etc.).
+       ------------------------------------------------------------------ */
+    var rowMenu = { el: null, trigger: null };
+    function closeRowMenu() {
+        if (rowMenu.el && rowMenu.el.parentNode) rowMenu.el.parentNode.removeChild(rowMenu.el);
+        if (rowMenu.trigger) rowMenu.trigger.classList.remove("is-open");
+        rowMenu.el = null; rowMenu.trigger = null;
+    }
+    function openRowMenu(btn) {
+        closeRowMenu();
+        var cell = btn.parentNode;
+        var src = cell ? cell.querySelector(".vctdg-rowmenu-items") : null;
+        if (!src || !src.children.length) return;
+        var originals = Array.prototype.slice.call(src.children);
+        var menu = document.createElement("div");
+        menu.className = "vctdg-rowmenu";
+        menu.setAttribute("role", "menu");
+        originals.forEach(function (orig, i) {
+            var item = document.createElement("button");
+            item.type = "button";
+            item.className = "vctdg-rowmenu-item";
+            item.setAttribute("role", "menuitem");
+            item.setAttribute("data-vctdg-idx", String(i));
+            var icon = orig.querySelector("[data-vct-icon]");
+            var label = orig.getAttribute("data-vct-tooltip") || cellText(orig);
+            item.innerHTML = (icon ? '<span class="vctdg-rowmenu-icon" data-vct-icon="' + esc(icon.getAttribute("data-vct-icon")) + '"></span>' : "") +
+                "<span>" + esc(label) + "</span>";
+            menu.appendChild(item);
+        });
+        menu.addEventListener("click", function (e) {
+            var it = e.target.closest(".vctdg-rowmenu-item");
+            if (!it) return;
+            e.preventDefault();
+            e.stopPropagation();
+            var orig = originals[parseInt(it.getAttribute("data-vctdg-idx"), 10)];
+            closeRowMenu();
+            if (orig) orig.click();
+        });
+        document.body.appendChild(menu);
+        if (window.VCT && VCT.Icon && typeof VCT.Icon.init === "function") VCT.Icon.init(menu);
+        var r = btn.getBoundingClientRect(), mw = menu.offsetWidth, mh = menu.offsetHeight;
+        var left = Math.max(8, Math.min(r.right - mw, window.innerWidth - mw - 8));
+        var top = r.bottom + 4;
+        if (top + mh > window.innerHeight - 8 && r.top - mh - 4 > 8) top = r.top - mh - 4;
+        menu.style.left = left + "px";
+        menu.style.top = top + "px";
+        btn.classList.add("is-open");
+        rowMenu.el = menu; rowMenu.trigger = btn;
+    }
+    document.addEventListener("click", function (e) {
+        var btn = e.target.closest ? e.target.closest("[data-vctdg-rowmenu]") : null;
+        if (btn) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (rowMenu.trigger === btn) closeRowMenu(); else openRowMenu(btn);
+            return;
+        }
+        if (rowMenu.el && !rowMenu.el.contains(e.target)) closeRowMenu();
+    });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeRowMenu(); });
+    window.addEventListener("resize", closeRowMenu);
+    window.addEventListener("scroll", closeRowMenu, true);
+
     function initOne(host) {
         if (host.getAttribute("data-vct-dg-ready") === "1") return registry[host.getAttribute("data-vct-dg-id")] || null;
         ensureDatePicker(host);
@@ -849,8 +971,9 @@
            ver mountRows(). El host vuelve a su lugar al final (aun si algo falla). */
         var parent = host.parentNode, marker = null;
         if (parent) { marker = document.createComment("vctdg-init"); parent.replaceChild(marker, host); }
+        var state = null;
         try {
-            var state = build(host);
+            state = build(host);
             if (!state) return null;
             readRows(state);
             applySort(state);
@@ -859,6 +982,7 @@
             return state;
         } finally {
             if (marker) parent.replaceChild(host, marker);
+            if (state) adoptBoxActions(state);
         }
     }
 

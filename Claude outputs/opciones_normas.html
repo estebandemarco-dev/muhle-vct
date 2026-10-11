@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Opciones de normas</title>
+<style>
+:root{--b:#66062D;--b1:#8C1D47;--b2:#CF6F92;--g1:#4A4849;--line:#E5E9F0;--txt:#334155;--mut:#64748b}
+*{box-sizing:border-box}
+body{margin:0;padding:24px;background:#f4f5f7;font-family:"Gotham","Gotham Book",-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--txt)}
+h1{font-size:18px;color:var(--b);margin:0 0 4px}
+h2{font-size:13px;margin:26px 0 4px;color:#25344C}
+p.n{font-size:12px;color:var(--mut);margin:0 0 10px;max-width:980px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;max-width:980px}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th{background:#f8fafc;color:#475569;font-size:10.5px;font-weight:600;text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+td{padding:8px 6px;border-bottom:1px solid #eef2f6;vertical-align:middle;font-size:10px}
+tr:last-child td{border-bottom:0}
+.c{text-align:center}
+.pn{font-weight:600;color:#1f2937;line-height:1.35}
+.pr{font-size:9px;color:var(--mut);line-height:1.35}
+/* N1 chips */
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tg{display:inline-flex;align-items:center;height:18px;padding:0 6px;border-radius:5px;font-size:10px;color:#4A4849;background:#F3F3F3;border:1px solid #E2E1E1;white-space:nowrap}
+.tg.more{color:var(--b);background:#F6EAEF;border-color:#E7C9D5}
+/* N2 lista */
+.lst{margin:0;padding:0;list-style:none;line-height:1.45}
+.lst li{display:flex;gap:5px;align-items:baseline}
+.lst li::before{content:"";flex:0 0 5px;height:5px;border-radius:50%;background:var(--b2);transform:translateY(-1px)}
+.lst .more{color:var(--b);font-weight:600}
+/* N3 contador */
+.cnt{display:flex;align-items:center;gap:6px;min-width:0}
+.cnt .first{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;padding:0 6px;border-radius:999px;font-size:9.5px;font-weight:700;color:#fff;background:var(--b1);cursor:pointer;position:relative}
+.pill:hover::after{content:attr(data-list);position:absolute;top:22px;right:0;white-space:pre;background:#fff;color:#334155;font-weight:500;border:1px solid rgba(102,6,45,.22);border-radius:8px;padding:6px 9px;box-shadow:0 10px 24px rgba(15,23,42,.12);z-index:5;text-align:left;font-size:10px}
+/* N4 texto separado */
+.txt{line-height:1.45}
+.txt .sep{color:#cbd5e1;padding:0 4px}
+.rec{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:99px;font-size:10px;background:var(--b);color:#fff;vertical-align:middle}
+</style></head><body>
+<h1>Columna Normas: opciones</h1>
+<p class="n">Ejemplos reales (1 a 3 normas). Escala nueva: datos 10px, referencia 9px. La columna mide lo mismo en las 4 opciones.</p>
+<script>
+const R=[['(1344) Nuevo proyecto Octubre 2026','',['ISO 14001:2015','ISO 27001:2022']],
+ ['(935) Capacitación FSSC:22001 - V6','Capacitación FSSC:22001 - V6',['FSSC 22000 V 6.0']],
+ ['(526) Actualización de la versión FSSC 22000 4.1 a la versión 5','Actualización de la versión FSSC 22000 4.1 a la versión 5 (ISO 22000:2018)',['FSSC 22000 V.5','FSSC 5','ISO 22000:2018']],
+ ['(508) Taller de análisis y método de solución de problemas','Taller de análisis y método de solución de problemas',['Mejora Continua']]];
+const OPT={
+ N1:['Opción 1 · Etiquetas (2 + "+N") — como está hoy','Una etiqueta gris por norma; si hay más de 2, "+N" con el resto en el tooltip. Las etiquetas pasan de renglón si no entran.',a=>'<span class="tags">'+a.slice(0,2).map(x=>'<span class="tg">'+x+'</span>').join('')+(a.length>2?'<span class="tg more" title="'+a.slice(2).join(', ')+'">+'+(a.length-2)+'</span>':'')+'</span>'],
+ N2:['Opción 2 · Lista con viñeta (una norma por renglón) <span class="rec">recomendada</span>','Texto liso, una norma por renglón con un punto bordó claro. Se lee de un vistazo, no compite con los badges de estado y alinea con el nombre del proyecto en 2 renglones. Más de 3: "+N más".',a=>'<ul class="lst">'+a.slice(0,3).map(x=>'<li>'+x+'</li>').join('')+(a.length>3?'<li class="more">+'+(a.length-3)+' más</li>':'')+'</ul>'],
+ N3:['Opción 3 · Principal + contador','Muestra la norma principal y un círculo con la cantidad total; al pasar el mouse se ve la lista completa. La más compacta (un solo renglón siempre).',a=>'<span class="cnt"><span class="first">'+a[0]+'</span>'+(a.length>1?'<span class="pill" data-list="'+a.join('\n')+'">'+a.length+'</span>':'')+'</span>'],
+ N4:['Opción 4 · Texto corrido separado','Todas las normas en texto, separadas por un punto medio; ocupa los renglones que necesite.',a=>'<span class="txt">'+a.join('<span class="sep">·</span>')+'</span>']};
+Object.keys(OPT).forEach(k=>{const o=OPT[k];
+ document.write('<h2>'+o[0]+'</h2><p class="n">'+o[1]+'</p><div class="card"><table><colgroup><col><col style="width:22%"><col style="width:96px"><col style="width:112px"></colgroup><thead><tr><th>Proyecto</th><th>Normas</th><th class="c">Analista</th><th class="c">Estado</th></tr></thead><tbody>'+
+ R.map(r=>'<tr><td><div class="pn">'+r[0]+'</div>'+(r[1]?'<div class="pr">'+r[1]+'</div>':'')+'</td><td>'+o[2](r[2])+'</td><td class="c">…</td><td class="c">…</td></tr>').join('')+'</tbody></table></div>');});
+</script>
+</body></html>
