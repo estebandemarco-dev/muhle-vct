@@ -1,0 +1,204 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Acciones - boceto</title><style>
+:root{--b:#66062D;--b1:#8C1D47;--b2:#CF6F92;--g1:#4A4849;--g2:#8E8C8D;--line:#E5E9F0;--txt:#334155;--mut:#64748b}
+*{box-sizing:border-box}
+body{margin:0;padding:24px;background:#f4f5f7;font-family:"Gotham","Gotham Book",-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--txt)}
+h1{font-size:18px;color:var(--b);margin:0 0 4px}
+h2{font-size:14px;margin:36px 0 4px;color:#25344C}
+p.n{font-size:12px;color:var(--mut);margin:0 0 12px;max-width:1100px}
+.rec{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:99px;font-size:10px;background:var(--b);color:#fff;vertical-align:middle}
+svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.page{max-width:1120px}
+/* ---- navegacion de reportes = barra de pestanas 360 con subopciones ---- */
+.bar{display:flex;align-items:center;gap:2px;padding:4px 6px;background:#E9EAEC;border:1px solid rgba(51,50,51,.075);border-radius:12px;margin-bottom:12px}
+.tab{position:relative;display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:0 11px;border-radius:9px;font-size:10px;font-weight:550;color:#52647D}
+.tab.on{background:#fff;color:var(--b);font-weight:700;box-shadow:0 2px 8px rgba(15,23,42,.07)}
+.tab.on::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:2px;border-radius:2px 2px 0 0;background:var(--b)}
+.tab .chev{width:11px;height:11px;opacity:.7;margin-left:-2px}
+.crumb{font-size:10px;color:var(--mut);margin:0 0 10px 2px}.crumb b{color:var(--b);font-weight:600}
+/* ---- KPIs de pantallas con grilla (vct-soft-kpi) ---- */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+.kpi{--c:#8C1D47;--s:#E7C9D5;display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--s);border-radius:12px;padding:10px 12px}
+.kpi:nth-child(2){--c:#4A4849;--s:#D9D8D8}.kpi:nth-child(3){--c:#CF6F92;--s:#F1D3DF}.kpi:nth-child(4){--c:#8E8C8D;--s:#E2E1E1}
+.kpi .i{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;background:var(--c);color:#fff}
+.kpi .t{flex:1;min-width:0}.kpi .t b{display:block;font-size:11.5px;color:#25344C;font-weight:600}.kpi .t span{font-size:10px;color:var(--mut)}
+.kpi .v{font-size:22px;font-weight:700;color:#1f2937}
+/* ---- tarjeta + toolbar estandar ---- */
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.head{display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px solid #EEF2F6;margin-bottom:14px}
+.head .ico{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;background:#F6EAEF;color:var(--b)}
+.head h3{margin:0;font-size:10.5px;font-weight:700;color:#1f2937}.head small{font-size:10px;color:var(--mut);margin-left:6px}
+.tool{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.in{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:10.5px;color:#94a3b8;background:#fff}
+.in.s{width:260px}.in.d{width:128px;color:#334155;justify-content:space-between}.in.f{width:150px;justify-content:space-between}
+.sp{flex:1}
+.btn{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border:1px solid #D7E0E9;border-radius:8px;background:#fff;font-size:10.5px;font-weight:600;color:#25344C}
+.btn .x{color:#16a34a}.btn .p{color:#dc2626}.btn .c{color:var(--b)}
+/* ---- tabla ---- */
+.tw{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th{background:#f8fafc;color:#475569;font-size:10.5px;font-weight:600;text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th .so{display:inline-block;width:10px;height:10px;margin-left:3px;opacity:.5;vertical-align:-1px}
+td{padding:9px 10px;border-bottom:1px solid #eef2f6;font-size:10px;vertical-align:middle;color:#334155}
+tr:last-child td{border-bottom:0}
+.c{text-align:center}.r{text-align:right}
+.ref{display:block;font-size:9px;color:var(--mut);margin-top:2px;line-height:1.35}
+.nm{font-weight:600;color:#1f2937;line-height:1.35}
+.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4}
+.svc{display:inline-flex;align-items:center;gap:6px}.svc i{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;color:#fff}
+.svc i svg{width:11px;height:11px}.co{background:#8C1D47}.au{background:#4A4849}.ca{background:#CF6F92}
+.bd{display:inline-flex;align-items:center;gap:5px;height:20px;padding:0 9px;border-radius:999px;font-size:10px;font-weight:600;border:1px solid}
+.bd::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.bd.pe{color:#92400E;background:#FFFBEB;border-color:#FDE68A}.bd.ok{color:#166534;background:#ECFDF3;border-color:#BBF7D0}
+.av{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;color:#4A4849;background:#EFEFEF}
+.xp{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;border:1px solid #D8E4EF;color:#475569;background:#fff}
+.xp.o{color:var(--b);border-color:rgba(102,6,45,.32);background:#FBF7F9}
+.det td{background:#FBF7F9;padding:0}
+.dg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:12px 14px 14px 48px}
+.dg div b{display:block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--b1);margin-bottom:4px}
+.dg div{font-size:10px;line-height:1.45;color:#334155}
+.ico-n{display:inline-flex;align-items:center;gap:4px;color:var(--b1);font-size:9px;font-weight:600}
+.foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:11px;color:var(--mut)}
+.pg{display:flex;gap:6px}.pg span{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:1px solid #D7E0E9;border-radius:8px;font-size:11px;color:#25344C;background:#fff}
+.pg span.on{background:var(--b);color:#fff;border-color:var(--b)}
+.sz{display:inline-flex;align-items:center;gap:8px}.sz span{display:inline-flex;align-items:center;justify-content:center;width:56px;height:30px;border:1px solid #cbd5e1;border-radius:8px;color:#334155}
+/* columnas */
+.colmenu{position:absolute;right:0;top:36px;width:210px;background:#fff;border:1px solid rgba(102,6,45,.22);border-radius:9px;box-shadow:0 14px 34px rgba(15,23,42,.14);padding:6px;z-index:3}
+.colmenu div{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:7px;font-size:10.5px}
+.colmenu div:hover{background:#F6E9EE}
+.ck{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:4px;border:1px solid #cbd5e1}
+.ck.on{background:var(--b);border-color:var(--b);color:#fff}.ck svg{width:9px;height:9px;stroke-width:3}
+.colmenu hr{border:0;border-top:1px solid #EEF2F6;margin:4px 2px}
+.colmenu small{display:block;padding:2px 8px 4px;font-size:9px;color:var(--mut)}
+/* drawer */
+.split{display:grid;grid-template-columns:1fr 320px;gap:12px}
+.drw{background:#fff;border:1px solid rgba(102,6,45,.22);border-radius:14px;box-shadow:0 14px 34px rgba(15,23,42,.12);padding:14px}
+.drw h4{margin:0 0 2px;font-size:11.5px;color:#1f2937}.drw .sub{font-size:10px;color:var(--mut);margin-bottom:12px}
+.drw .f{margin-bottom:10px}.drw .f b{display:block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--b1);margin-bottom:3px}
+.drw .f div{font-size:10px;line-height:1.45}
+tr.sel td{background:#F6E9EE}
+.cmp{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.mini{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:11px;color:var(--mut);line-height:1.45}
+.mini b{display:block;color:#25344C;font-size:12px;margin-bottom:4px}
+.seg{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.sg{--c:#334155;--bg:#fff;--bd:#E5E9F0;display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 14px;background:#fff;border:1px solid var(--bd);border-radius:10px;cursor:pointer;position:relative}
+.sg b{font-size:18px;font-weight:700;color:var(--c)}.sg span{font-size:10.5px;color:#475569;font-weight:600}
+.sg::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c)}
+.sg.red{--c:#B91C1C;--bd:#FECACA}.sg.amb{--c:#B45309;--bd:#FDE68A}.sg.bor{--c:#8C1D47;--bd:#F1D3DF}.sg.gry{--c:#64748b;--bd:#E2E8F0}.sg.grn{--c:#15803D;--bd:#BBF7D0}
+.sg.on{background:var(--c);border-color:var(--c)}.sg.on b,.sg.on span{color:#fff}.sg.on::before{background:#fff}
+.vt{display:inline-flex;padding:3px;background:#E9EAEC;border-radius:9px}.vt span{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:7px;font-size:10.5px;font-weight:600;color:#52647D}.vt span.on{background:#fff;color:var(--b);box-shadow:0 2px 6px rgba(15,23,42,.08)}
+.charts3{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px;margin-bottom:12px}
+.ch{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.cht{font-size:11px;font-weight:600;color:#334155;margin-bottom:10px}
+.hb{display:grid;grid-template-columns:90px 1fr 22px;align-items:center;gap:8px;margin-bottom:7px}
+.hn{font-size:10px;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hv{font-size:10px;font-weight:700;text-align:right;color:#1f2937}
+.hbar{display:flex;height:10px;background:#F1F3F6;border-radius:5px;overflow:hidden}
+.hbar i,.lg i{display:block;height:100%}.r{background:#B91C1C}.a{background:#F59E0B}.b{background:#CF6F92}.g{background:#8E8C8D}
+.lg{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;font-size:9px;color:#64748b}.lg span{display:inline-flex;align-items:center;gap:4px}.lg i{width:8px;height:8px;border-radius:2px}
+.cols{display:flex;align-items:flex-end;gap:5px;height:110px;padding:0 2px;border-bottom:1px solid #E5E9F0}
+.cols span{flex:1;height:var(--h);min-height:2px;background:#8C1D47;border-radius:3px 3px 0 0;position:relative}
+.cols span.we{background:transparent}.cols span.today{background:#F59E0B}
+.cols em{position:absolute;top:-14px;left:0;right:0;text-align:center;font-style:normal;font-size:9px;font-weight:600;color:#334155}
+.cols.cm span{background:#4A4849}.cols.cm span.today{background:#8C1D47}.cols.sm{height:80px}
+.clb{display:flex;gap:5px;padding:4px 2px 0}.clb span{flex:1;text-align:center;font-size:9px;color:#64748b}
+.tg{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;color:#334155}.tg i{width:28px;height:16px;border-radius:99px;background:#CBD5E1;position:relative}.tg i::after{content:"";position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff}
+.rel{display:flex;width:max-content;margin-top:3px;height:17px;align-items:center;padding:0 7px;border-radius:99px;font-size:9px;font-weight:600;border:1px solid}
+.rel.red{color:#B91C1C;background:#FEF2F2;border-color:#FECACA}.rel.amb{color:#92400E;background:#FFFBEB;border-color:#FDE68A}.rel.bor{color:#8C1D47;background:#FBF1F5;border-color:#F1D3DF}
+.pr{display:inline-flex;align-items:center;gap:6px}.av.a{color:#8C1D47;background:#F6EAEF}.av.n{color:#94a3b8;background:#F1F5F9}
+.bd.hi{color:#B91C1C;background:#FEF2F2;border-color:#FECACA}.bd.me{color:#92400E;background:#FFFBEB;border-color:#FDE68A}.bd.lo{color:#475569;background:#F8FAFC;border-color:#E2E8F0}
+.bd.st{color:#475569;background:#F1F5F9;border-color:#E2E8F0}.bd.go{color:#166534;background:#ECFDF3;border-color:#BBF7D0}
+.dots{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border:1px solid #D8E4EF;border-radius:7px;font-size:14px;color:#475569;font-weight:700}
+tr.soft td{background:#FBFBFC}
+.split2{display:grid;grid-template-columns:1fr 300px;gap:12px}.split2.rev{grid-template-columns:300px 1fr}
+.stack{display:flex;flex-direction:column;gap:12px}
+.dn{display:flex;align-items:center;gap:16px}.donut{width:86px;height:86px;border-radius:50%;position:relative;flex:0 0 auto}
+.donut::after{content:"";position:absolute;inset:16px;border-radius:50%;background:#fff}.donut b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1;font-size:16px}
+.dl{display:flex;flex-direction:column;gap:5px;font-size:10px;flex:1}.dl span{display:flex;align-items:center;gap:6px}.dl i{width:8px;height:8px;border-radius:50%}.dl b{margin-left:auto}
+.msg{display:flex;align-items:center;gap:14px;max-width:640px}.msg .mi{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:#F6EAEF;color:var(--b)}.msg .mi svg{width:20px;height:20px}
+.msg div{flex:1}.msg b{display:block;font-size:12px;color:#1f2937;margin-bottom:3px}.msg div span{font-size:10.5px;color:#64748b;line-height:1.45}
+.opt3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grp{margin:8px 0;border:1px solid var(--line);border-radius:8px;overflow:hidden}.gh{padding:5px 8px;font-size:9.5px;font-weight:700;color:#fff}.gh.red{background:#B91C1C}.gh.amb{background:#B45309}.gh.bor{background:#8C1D47}
+.gi{padding:5px 8px;font-size:10px;color:#334155;border-bottom:1px solid #EEF2F6}.gi i{float:right;font-style:normal;color:#94a3b8;font-size:9px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin:8px 0}.cal span{position:relative;height:30px;border:1px solid #EEF2F6;border-radius:5px;font-size:9px;color:#334155;padding:2px 4px;background:#fff}
+.cal .h{height:auto;border:0;text-align:center;color:#64748b;font-weight:600;background:transparent}.cal .o{background:transparent;border:0}.cal .w{background:#F8FAFC;color:#94a3b8}.cal .t{border-color:#F59E0B;box-shadow:inset 0 0 0 1px #F59E0B}
+.cal i{position:absolute;right:3px;bottom:3px;min-width:14px;height:14px;padding:0 3px;border-radius:99px;font-style:normal;font-size:8.5px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center}
+.cal i.r{background:#B91C1C}.cal i.a{background:#F59E0B}.cal i.b{background:#CF6F92}
+.in{white-space:nowrap}.in.f{width:160px}
+.sg{user-select:none}.sg:hover{filter:brightness(.98)}
+.charts4{display:grid;grid-template-columns:1.25fr 1fr 1fr .9fr;gap:12px;margin-top:12px}
+.calv{display:none}.calv.on{display:block}.listv.off{display:none}
+.calg{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.calg .h{font-size:10px;font-weight:600;color:#64748b;text-align:center;padding-bottom:4px}
+.calg .d{position:relative;height:74px;border:1px solid #EEF2F6;border-radius:8px;padding:6px 7px;font-size:10px;color:#334155;background:#fff}
+.calg .d.w{background:#F8FAFC;color:#94a3b8}.calg .d.o{border:0;background:transparent}.calg .d.t{box-shadow:inset 0 0 0 2px #F59E0B}
+.calg .d .pill{display:block;margin-top:4px;height:16px;line-height:16px;padding:0 6px;border-radius:99px;font-size:9px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill.r{background:#B91C1C}.pill.a{background:#F59E0B}.pill.b{background:#CF6F92}.pill.g{background:#8E8C8D}
+.note{font-size:10.5px;color:#64748b;margin:8px 0 0}
+.sec{font-size:11px;font-weight:700;color:#25344C;margin:16px 0 8px}
+.tool .in.s{width:220px}.tool .in.f,.tool .in.f[style]{width:112px !important}.tool .in.s{width:210px}</style></head><body><div class="page">
+<h1>Acciones · diseño único para todos los perfiles</h1>
+<p class="n">Mismo diseño para Gerencia, Proyectos (analista) y Consultor; lo único que cambia es <b>el alcance de los datos</b>: Gerencia ve todas las acciones (asignadas o no), Proyectos y Consultor solo las asignadas a su usuario. Para el perfil Clientes se muestra solo el mensaje del sistema (abajo). Arriba: contadores-pestaña + grilla con paginado; abajo: gráficos. Los contadores y el botón Lista / Calendario de este boceto funcionan (hacé click).</p>
+
+<div class="seg" id="seg">
+  <span class="sg red on" data-f="vencidas"><b>12</b><span>Vencidas</span></span>
+  <span class="sg amb" data-f="hoy"><b>5</b><span>Hoy</span></span>
+  <span class="sg bor" data-f="proximas"><b>18</b><span>Próximas 7 días</span></span>
+  <span class="sg gry" data-f="sinfecha"><b>6</b><span>Sin fecha</span></span>
+  <span class="sg grn" data-f="todas"><b>41</b><span>Todas las abiertas</span></span>
+  <span class="sp"></span>
+  <span class="vt" id="vt"><span class="on" data-v="lista"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Lista</span><span data-v="cal"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Calendario</span></span>
+</div>
+
+<div class="card">
+  <div class="head"><span class="ico"><svg viewBox="0 0 24 24"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><h3 id="ttl">Acciones vencidas</h3><small id="sub">Acciones abiertas cuyo vencimiento ya pasó.</small></div>
+  <div class="tool"><span class="in s"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>Buscar acción, cliente o proyecto…</span><span class="in f">Responsable<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span><span class="in f">Tipo<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span><span class="in f" style="width:130px">Prioridad<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span><span class="in f" style="width:150px">Proyecto<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span><span class="tg"><i></i>Solo mías</span><span class="sp"></span><span class="btn"><svg class="x" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Excel</span><span class="btn"><svg class="p" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>PDF</span><span class="btn"><svg class="c" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Nueva</span></div>
+  <div class="listv" id="listv">
+  <div class="tw"><table>
+    <colgroup><col style="width:120px"><col><col style="width:23%"><col style="width:150px"><col style="width:82px"><col style="width:96px"><col style="width:46px"></colgroup>
+    <thead><tr><th>Vence<svg class="so" viewBox="0 0 24 24"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg></th><th>Acción<svg class="so" viewBox="0 0 24 24"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg></th><th>Cliente / Proyecto<svg class="so" viewBox="0 0 24 24"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg></th><th>Responsable</th><th class="c">Prioridad</th><th class="c">Estado</th><th></th></tr></thead>
+    <tbody id="tb"><tr data-sit="vencidas"><td>05/10/2026<span class="rel red">hace 7 días</span></td><td><span class="nm">Enviar plan estratégico firmado</span><span class="ref">Tarea · Documentación</span></td><td><span class="nm">Coca Cola FEMSA</span><span class="ref">(1268) Kores Seguridad</span></td><td><span class="pr"><span class="av a">MN</span>Nowak, Martin A.</span></td><td class="c"><span class="bd hi">Alta</span></td><td class="c"><span class="bd st">Pendiente</span></td><td class="c"><span class="dots">⋮</span></td></tr><tr data-sit="vencidas"><td>08/10/2026<span class="rel red">hace 4 días</span></td><td><span class="nm">Confirmar fecha de auditoría etapa 2</span><span class="ref">Seguimiento · Agenda</span></td><td><span class="nm">YPF S.A.</span><span class="ref">(1309) TRON</span></td><td><span class="pr"><span class="av a">PA</span>Alvarez, Paula M.</span></td><td class="c"><span class="bd me">Media</span></td><td class="c"><span class="bd go">En curso</span></td><td class="c"><span class="dots">⋮</span></td></tr><tr data-sit="vencidas"><td>09/10/2026<span class="rel red">hace 3 días</span></td><td><span class="nm">Solicitar documentación de procesos</span><span class="ref">Solicitud</span></td><td><span class="nm">Arcor SAIC</span><span class="ref">(1320) ISO 9001 Planta Arroyito</span></td><td><span class="pr"><span class="av n">–</span><i style="color:#94a3b8">Sin asignar</i></span></td><td class="c"><span class="bd lo">Baja</span></td><td class="c"><span class="bd st">Pendiente</span></td><td class="c"><span class="dots">⋮</span></td></tr><tr data-sit="vencidas"><td>10/10/2026<span class="rel red">hace 2 días</span></td><td><span class="nm">Emitir orden de servicio</span><span class="ref">Tarea · Administración</span></td><td><span class="nm">YPF S.A.</span><span class="ref">(1309) TRON</span></td><td><span class="pr"><span class="av a">AV</span>Vocaturo, Agustín</span></td><td class="c"><span class="bd me">Media</span></td><td class="c"><span class="bd st">Pendiente</span></td><td class="c"><span class="dots">⋮</span></td></tr><tr data-sit="hoy"><td>12/10/2026<span class="rel amb">Hoy</span></td><td><span class="nm">Cargar minuta de visita</span><span class="ref">Actividad · Minuta</span></td><td><span class="nm">Coca Cola FEMSA</span><span class="ref">(1268) Kores Seguridad</span></td><td><span class="pr"><span class="av a">MN</span>Nowak, Martin A.</span></td><td class="c"><span class="bd hi">Alta</span></td><td class="c"><span class="bd go">En curso</span></td><td class="c"><span class="dots">⋮</span></td></tr><tr data-sit="hoy"><td>12/10/2026<span class="rel amb">Hoy</span></td><td><span class="nm">Revisar no conformidades abiertas</span><span class="ref">Seguimiento</span></td><td><span class="nm">Terminales Río de la Plata</span><span class="ref">(1238) Asistencia técnica</span></td><td><span class="pr"><span class="av a">LR</span>Rementeria, Lionel</span></td><td class="c"><span class="bd me">Media</span></td><td class="c"><span class="bd st">Pendiente</span></td><td class="c"><span class="dots">⋮</span></td></tr><tr data-sit="proximas"><td>13/10/2026<span class="rel bor">mañana</span></td><td><span class="nm">Enviar informe de auditoría</span><span class="ref">Tarea · Informe</span></td><td><span class="nm">Polydem SA</span><span class="ref">(1258) AT Soporte SG</span></td><td><span class="pr"><span class="av a">PA</span>Alvarez, Paula M.</span></td><td class="c"><span class="bd hi">Alta</span></td><td class="c"><span class="bd st">Pendiente</span></td><td class="c"><span class="dots">⋮</span></td></tr><tr data-sit="proximas"><td>14/10/2026<span class="rel bor">en 2 días</span></td><td><span class="nm">Coordinar capacitación de auditores internos</span><span class="ref">Actividad · Capacitación</span></td><td><span class="nm">Arcor SAIC</span><span class="ref">(1320) ISO 9001 Planta Arroyito</span></td><td><span class="pr"><span class="av a">AV</span>Vocaturo, Agustín</span></td><td class="c"><span class="bd me">Media</span></td><td class="c"><span class="bd st">Pendiente</span></td><td class="c"><span class="dots">⋮</span></td></tr><tr data-sit="proximas"><td>16/10/2026<span class="rel bor">en 4 días</span></td><td><span class="nm">Revisar plan de acción del cliente</span><span class="ref">Seguimiento</span></td><td><span class="nm">YPF S.A.</span><span class="ref">(1266) Geofísica</span></td><td><span class="pr"><span class="av a">LM</span>Lorenzini, Paula</span></td><td class="c"><span class="bd lo">Baja</span></td><td class="c"><span class="bd st">Pendiente</span></td><td class="c"><span class="dots">⋮</span></td></tr><tr data-sit="sinfecha"><td>—<span class="rel" style="color:#64748b;background:#F8FAFC;border-color:#E2E8F0">Sin fecha</span></td><td><span class="nm">Actualizar matriz de requisitos legales</span><span class="ref">Tarea</span></td><td><span class="nm">Coca Cola FEMSA</span><span class="ref">(1268) Kores Seguridad</span></td><td><span class="pr"><span class="av a">MN</span>Nowak, Martin A.</span></td><td class="c"><span class="bd lo">Baja</span></td><td class="c"><span class="bd st">Pendiente</span></td><td class="c"><span class="dots">⋮</span></td></tr></tbody></table></div>
+  <div class="foot"><span id="info">Mostrando 1 a 4 de 12 registro(s)</span><span class="pg"><span>«</span><span>‹</span><span class="on">1</span><span>2</span><span>›</span><span>»</span></span><span class="sz">Registros por página: <span>10 ▾</span></span></div>
+  </div>
+  <div class="calv" id="calv"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span class="btn">‹</span><b style="font-size:12px;color:#1f2937">Octubre 2026</b><span class="btn">›</span><span class="sp"></span><span class="lg" style="margin:0"><span><i class="r"></i>Vencidas</span><span><i class="a"></i>Hoy</span><span><i class="b"></i>Próximas</span><span><i class="g"></i>Más adelante</span></span></div><div class="calg"><div class="h">Lun</div><div class="h">Mar</div><div class="h">Mié</div><div class="h">Jue</div><div class="h">Vie</div><div class="h">Sáb</div><div class="h">Dom</div><div class="d o"></div><div class="d o"></div><div class="d o"></div><div class="d">1</div><div class="d">2</div><div class="d w">3</div><div class="d w">4</div><div class="d">5<span class="pill r">Plan estratégico</span></div><div class="d">6</div><div class="d">7</div><div class="d">8<span class="pill r">Fecha etapa 2</span><span class="pill r">+2</span></div><div class="d">9<span class="pill r">Documentación</span></div><div class="d w">10<span class="pill r">Orden de servicio</span></div><div class="d w">11</div><div class="d t">12<span class="pill a">Minuta de visita</span><span class="pill a">No conformidades</span></div><div class="d">13<span class="pill b">Informe auditoría</span></div><div class="d">14<span class="pill b">Capacitación</span></div><div class="d">15</div><div class="d">16<span class="pill b">Plan de acción</span><span class="pill b">+3</span></div><div class="d w">17</div><div class="d w">18</div><div class="d">19</div><div class="d">20<span class="pill b">Revisión anual</span></div><div class="d">21</div><div class="d">22<span class="pill b">Cierre etapa 1</span></div><div class="d">23</div><div class="d w">24</div><div class="d w">25</div><div class="d">26</div><div class="d">27<span class="pill g">Reunión mensual</span></div><div class="d">28</div><div class="d">29</div><div class="d">30</div><div class="d w">31</div></div><p class="note">Click en un día: vuelve a Lista filtrada por ese día.</p></div>
+</div>
+<p class="note">Menú ⋮ de cada fila (según permisos del perfil): Ver / Editar · Marcar cumplida · Reabrir · Reasignar · Ver proyecto.</p>
+
+<div class="sec">Gráficos</div>
+<div class="charts4">
+  <div class="ch"><div class="cht">Abiertas por responsable <span style="font-weight:400;color:#94a3b8">(Proyectos / Consultor: por proyecto)</span></div>
+    <div class="hb"><span class="hn">Nowak, M.</span><span class="hbar"><i class="r" style="width:22%"></i><i class="a" style="width:8%"></i><i class="b" style="width:20%"></i><i class="g" style="width:12%"></i></span><span class="hv">11</span></div>
+    <div class="hb"><span class="hn">Vocaturo, A.</span><span class="hbar"><i class="r" style="width:10%"></i><i class="a" style="width:6%"></i><i class="b" style="width:26%"></i><i class="g" style="width:8%"></i></span><span class="hv">9</span></div>
+    <div class="hb"><span class="hn">Alvarez, P.</span><span class="hbar"><i class="r" style="width:12%"></i><i class="b" style="width:14%"></i><i class="g" style="width:12%"></i></span><span class="hv">7</span></div>
+    <div class="hb"><span class="hn">Rementeria, L.</span><span class="hbar"><i class="r" style="width:6%"></i><i class="a" style="width:6%"></i><i class="b" style="width:12%"></i><i class="g" style="width:6%"></i></span><span class="hv">5</span></div>
+    <div class="hb"><span class="hn">Sin asignar</span><span class="hbar"><i class="r" style="width:12%"></i><i class="g" style="width:6%"></i></span><span class="hv">3</span></div>
+    <div class="lg"><span><i class="r"></i>Vencidas</span><span><i class="a"></i>Hoy</span><span><i class="b"></i>Próximas</span><span><i class="g"></i>Resto</span></div>
+  </div>
+  <div class="ch"><div class="cht">Vencimientos próximos 14 días</div>
+    <div class="cols"><span style="--h:42%" class="today"><em>5</em></span><span style="--h:25%"><em>3</em></span><span style="--h:33%"><em>4</em></span><span style="--h:17%"><em>2</em></span><span style="--h:50%"><em>6</em></span><span style="--h:0%" class="we"></span><span style="--h:0%" class="we"></span><span style="--h:25%"><em>3</em></span><span style="--h:8%"><em>1</em></span><span style="--h:17%"><em>2</em></span><span style="--h:33%"><em>4</em></span><span style="--h:8%"><em>1</em></span><span style="--h:0%" class="we"></span><span style="--h:0%" class="we"></span></div>
+    <div class="clb"><span>L12</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span><span>L19</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+  </div>
+  <div class="ch"><div class="cht">Cumplidas a término · 6 meses</div>
+    <div class="cols cm"><span style="--h:62%"><em>62%</em></span><span style="--h:70%"><em>70%</em></span><span style="--h:58%"><em>58%</em></span><span style="--h:75%"><em>75%</em></span><span style="--h:81%"><em>81%</em></span><span style="--h:77%" class="today"><em>77%</em></span></div>
+    <div class="clb"><span>May</span><span>Jun</span><span>Jul</span><span>Ago</span><span>Sep</span><span>Oct</span></div>
+  </div>
+  <div class="ch"><div class="cht">Abiertas por tipo</div>
+    <div class="dn" style="flex-direction:column;align-items:flex-start;gap:10px"><span class="donut" style="background:conic-gradient(#8C1D47 0 44%,#4A4849 44% 66%,#CF6F92 66% 88%,#8E8C8D 88% 100%)"><b>41</b></span>
+    <div class="dl" style="width:100%"><span><i style="background:#8C1D47"></i>Tarea<b>18</b></span><span><i style="background:#4A4849"></i>Seguimiento<b>9</b></span><span><i style="background:#CF6F92"></i>Solicitud<b>9</b></span><span><i style="background:#8E8C8D"></i>Otros<b>5</b></span></div></div>
+  </div>
+</div>
+
+<div class="sec" style="margin-top:28px">Perfil Clientes (si por error tiene la opción en el sidebar)</div>
+<div class="card msg">
+  <span class="mi"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+  <div><b>Acciones no está disponible para tu perfil</b><span>Esta sección es de uso interno del equipo. Si necesitás consultar el estado de tus proyectos, comunicate con tu analista asignado.</span></div>
+  <span class="btn">Volver al inicio</span>
+</div>
+</div><script>
+var T={vencidas:["Acciones vencidas","Acciones abiertas cuyo vencimiento ya pasó.",12],hoy:["Acciones de hoy","Lo que vence hoy, lunes 12/10.",5],proximas:["Próximas 7 días","Lo que vence del 13/10 al 19/10.",18],sinfecha:["Acciones sin fecha","Abiertas sin fecha de vencimiento.",6],todas:["Todas las abiertas","Vencidas, de hoy, próximas y sin fecha.",41]};
+function f(k){document.querySelectorAll("#seg .sg").forEach(function(s){s.classList.toggle("on",s.dataset.f===k)});
+var n=0;document.querySelectorAll("#tb tr").forEach(function(r){var v=k==="todas"||r.dataset.sit===k;r.style.display=v?"":"none";if(v)n++;});
+document.getElementById("ttl").textContent=T[k][0];document.getElementById("sub").textContent=T[k][1];
+document.getElementById("info").textContent="Mostrando 1 a "+n+" de "+T[k][2]+" registro(s)";}
+document.querySelectorAll("#seg .sg").forEach(function(s){s.onclick=function(){f(s.dataset.f);}});
+document.querySelectorAll("#vt span").forEach(function(s){s.onclick=function(){document.querySelectorAll("#vt span").forEach(function(x){x.classList.toggle("on",x===s)});var c=s.dataset.v==="cal";document.getElementById("calv").classList.toggle("on",c);document.getElementById("listv").classList.toggle("off",c);}});
+f("vencidas");
+</script></body></html>
