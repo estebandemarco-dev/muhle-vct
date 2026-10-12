@@ -979,3 +979,196 @@
         row-gap:4px;
     }
 }
+
+/* ============================================================================
+   v28 - ESTANDAR VISUAL (mismo lenguaje que las V360)
+   - Pestañas: barra de la V360 de Cliente (color institucional, 9.5px).
+   - Submenu de categoria: mismo menu que la pestaña Agenda de la V360 de
+     Consultor (item activo en bordo con texto blanco, chevron propio).
+   - Pantalla sin "card" envolvente: pestañas + breadcrumb + KPIs + tarjeta de
+     grilla, igual que el resto de las pantallas.
+   - KPIs compactos con la paleta institucional; graficos con la misma paleta.
+   Todo con alcance [data-vct-report-root] / .vct-reports-workspace.
+   ============================================================================ */
+.vct-reports-workspace{
+    margin-top:4px !important;overflow:visible !important;
+    background:transparent !important;border:0 !important;box-shadow:none !important;padding:0 !important;
+}
+[data-vct-report-root] [data-vct-report-group-panel] > .vct-card-body{padding:0 !important;background:transparent !important;}
+
+/* ---- Pestañas (barra V360 Cliente) */
+[data-vct-report-root] .vct-report-topnav{
+    height:auto !important;min-height:48px;display:flex;flex-wrap:wrap;align-items:center;gap:2px;
+    margin:0 0 10px;padding:4px 6px !important;
+    background:rgba(51,50,51,.055) !important;border:1px solid rgba(51,50,51,.075) !important;
+    border-radius:12px !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.65) !important;
+}
+[data-vct-report-root] .vct-report-topnav-item{height:auto;}
+[data-vct-report-root] .vct-report-topnav [data-vct-report-cat]{
+    position:relative;min-height:38px;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+    padding:0 11px !important;color:#52647D !important;background:transparent !important;border:0;border-radius:9px !important;
+    font-size:9.5px !important;font-weight:550 !important;box-shadow:none !important;transform:none !important;
+    transition:color .16s ease,background .16s ease,box-shadow .16s ease;
+}
+[data-vct-report-root] .vct-report-topnav [data-vct-report-cat]::after{
+    content:"";position:absolute;left:12px;right:12px;bottom:0;height:2px;border-radius:2px 2px 0 0;background:transparent;
+}
+[data-vct-report-root] .vct-report-topnav [data-vct-report-cat] > [data-vct-icon],
+[data-vct-report-root] .vct-report-topnav [data-vct-report-cat] > [data-vct-icon] svg{
+    width:15px !important;height:15px !important;min-width:15px;opacity:1 !important;color:currentColor !important;
+}
+[data-vct-report-root] .vct-report-topnav [data-vct-report-cat]:not(.is-active):hover,
+[data-vct-report-root] .vct-report-topnav [data-vct-report-cat][aria-expanded="true"]:not(.is-active){
+    color:#66062D !important;background:rgba(255,255,255,.62) !important;
+}
+[data-vct-report-root] .vct-report-topnav [data-vct-report-cat]:not(.is-active):hover [data-vct-icon],
+[data-vct-report-root] .vct-report-topnav [data-vct-report-cat]:not(.is-active):hover .vct-report-chevron{color:#66062D !important;}
+[data-vct-report-root] .vct-report-topnav [data-vct-report-cat].is-active{
+    color:#66062D !important;background:#FFFFFF !important;box-shadow:0 2px 8px rgba(15,23,42,.07) !important;font-weight:720 !important;
+}
+[data-vct-report-root] .vct-report-topnav [data-vct-report-cat].is-active::after{background:#66062D;}
+[data-vct-report-root] .vct-report-topnav [data-vct-report-cat]:focus{outline:none;}
+[data-vct-report-root] .vct-report-topnav [data-vct-report-cat]:focus-visible{box-shadow:0 0 0 2px rgba(102,6,45,.25) !important;}
+/* Chevron igual que Agenda (SVG propio de 12px) */
+[data-vct-report-root] .vct-report-topnav [data-vct-report-cat] .vct-report-chevron{
+    display:inline-flex;width:12px !important;height:12px !important;margin-left:-2px !important;
+    clip-path:none !important;opacity:.8 !important;transition:transform .16s ease;
+}
+[data-vct-report-root] .vct-report-chevron svg{width:12px !important;height:12px !important;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+[data-vct-report-root] .vct-report-topnav [data-vct-report-cat][aria-expanded="true"] .vct-report-chevron{transform:rotate(180deg);}
+
+/* ---- Submenu (menu de la pestaña Agenda) */
+[data-vct-report-root] .vct-report-dropdown{
+    top:calc(100% + 6px) !important;min-width:210px !important;padding:5px !important;gap:0 !important;
+    background:#fff !important;border:1px solid rgba(102,6,45,.22) !important;border-radius:9px !important;
+    box-shadow:0 14px 34px rgba(15,23,42,.14),0 3px 10px rgba(102,6,45,.08) !important;z-index:60 !important;
+}
+[data-vct-report-root] .vct-report-dropdown [data-vct-report-group]{
+    min-height:30px;margin:1px 0;padding:6px 10px !important;gap:8px !important;
+    color:#334155 !important;background:transparent !important;border-radius:7px !important;
+    font-size:10.5px !important;font-weight:500 !important;transform:none !important;
+}
+[data-vct-report-root] .vct-report-dropdown [data-vct-report-group] [data-vct-icon],
+[data-vct-report-root] .vct-report-dropdown [data-vct-report-group] [data-vct-icon] svg{width:15px !important;height:15px !important;color:#66062D !important;opacity:1 !important;}
+[data-vct-report-root] .vct-report-dropdown [data-vct-report-group]:hover{color:#66062D !important;background:#F6E9EE !important;}
+[data-vct-report-root] .vct-report-dropdown [data-vct-report-group].is-active{color:#fff !important;background:#66062D !important;font-weight:600 !important;}
+[data-vct-report-root] .vct-report-dropdown [data-vct-report-group].is-active [data-vct-icon],
+[data-vct-report-root] .vct-report-dropdown [data-vct-report-group].is-active [data-vct-icon] svg{color:#fff !important;}
+
+/* ---- Breadcrumb (igual que el de Agenda) */
+[data-vct-report-root] .vct-report-breadcrumb{padding:0 2px !important;margin:0 0 10px !important;font-size:10px !important;font-weight:400 !important;color:#64748b !important;}
+[data-vct-report-root] .vct-report-breadcrumb .vct-report-crumb-sep{margin:0 5px;color:#94a3b8;}
+[data-vct-report-root] .vct-report-breadcrumb b{color:#66062D;font-weight:600;}
+
+/* ---- KPIs compactos, paleta institucional */
+[data-vct-report-root] .vct-reports-kpis{gap:10px !important;margin:0 0 12px !important;}
+[data-vct-report-root] .vct-reports-kpis .vct-soft-kpi{
+    min-height:62px !important;grid-template-columns:34px minmax(0,1fr) !important;column-gap:12px !important;
+    padding:12px 16px !important;background:#fff !important;border:1px solid #E7E8EC !important;border-radius:12px !important;
+    box-shadow:0 2px 10px rgba(31,36,45,.04) !important;
+}
+[data-vct-report-root] .vct-reports-kpis .vct-soft-kpi-icon{width:34px !important;height:34px !important;border-radius:9px !important;color:#fff !important;background:#8C1D47 !important;}
+[data-vct-report-root] .vct-reports-kpis .vct-soft-kpi-icon svg{width:17px !important;height:17px !important;color:#fff !important;}
+[data-vct-report-root] .vct-reports-kpis .vct-soft-kpi:nth-child(4n+2) .vct-soft-kpi-icon{background:#4A4849 !important;}
+[data-vct-report-root] .vct-reports-kpis .vct-soft-kpi:nth-child(4n+3) .vct-soft-kpi-icon{background:#CF6F92 !important;}
+[data-vct-report-root] .vct-reports-kpis .vct-soft-kpi:nth-child(4n+4) .vct-soft-kpi-icon{background:#8E8C8D !important;}
+[data-vct-report-root] .vct-reports-kpis .vct-soft-kpi-copy{flex-direction:row !important;align-items:center !important;justify-content:space-between !important;gap:10px !important;}
+[data-vct-report-root] .vct-reports-kpis .vct-soft-kpi-label{font-size:10.5px !important;font-weight:600 !important;color:#334155 !important;}
+[data-vct-report-root] .vct-reports-kpis .vct-soft-kpi-value{font-size:20px !important;font-weight:700 !important;color:#171D2A !important;white-space:nowrap;}
+
+/* ---- Tarjeta de la grilla */
+[data-vct-report-root] [data-vct-report-group-panel] .vctdg{
+    padding:14px 16px 12px;background:#fff;border:1px solid #E7E8EC;border-radius:12px;box-shadow:0 2px 10px rgba(31,36,45,.04);
+}
+[data-vct-report-root] .vctdg .vct-config-abm-header{padding:0 0 12px !important;margin:0 !important;border:0 !important;background:transparent !important;}
+[data-vct-report-root] .vctdg .vct-config-abm-header > div{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;}
+[data-vct-report-root] .vctdg .vct-config-abm-header .vct-card-title{display:inline-flex !important;align-items:center;gap:9px;margin:0 !important;font-size:11.5px !important;font-weight:700 !important;color:#1F2937 !important;}
+[data-vct-report-root] .vctdg .vct-config-abm-header .vct-card-title > [data-vct-icon]{
+    display:inline-flex !important;align-items:center;justify-content:center;width:26px !important;height:26px !important;
+    padding:5px;border-radius:7px;color:#66062D !important;background:#F6E9EE !important;
+}
+[data-vct-report-root] .vctdg .vct-config-abm-header .vct-card-title > [data-vct-icon] svg{width:15px !important;height:15px !important;}
+[data-vct-report-root] .vctdg .vct-config-abm-header .vct-card-subtitle{margin:0 !important;font-size:10px !important;color:#64748b !important;}
+
+/* ---- Filtros del toolbar: 30px, 10.5px */
+[data-vct-report-root] .vctdg-filters .vct-reports-filters{gap:8px !important;}
+[data-vct-report-root] .vctdg-filters .vct-reports-filters .vct-datepicker-trigger,
+[data-vct-report-root] .vctdg-filters .vct-reports-filters input[type="date"],
+[data-vct-report-root] .vctdg-filters .vct-reports-filters input[type="text"],
+[data-vct-report-root] .vctdg-filters .vct-reports-filters .vct-custom-select-trigger,
+[data-vct-report-root] .vctdg-filters .vct-reports-filters > select.vct-select{
+    height:30px !important;min-height:30px !important;font-size:10.5px !important;border-radius:7px !important;
+}
+
+/* ---- Graficos con la paleta institucional */
+[data-vct-report-root] .vct-donut-seg.is-mint,.vct-modal-charts .vct-donut-seg.is-mint,[data-vct-report-root] .vct-donut-seg.is-primary,.vct-modal-charts .vct-donut-seg.is-primary{stroke:#8C1D47;}
+[data-vct-report-root] .vct-donut-seg.is-amber,.vct-modal-charts .vct-donut-seg.is-amber{stroke:#4A4849;}
+[data-vct-report-root] .vct-donut-seg.is-blue,.vct-modal-charts .vct-donut-seg.is-blue{stroke:#CF6F92;}
+[data-vct-report-root] .vct-donut-seg.is-violet,.vct-modal-charts .vct-donut-seg.is-violet{stroke:#8E8C8D;}
+[data-vct-report-root] .vct-donut-seg.is-coral,.vct-modal-charts .vct-donut-seg.is-coral{stroke:#66062D;}
+[data-vct-report-root] .vct-donut-dot.is-mint,.vct-modal-charts .vct-donut-dot.is-mint,[data-vct-report-root] .vct-donut-dot.is-primary,.vct-modal-charts .vct-donut-dot.is-primary{background:#8C1D47;}
+[data-vct-report-root] .vct-donut-dot.is-amber,.vct-modal-charts .vct-donut-dot.is-amber{background:#4A4849;}
+[data-vct-report-root] .vct-donut-dot.is-blue,.vct-modal-charts .vct-donut-dot.is-blue{background:#CF6F92;}
+[data-vct-report-root] .vct-donut-dot.is-violet,.vct-modal-charts .vct-donut-dot.is-violet{background:#8E8C8D;}
+[data-vct-report-root] .vct-donut-dot.is-coral,.vct-modal-charts .vct-donut-dot.is-coral{background:#66062D;}
+[data-vct-report-root] .vct-gantt-bar,.vct-modal-charts .vct-gantt-bar,[data-vct-report-root] .vct-gantt-bar.is-coral,.vct-modal-charts .vct-gantt-bar.is-coral,[data-vct-report-root] .vct-gantt-bar.is-mint,.vct-modal-charts .vct-gantt-bar.is-mint{background:#8C1D47;}
+[data-vct-report-root] .vct-gantt-bar.is-amber,.vct-modal-charts .vct-gantt-bar.is-amber{background:#4A4849;}
+[data-vct-report-root] .vct-gantt-bar.is-blue,.vct-modal-charts .vct-gantt-bar.is-blue{background:#CF6F92;}
+[data-vct-report-root] .vct-gantt-bar.is-violet,.vct-modal-charts .vct-gantt-bar.is-violet{background:#8E8C8D;}
+[data-vct-report-root] .vct-barchart-bar,.vct-modal-charts .vct-barchart-bar{background:#8C1D47 !important;}
+
+@media (max-width:768px){
+    [data-vct-report-root] .vct-report-topnav [data-vct-report-cat]{padding:0 9px !important;}
+    [data-vct-report-root] .vct-reports-kpis .vct-soft-kpi{min-width:calc(50% - 5px) !important;}
+}
+
+/* ============================================================================
+   v30 - Modales de Graficos de TODOS los reportes (misma logica que Parte de
+   Actividades): 2 graficos arriba y el cronograma/periodo (gantt) abajo al
+   100%. Si no hay gantt, los graficos van de a 2 por fila y el ultimo impar
+   ocupa el 100%. Tipografia chica (titulos 11px, datos 10px, etiquetas 9px)
+   y barras que no se salen de la tarjeta.
+   ============================================================================ */
+.vct-modal-charts .vct-modal-dialog{width:min(920px,94vw) !important;max-width:920px !important;}
+.vct-modal-charts .vct-modal-title{font-size:13px !important;font-weight:700 !important;}
+.vct-modal-charts .vct-report-chart-grid,
+.vct-modal-charts .vct-report-chart-grid[data-vct-chart-cols="3"]{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:12px !important;}
+.vct-modal-charts .vct-report-chart-grid[data-vct-chart-cols="1"]{grid-template-columns:minmax(0,1fr) !important;}
+.vct-modal-charts .vct-report-chart-grid > .vct-report-chart:last-child:nth-child(odd){grid-column:1 / -1;}
+.vct-modal-charts .vct-report-chart-grid > .vct-report-chart:has(> .vct-gantt){order:3;grid-column:1 / -1;}
+.vct-modal-charts .vct-report-chart-grid > .vct-report-chart:has(> .vct-gantt) ~ .vct-report-chart:last-child{grid-column:auto;}
+.vct-modal-charts .vct-report-chart{padding:12px 14px !important;margin:0 !important;border-radius:10px !important;min-width:0;overflow:hidden;}
+.vct-modal-charts .vct-report-chart-title{margin:0 0 10px !important;font-size:11px !important;font-weight:600 !important;color:#334155 !important;}
+/* donut */
+.vct-modal-charts .vct-donut-row{gap:18px !important;}
+.vct-modal-charts .vct-donut{width:96px !important;height:96px !important;}
+.vct-modal-charts .vct-donut-label{font-size:7px !important;font-weight:600 !important;}
+.vct-modal-charts .vct-donut-sublabel{font-size:9.5px !important;margin-top:4px !important;}
+.vct-modal-charts .vct-donut-legend{gap:4px !important;}
+.vct-modal-charts .vct-donut-legend-item{font-size:10px !important;gap:7px !important;padding:2px 4px !important;}
+.vct-modal-charts .vct-donut-legend-item b{font-size:10px !important;padding-left:16px !important;}
+.vct-modal-charts .vct-donut-dot{width:8px !important;height:8px !important;}
+.vct-modal-charts .vct-donut-gauges{gap:16px !important;}
+.vct-modal-charts .vct-donut-gauge .vct-donut{width:76px !important;height:76px !important;}
+/* barras */
+.vct-modal-charts .vct-barchart{height:140px !important;gap:14px !important;padding:4px 4px 0 !important;width:100%;box-sizing:border-box;}
+.vct-modal-charts .vct-barchart-col{flex:1 1 0 !important;min-width:0 !important;max-width:76px !important;gap:4px !important;}
+.vct-modal-charts .vct-barchart-bar{max-width:40px;border-radius:4px 4px 0 0 !important;}
+.vct-modal-charts .vct-barchart-value{font-size:9px !important;font-weight:600 !important;color:#334155 !important;white-space:nowrap;}
+.vct-modal-charts .vct-barchart-label{width:100%;min-height:22px;font-size:9px !important;line-height:1.2 !important;color:#64748b !important;white-space:normal !important;display:-webkit-box !important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+/* cronograma / periodo (abajo, 100%) */
+.vct-modal-charts .vct-gantt{gap:8px !important;}
+.vct-modal-charts .vct-gantt-row-head{font-size:10px !important;margin-bottom:3px !important;}
+.vct-modal-charts .vct-gantt-row-head span:last-child{font-size:9.5px !important;font-weight:500 !important;color:#64748b !important;}
+.vct-modal-charts .vct-gantt-track{height:6px !important;border-radius:3px !important;}
+.vct-modal-charts .vct-gantt-bar{border-radius:3px !important;}
+.vct-modal-charts .vct-gantt-empty{font-size:10px !important;padding:12px 0 !important;}
+@media (max-width:700px){
+    .vct-modal-charts .vct-report-chart-grid{grid-template-columns:1fr !important;}
+}
+
+/* ---- Filtros de Reportes: combos de 150px para que buscador + filtros +
+   botones entren en una sola fila (Calificacion tiene 3 combos). */
+[data-vct-report-root] .vctdg-search{flex:0 1 240px !important;max-width:240px !important;min-width:170px !important;}
+[data-vct-report-root] .vctdg-filters .vct-reports-filters > select.vct-select,
+[data-vct-report-root] .vctdg-filters .vct-reports-filters > .vct-custom-select{flex:0 0 150px !important;width:150px !important;min-width:0 !important;}

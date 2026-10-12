@@ -1433,3 +1433,236 @@
     width: 100%;
     height: 100%;
 }
+
+/* ============================================================================
+   v7 - ESTANDAR VISUAL (mismo criterio que Reportes y las V360)
+   - Pestañas: barra de la V360 de Cliente (color institucional, 9.5px).
+   - Submenu: menu de la pestaña Agenda (activo en bordo, texto blanco).
+   - Breadcrumb como el de Agenda.
+   - Sin card envolvente: pestañas + breadcrumb + tarjeta del ABM.
+   - Grilla: datos 10px sin negrita, encabezados 10.5px, acciones en menu de
+     3 puntos (vct-config-parametria.js v3).
+   - KPIs y graficos eliminados (SP).
+   Alcance: [data-vct-param-root] / .vct-config-workspace.
+   ============================================================================ */
+.vct-config-workspace{
+    margin-top:4px !important;overflow:visible !important;
+    background:transparent !important;border:0 !important;box-shadow:none !important;padding:0 !important;
+}
+[data-vct-param-root] .vct-reports-kpis,
+[data-vct-param-root] .vctdg-btn-charts,
+[data-vct-param-root] [data-vctdg-charts]{display:none !important;}
+
+/* ---- Pestañas */
+[data-vct-param-root] .vct-param-topnav{
+    height:auto !important;min-height:48px;display:flex;flex-wrap:wrap;align-items:center;gap:2px;
+    margin:0 0 10px !important;padding:4px 6px !important;
+    background:rgba(51,50,51,.055) !important;border:1px solid rgba(51,50,51,.075) !important;
+    border-radius:12px !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.65) !important;
+}
+[data-vct-param-root] .vct-param-topnav-item{height:auto !important;}
+[data-vct-param-root] .vct-param-topnav [data-vct-param-cat]{
+    position:relative;min-height:38px;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+    padding:0 11px !important;color:#52647D !important;background:transparent !important;border:0;border-radius:9px !important;
+    font-size:9.5px !important;font-weight:550 !important;box-shadow:none !important;transform:none !important;
+    transition:color .16s ease,background .16s ease,box-shadow .16s ease;
+}
+[data-vct-param-root] .vct-param-topnav [data-vct-param-cat]::after{
+    content:"";position:absolute;left:12px;right:12px;bottom:0;height:2px;border-radius:2px 2px 0 0;background:transparent;
+}
+[data-vct-param-root] .vct-param-topnav [data-vct-param-cat] > [data-vct-icon],
+[data-vct-param-root] .vct-param-topnav [data-vct-param-cat] > [data-vct-icon] svg{
+    width:15px !important;height:15px !important;min-width:15px;opacity:1 !important;color:currentColor !important;
+}
+[data-vct-param-root] .vct-param-topnav [data-vct-param-cat]:not(.is-active):hover,
+[data-vct-param-root] .vct-param-topnav [data-vct-param-cat][aria-expanded="true"]:not(.is-active){
+    color:#66062D !important;background:rgba(255,255,255,.62) !important;
+}
+[data-vct-param-root] .vct-param-topnav [data-vct-param-cat]:not(.is-active):hover [data-vct-icon],
+[data-vct-param-root] .vct-param-topnav [data-vct-param-cat]:not(.is-active):hover .vct-param-chevron{color:#66062D !important;}
+[data-vct-param-root] .vct-param-topnav [data-vct-param-cat].is-active{
+    color:#66062D !important;background:#FFFFFF !important;box-shadow:0 2px 8px rgba(15,23,42,.07) !important;font-weight:720 !important;
+}
+[data-vct-param-root] .vct-param-topnav [data-vct-param-cat].is-active::after{background:#66062D;}
+[data-vct-param-root] .vct-param-topnav [data-vct-param-cat]:focus{outline:none;}
+[data-vct-param-root] .vct-param-topnav [data-vct-param-cat]:focus-visible{box-shadow:0 0 0 2px rgba(102,6,45,.25) !important;}
+[data-vct-param-root] .vct-param-topnav [data-vct-param-cat] .vct-param-chevron{
+    display:inline-flex;width:12px !important;height:12px !important;margin-left:-2px !important;
+    clip-path:none !important;opacity:.8 !important;color:currentColor !important;transition:transform .16s ease;
+}
+[data-vct-param-root] .vct-param-chevron svg{width:12px !important;height:12px !important;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+[data-vct-param-root] .vct-param-topnav [data-vct-param-cat][aria-expanded="true"] .vct-param-chevron{transform:rotate(180deg);}
+
+/* ---- Submenu (menu de Agenda) */
+[data-vct-param-root] .vct-param-dropdown{
+    top:calc(100% + 6px) !important;min-width:200px !important;padding:5px !important;gap:0 !important;
+    background:#fff !important;border:1px solid rgba(102,6,45,.22) !important;border-radius:9px !important;
+    box-shadow:0 14px 34px rgba(15,23,42,.14),0 3px 10px rgba(102,6,45,.08) !important;z-index:60 !important;
+}
+[data-vct-param-root] .vct-param-dropdown [data-vct-param-group]{
+    min-height:30px;margin:1px 0;padding:6px 10px !important;gap:8px !important;
+    color:#334155 !important;background:transparent !important;border-radius:7px !important;
+    font-size:10.5px !important;font-weight:500 !important;transform:none !important;
+}
+[data-vct-param-root] .vct-param-dropdown [data-vct-param-group] [data-vct-icon],
+[data-vct-param-root] .vct-param-dropdown [data-vct-param-group] [data-vct-icon] svg{width:15px !important;height:15px !important;color:#66062D !important;opacity:1 !important;}
+[data-vct-param-root] .vct-param-dropdown [data-vct-param-group]:hover{color:#66062D !important;background:#F6E9EE !important;}
+[data-vct-param-root] .vct-param-dropdown [data-vct-param-group].is-active{color:#fff !important;background:#66062D !important;font-weight:600 !important;}
+[data-vct-param-root] .vct-param-dropdown [data-vct-param-group].is-active [data-vct-icon],
+[data-vct-param-root] .vct-param-dropdown [data-vct-param-group].is-active [data-vct-icon] svg{color:#fff !important;}
+
+/* ---- Breadcrumb */
+[data-vct-param-root] .vct-param-breadcrumb{padding:0 2px !important;margin:0 0 10px !important;font-size:10px !important;font-weight:400 !important;color:#64748b !important;}
+[data-vct-param-root] .vct-param-breadcrumb .vct-param-crumb-sep{margin:0 5px;color:#94a3b8;}
+[data-vct-param-root] .vct-param-breadcrumb b{color:#66062D;font-weight:600;}
+
+/* ---- Tarjeta del ABM (todos menos Email, que tiene su propio diseñador) */
+[data-vct-param-root] [data-vct-param-group-panel]:not([data-vct-param-group-panel="email-templates"]).is-active{
+    padding:14px 16px 12px;background:#fff;border:1px solid #E7E8EC;border-radius:12px;box-shadow:0 2px 10px rgba(31,36,45,.04);
+}
+[data-vct-param-root] .vct-config-panel > .vct-config-abm-header{padding:0 0 12px !important;margin:0 !important;border:0 !important;background:transparent !important;}
+[data-vct-param-root] .vct-config-panel > .vct-config-abm-header > div{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;}
+[data-vct-param-root] .vct-config-panel > .vct-config-abm-header .vct-card-title{display:inline-flex !important;align-items:center;gap:9px;margin:0 !important;font-size:11.5px !important;font-weight:700 !important;color:#1F2937 !important;}
+[data-vct-param-root] .vct-config-panel > .vct-config-abm-header .vct-card-title > [data-vct-icon]{
+    display:inline-flex !important;align-items:center;justify-content:center;width:26px !important;height:26px !important;
+    padding:5px;border-radius:7px;color:#66062D !important;background:#F6E9EE !important;
+}
+[data-vct-param-root] .vct-config-panel > .vct-config-abm-header .vct-card-title > [data-vct-icon] svg{width:15px !important;height:15px !important;}
+[data-vct-param-root] .vct-config-panel > .vct-config-abm-header .vct-card-subtitle{margin:0 !important;font-size:10px !important;color:#64748b !important;}
+
+/* ---- Grilla: datos sin negrita, filtros 30px, columna de menu angosta */
+[data-vct-param-root] .vctdg .vctdg-table td strong{font-weight:500 !important;}
+[data-vct-param-root] .vctdg-filters select.vct-select,
+[data-vct-param-root] .vctdg-filters .vct-custom-select{flex:0 0 150px !important;width:150px !important;min-width:0 !important;}
+[data-vct-param-root] .vctdg-filters .vct-custom-select-trigger{height:30px !important;min-height:30px !important;font-size:10.5px !important;}
+[data-vct-param-root] .vctdg-search{flex:0 1 260px !important;max-width:260px !important;}
+[data-vct-param-root] .vctdg .vctdg-table td.vct-table-action-cell{text-align:center !important;white-space:nowrap;}
+[data-vct-param-root] .vctdg .vctdg-table td.vct-table-action-cell .vctdg-rowmenu-items{display:none !important;}
+
+/* v8: refuerzo de especificidad contra vct-main.css (.vct-config-page ...) */
+.vct-config-page section.vct-card.vct-config-workspace,
+.vct-config-page .vct-config-workspace.vct-config-workspace{
+    background:transparent !important;border:0 !important;box-shadow:none !important;
+    padding:0 !important;overflow:visible !important;border-radius:0 !important;
+}
+.vct-config-page [data-vct-param-root] .vct-param-topnav.vct-param-topnav{
+    background:rgba(51,50,51,.055) !important;border:1px solid rgba(51,50,51,.075) !important;border-radius:12px !important;
+    height:auto !important;min-height:48px !important;padding:4px 6px !important;margin:0 0 10px !important;
+}
+.vct-config-page [data-vct-param-root] .vct-param-breadcrumb.vct-param-breadcrumb{
+    padding:0 2px !important;margin:0 0 10px !important;font-size:10px !important;font-weight:400 !important;color:#64748b !important;background:transparent !important;
+}
+.vct-config-page [data-vct-param-root] .vctdg-wrap{overflow-x:hidden !important;}
+.vct-config-page [data-vct-param-root] .vctdg .vctdg-table td.vct-table-action-cell{width:52px !important;min-width:0 !important;padding-left:4px !important;padding-right:4px !important;}
+
+/* ============================================================================
+   v9 - EMAIL (Templates de emails): mismo criterio que el resto de Parametria.
+   - Lista: tarjeta blanca con titulo + grilla estandar.
+   - Alta / edicion (form completo en la misma pantalla): todo dentro de una
+     tarjeta blanca; encabezado compacto (volver + titulo 13px + Cancelar /
+     Guardar de 30px); secciones como sub-tarjetas con borde fino; labels
+     10.5px, campos de 30px con texto 10.5px, ayudas 9px; panel de variables
+     con chips chicos.
+   ============================================================================ */
+.vct-config-page [data-vct-param-root] [data-vct-param-group-panel="email-templates"].is-active{
+    padding:0 !important;background:transparent !important;border:0 !important;box-shadow:none !important;
+}
+.vct-config-page [data-vct-param-root] .vct-email-list-view.is-active,
+.vct-config-page [data-vct-param-root] .vct-email-editor-view.is-active{
+    display:block;padding:14px 16px 12px !important;background:#fff !important;
+    border:1px solid #E7E8EC !important;border-radius:12px !important;box-shadow:0 2px 10px rgba(31,36,45,.04) !important;
+}
+.vct-config-page [data-vct-param-root] .vct-email-list-view > .vct-config-abm-header{
+    padding:0 0 12px !important;margin:0 !important;border:0 !important;background:transparent !important;box-shadow:none !important;
+}
+.vct-config-page [data-vct-param-root] .vct-email-list-view > .vct-config-abm-header > div{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;}
+.vct-config-page [data-vct-param-root] .vct-email-list-view > .vct-config-abm-header .vct-card-title{display:inline-flex !important;align-items:center;gap:9px;margin:0 !important;font-size:11.5px !important;font-weight:700 !important;color:#1F2937 !important;}
+.vct-config-page [data-vct-param-root] .vct-email-list-view > .vct-config-abm-header .vct-card-title > [data-vct-icon]{
+    display:inline-flex !important;align-items:center;justify-content:center;width:26px !important;height:26px !important;
+    padding:5px;border-radius:7px;color:#66062D !important;background:#F6E9EE !important;
+}
+.vct-config-page [data-vct-param-root] .vct-email-list-view > .vct-config-abm-header .vct-card-title > [data-vct-icon] svg{width:15px !important;height:15px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-list-view > .vct-config-abm-header .vct-card-subtitle{margin:0 !important;font-size:10px !important;color:#64748b !important;}
+
+/* ---- editor: encabezado */
+.vct-config-page [data-vct-param-root] .vct-email-editor-header{
+    display:flex !important;align-items:center !important;justify-content:space-between !important;gap:12px !important;
+    margin:0 0 12px !important;padding:0 0 12px !important;background:transparent !important;
+    border:0 !important;border-bottom:1px solid #EEF0F3 !important;box-shadow:none !important;
+}
+.vct-config-page [data-vct-param-root] .vct-email-editor-heading{display:flex !important;align-items:center !important;gap:10px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-editor-heading > button,
+.vct-config-page [data-vct-param-root] .vct-email-back-btn{
+    width:30px !important;height:30px !important;min-width:30px !important;padding:0 !important;border-radius:7px !important;
+}
+.vct-config-page [data-vct-param-root] .vct-email-editor-icon{
+    width:30px !important;height:30px !important;min-width:30px !important;border-radius:8px !important;
+    display:inline-flex !important;align-items:center !important;justify-content:center !important;color:#66062D !important;background:#F6E9EE !important;
+}
+.vct-config-page [data-vct-param-root] .vct-email-editor-icon svg{width:15px !important;height:15px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-editor-titles h2{margin:0 !important;font-size:13px !important;font-weight:700 !important;color:#1F2937 !important;line-height:1.25 !important;}
+.vct-config-page [data-vct-param-root] .vct-email-editor-titles p{margin:2px 0 0 !important;font-size:10px !important;color:#64748b !important;}
+.vct-config-page [data-vct-param-root] .vct-email-editor-actions{display:flex !important;gap:8px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-editor-actions .vct-btn{height:30px !important;min-height:30px !important;padding:0 12px !important;font-size:10.5px !important;border-radius:7px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-editor-actions .vct-btn svg{width:14px !important;height:14px !important;}
+
+/* ---- editor: secciones (sub-tarjetas) */
+.vct-config-page [data-vct-param-root] .vct-email-editor-body,
+.vct-config-page [data-vct-param-root] .vct-email-fields-row{gap:12px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-editor-card,
+.vct-config-page [data-vct-param-root] .vct-email-body-card,
+.vct-config-page [data-vct-param-root] .vct-email-variables-panel{
+    padding:12px 14px !important;background:#fff !important;border:1px solid #E7E8EC !important;
+    border-radius:10px !important;box-shadow:none !important;
+}
+.vct-config-page [data-vct-param-root] .vct-email-field-group-head{
+    display:flex !important;align-items:center !important;gap:7px !important;margin:0 0 10px !important;
+    font-size:11px !important;font-weight:700 !important;color:#1F2937 !important;
+}
+.vct-config-page [data-vct-param-root] .vct-email-field-group-head svg{color:#66062D !important;width:14px !important;height:14px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-fields-grid{gap:10px 12px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-editor-view .vct-label{margin:0 0 4px !important;font-size:10.5px !important;font-weight:600 !important;color:#334155 !important;}
+.vct-config-page [data-vct-param-root] .vct-email-editor-view .vct-input,
+.vct-config-page [data-vct-param-root] .vct-email-editor-view select.vct-select,
+.vct-config-page [data-vct-param-root] .vct-email-editor-view .vct-custom-select-trigger,
+.vct-config-page [data-vct-param-root] .vct-email-editor-view .vct-email-rich-select{
+    height:30px !important;min-height:30px !important;padding-top:0 !important;padding-bottom:0 !important;
+    font-size:10.5px !important;border-radius:7px !important;
+}
+.vct-config-page [data-vct-param-root] .vct-email-editor-view .vct-custom-select-trigger *{font-size:10.5px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-field-help{margin-top:3px !important;font-size:9px !important;line-height:1.3 !important;color:#94a3b8 !important;}
+
+/* ---- editor: cuerpo / vista previa */
+.vct-config-page [data-vct-param-root] .vct-email-rich-toolbar{padding:6px !important;gap:4px !important;border-radius:8px 8px 0 0 !important;}
+.vct-config-page [data-vct-param-root] .vct-email-rich-btn{width:auto !important;height:26px !important;min-width:26px !important;padding:0 6px !important;font-size:10.5px !important;border-radius:6px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-rich-btn svg{width:13px !important;height:13px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-rich-editor{font-size:11px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-body-header,
+.vct-config-page [data-vct-param-root] .vct-email-live-preview-label{font-size:10.5px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-word-count{font-size:9px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-device-btn{height:26px !important;font-size:10px !important;}
+
+/* ---- editor: variables */
+.vct-config-page [data-vct-param-root] .vct-email-variables-head h3,
+.vct-config-page [data-vct-param-root] .vct-email-variables-head strong,
+.vct-config-page [data-vct-param-root] .vct-email-variables-head > :first-child{font-size:11px !important;font-weight:700 !important;color:#1F2937 !important;}
+.vct-config-page [data-vct-param-root] .vct-email-variables-head p,
+.vct-config-page [data-vct-param-root] .vct-email-variables-hint{font-size:9.5px !important;color:#64748b !important;}
+.vct-config-page [data-vct-param-root] .vct-email-variables-search{height:30px !important;font-size:10.5px !important;border-radius:7px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-variables-alert,
+.vct-config-page [data-vct-param-root] .vct-email-tip{padding:8px 10px !important;font-size:9.5px !important;border-radius:8px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-variables-list{gap:8px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-variables-group-label{margin:0 0 5px !important;font-size:9px !important;font-weight:700 !important;letter-spacing:.05em;color:#64748b !important;}
+.vct-config-page [data-vct-param-root] .vct-email-variables-chips{gap:5px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-variable-chip{
+    min-height:22px !important;height:22px !important;padding:0 8px !important;font-size:9.5px !important;
+    font-weight:600 !important;border-radius:999px !important;line-height:22px !important;
+}
+.vct-config-page [data-vct-param-root] .vct-email-tip strong{font-size:10px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-tip span{font-size:9.5px !important;}
+
+/* v9: la grilla ya va dentro de la tarjeta con padding: sin el margen de 14px de vct-main.css */
+.vct-config-page [data-vct-param-root] .vct-config-panel > .vctdg,
+.vct-config-page [data-vct-param-root] .vct-email-list-view > .vctdg{margin:0 !important;width:100% !important;}
+.vct-config-page [data-vct-param-root] .vct-email-body-header strong{font-size:11px !important;}
+.vct-config-page [data-vct-param-root] .vct-email-variables-head strong{font-size:11px !important;}

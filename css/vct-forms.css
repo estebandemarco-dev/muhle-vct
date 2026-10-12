@@ -1,0 +1,120 @@
+/* ========================================================================
+   VCT FORMS - ESCALA UNICA DE CAMPOS (ESCRITORIO)                     v1
+   ------------------------------------------------------------------------
+   Un solo lugar para el tamaño de TODOS los campos del sistema en
+   escritorio: formularios del renderer (modal / drawer / form completo,
+   .vct-form-shell), inputs y combos sueltos, calendario y textarea.
+   Misma escala que los filtros de grilla (vct-datagrid.css):
+       campo 30px · letra 10,5px · radio 7px
+       label 10,5px · ayuda 10px · botones del form 30px
+   Se carga desde main/Default.aspx. vct-main.css tiene ~10 capas viejas
+   para estos mismos campos (38/40/41px, 11-13px); estos selectores son mas
+   especificos que la capa que hoy gana ("html body .vct-form-shell
+   .vct-form-shell ...") para ganarle sin depender del orden de carga.
+   Para cambiar la escala: tocar SOLO las variables de :root.
+   Mobile (<=768px) no se toca: queda como esta hasta definir vct-mobile.css.
+   ======================================================================== */
+:root{
+    --vct-ctl-h:30px;
+    --vct-ctl-font:10.5px;
+    --vct-ctl-radius:7px;
+    --vct-label-font:10.5px;
+    --vct-help-font:10px;
+}
+
+@media (min-width:769px){
+
+/* ---------- Campos: input / select nativo / combos / fecha ---------- */
+html body .vct-form-shell.vct-form-shell.vct-form-shell input.vct-input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+html body .vct-form-shell.vct-form-shell.vct-form-shell select.vct-select,
+html body .vct-form-shell.vct-form-shell.vct-form-shell .vct-form-select > .vct-form-select-trigger,
+html body .vct-form-shell.vct-form-shell.vct-form-shell .vct-custom-select-trigger,
+html body .vct-form-shell.vct-form-shell.vct-form-shell .vct-datepicker-trigger,
+html body input.vct-input.vct-input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+html body select.vct-select.vct-select,
+html body .vct-custom-select.vct-custom-select > .vct-custom-select-trigger,
+html body .vct-form-select.vct-form-select > .vct-form-select-trigger,
+html body .vct-datepicker.vct-datepicker > .vct-datepicker-trigger{
+    height:var(--vct-ctl-h) !important;
+    min-height:var(--vct-ctl-h) !important;
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+    font-size:var(--vct-ctl-font) !important;
+    line-height:normal !important;
+    border-radius:var(--vct-ctl-radius) !important;
+}
+html body .vct-form-shell.vct-form-shell.vct-form-shell input.vct-input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+html body .vct-form-shell.vct-form-shell.vct-form-shell .vct-form-select > .vct-form-select-trigger,
+html body .vct-form-shell.vct-form-shell.vct-form-shell .vct-custom-select-trigger,
+html body .vct-form-shell.vct-form-shell.vct-form-shell .vct-datepicker-trigger{
+    padding-left:10px !important;
+    padding-right:10px !important;
+}
+html body .vct-form-shell.vct-form-shell.vct-form-shell .vct-form-select-value,
+html body .vct-form-shell.vct-form-shell.vct-form-shell .vct-custom-select-value,
+html body .vct-form-shell.vct-form-shell.vct-form-shell .vct-datepicker-value,
+html body .vct-custom-select.vct-custom-select .vct-custom-select-value,
+html body .vct-form-select.vct-form-select .vct-form-select-value,
+html body .vct-datepicker.vct-datepicker .vct-datepicker-value{
+    font-size:var(--vct-ctl-font) !important;
+}
+html body .vct-form-shell.vct-form-shell.vct-form-shell .vct-form-select-chevron,
+html body .vct-form-select.vct-form-select .vct-form-select-chevron{
+    flex:0 0 14px !important;width:14px !important;height:14px !important;
+}
+html body .vct-datepicker.vct-datepicker .vct-datepicker-icon,
+html body .vct-datepicker.vct-datepicker .vct-datepicker-icon svg{width:14px !important;height:14px !important;}
+
+/* ---------- Textarea: misma letra y radio, alto libre ---------- */
+html body .vct-form-shell.vct-form-shell.vct-form-shell textarea.vct-input,
+html body .vct-form-shell.vct-form-shell.vct-form-shell textarea.vct-textarea,
+html body textarea.vct-textarea.vct-textarea,
+html body textarea.vct-input.vct-input{
+    height:auto !important;
+    min-height:64px !important;
+    padding:7px 10px !important;
+    font-size:var(--vct-ctl-font) !important;
+    line-height:1.45 !important;
+    border-radius:var(--vct-ctl-radius) !important;
+}
+
+/* ---------- Opciones de los desplegables (como los filtros) ---------- */
+html body .vct-form-select-menu.vct-form-select-menu .vct-form-select-option,
+html body .vct-custom-select.vct-custom-select .vct-custom-select-option{
+    min-height:28px !important;
+    padding-top:5px !important;
+    padding-bottom:5px !important;
+    font-size:var(--vct-ctl-font) !important;
+    line-height:1.3 !important;
+}
+
+/* ---------- Label y ayuda ---------- */
+html body .vct-form-shell.vct-form-shell.vct-form-shell .vct-label,
+html body .vct-field.vct-field > .vct-label,
+html body label.vct-label.vct-label{
+    margin-bottom:4px !important;
+    font-size:var(--vct-label-font) !important;
+    line-height:1.3 !important;
+}
+html body .vct-form-shell.vct-form-shell.vct-form-shell .vct-help,
+html body .vct-field.vct-field .vct-help,
+html body .vct-field.vct-field .vct-field-help{
+    margin-top:3px !important;
+    font-size:var(--vct-help-font) !important;
+    line-height:1.3 !important;
+}
+
+/* ---------- Botones del formulario = alto del campo ---------- */
+html body .vct-form-shell.vct-form-shell.vct-form-shell .vct-form-footer .vct-btn,
+html body .vct-form-shell.vct-form-shell.vct-form-shell .vct-form-header .vct-btn:not(.vct-btn-icon):not(.vct-form-close){
+    height:var(--vct-ctl-h) !important;
+    min-height:var(--vct-ctl-h) !important;
+    padding:0 12px !important;
+    font-size:var(--vct-ctl-font) !important;
+    line-height:1 !important;
+    border-radius:var(--vct-ctl-radius) !important;
+}
+html body .vct-form-shell.vct-form-shell.vct-form-shell .vct-form-footer .vct-btn svg{width:14px !important;height:14px !important;}
+
+/* Las grillas (vct-datagrid.css) ya tienen su escala de 30px: no se tocan */
+}

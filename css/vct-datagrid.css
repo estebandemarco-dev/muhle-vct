@@ -1,4 +1,4 @@
-/* vct-datagrid.css - v26 (flecha de la pestana con subopciones en SVG propio; pestana con subopciones; Resumen 360 Consultor con los mismos anchos que las pestanas Proyectos y Acciones; Resumen 360 Consultor: minimo para Normas y Proyecto; tablas estaticas del Resumen 360 de Consultor con ancho flexible aunque la tarjeta traiga anchos fijos; servicio con icono + descripcion; nombre del consultor sin negrita; badges azul/verde en Clientes y Consultores; filtros Estado y Eventual angostos; rentabilidad 360 institucional con mayor especificidad; tipografia y anillos del Inicio; tablas estaticas flexibles; rentabilidad institucional; encabezados centrados; normas en lista; KPIs del Inicio; escala tipografica general; columna Servicios sin recorte; kit de badges unificado, personas, tabla estatica; sin contador en el toolbar; separacion titulo/toolbar en tarjetas 360; servicios, normas, avance y menu de fila; ver al final: ESTANDAR DE TOOLBAR Y TIPOGRAFIA, KPIs de grillas y KPIs de Vista 360)
+/* vct-datagrid.css - v27 (360 Proveedor: barras de viaticos en bordo; flecha de la pestana con subopciones en SVG propio; pestana con subopciones; Resumen 360 Consultor con los mismos anchos que las pestanas Proyectos y Acciones; Resumen 360 Consultor: minimo para Normas y Proyecto; tablas estaticas del Resumen 360 de Consultor con ancho flexible aunque la tarjeta traiga anchos fijos; servicio con icono + descripcion; nombre del consultor sin negrita; badges azul/verde en Clientes y Consultores; filtros Estado y Eventual angostos; rentabilidad 360 institucional con mayor especificidad; tipografia y anillos del Inicio; tablas estaticas flexibles; rentabilidad institucional; encabezados centrados; normas en lista; KPIs del Inicio; escala tipografica general; columna Servicios sin recorte; kit de badges unificado, personas, tabla estatica; sin contador en el toolbar; separacion titulo/toolbar en tarjetas 360; servicios, normas, avance y menu de fila; ver al final: ESTANDAR DE TOOLBAR Y TIPOGRAFIA, KPIs de grillas y KPIs de Vista 360)
    ============================================================================
    Estilos del motor de grilla de MAIN (vct-datagrid.js). Autocontenido y
    namespaced .vctdg-*: no depende de las reglas de tablas/paginado de
@@ -1218,3 +1218,51 @@
 .vct-360-visual-final .vct-360-tabsbar button.vctdg-tabgroup > span.vctdg-tabgroup-chev svg{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
 .vct-360-visual-final .vct-360-tabsbar button.vctdg-tabgroup:focus,
 .vct-360-visual-final .vct-360-tabsbar button.vctdg-tabgroup:focus-visible{outline:none !important;}
+
+/* v27: 360 de Proveedor - "Viaticos por mes" con la paleta institucional */
+.vct-360-visual-final.vct-proveedor360-module .vct-360-column-bar{background:#8C1D47 !important;background-image:none !important;}
+.vct-360-visual-final.vct-proveedor360-module .vct-360-column-item:hover .vct-360-column-bar{background:#66062D !important;}
+.vct-360-visual-final.vct-proveedor360-module .vct-360-column-label{font-size:10px !important;}
+
+/* ============================================================================
+   v28: columnas de detalle / sublinea / persona / servicio (opt-in por <th>,
+   ver extension "VCTDetail" al final de vct-datagrid.js). Sin esos atributos
+   ninguna grilla cambia.
+   ============================================================================ */
+.vctdg .vctdg-table th.vctdg-xhide,
+.vctdg .vctdg-table td.vctdg-xhide,
+.vctdg .vctdg-table tr[data-vct-row] > td:nth-child(n).vctdg-xhide{display:none !important;}
+.vctdg .vctdg-table th.vctdg-xhead,
+.vctdg .vctdg-table td.vctdg-xcell{position:relative;padding-left:40px !important;}
+.vctdg-xbtn{
+    position:absolute;left:9px;top:50%;transform:translateY(-50%);
+    width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;
+    padding:0;color:#94a3b8;background:#fff;border:1px solid #E2E8F0;border-radius:6px;cursor:pointer;
+    transition:color .15s ease,border-color .15s ease,background .15s ease;
+}
+.vctdg-xbtn svg{transition:transform .18s ease;}
+.vctdg-xbtn.has-data{color:#66062D;border-color:rgba(102,6,45,.28);}
+.vctdg-xbtn.has-data:hover{background:#F6E9EE;}
+.vctdg-xbtn:disabled{opacity:.45;cursor:default;}
+.vctdg-xbtn:focus{outline:none;}
+.vctdg-xbtn:focus-visible{box-shadow:0 0 0 2px rgba(102,6,45,.25);}
+tr.is-xopen > td{background:#FBF7F9 !important;}
+tr.is-xopen .vctdg-xbtn{color:#fff;background:#66062D;border-color:#66062D;}
+tr.is-xopen .vctdg-xbtn svg{transform:rotate(180deg);}
+.vctdg .vctdg-table tr.vctdg-xrow > td{
+    padding:10px 14px 12px 40px !important;background:#FBF7F9 !important;
+    border-top:0 !important;white-space:normal !important;
+}
+.vctdg-xgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px 28px;}
+.vctdg-xlabel{margin:0 0 3px;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#8C1D47;}
+.vctdg-xvalue{font-size:10px;line-height:1.45;color:#334155;white-space:pre-line;overflow-wrap:break-word;word-break:normal;}
+.vctdg-sub{
+    margin-top:2px;font-size:9px;line-height:1.3;color:#64748b;font-weight:400;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.vctdg-xperson{display:inline-flex;max-width:100%;}
+.vctdg-xperson .vctdg-person-name{font-size:10px;}
+@media (max-width:640px){
+    .vctdg .vctdg-table td.vctdg-xcell{padding-left:44px !important;}
+    .vctdg .vctdg-table tr.vctdg-xrow > td{padding:10px 12px !important;}
+}

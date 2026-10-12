@@ -14,6 +14,8 @@
         <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
         <link rel="icon" href="../favicon.ico" type="image/x-icon"/>
         <link rel="stylesheet" href="../css/main.css"/>
+        <!-- Escala unica de campos de formulario (escritorio): ver css/vct-forms.css -->
+        <link rel="stylesheet" href="../css/vct-forms.css?v=1"/>
         
         <style>
             /* ⚪ TOPBAR BLANCA ULTRA CLEAN */

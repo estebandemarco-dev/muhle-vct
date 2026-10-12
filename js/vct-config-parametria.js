@@ -72,7 +72,14 @@
         var parts = ["Parametría"];
         if (catLabel) parts.push(catLabel);
         if (groupLabel && groupLabel !== catLabel) parts.push(groupLabel);
-        bc.textContent = parts.join(" / ");
+        /* v3: separador y ultimo nivel en bordo (como Agenda / Reportes) */
+        bc.textContent = "";
+        parts.forEach(function (p, i) {
+            if (i) { var sep = document.createElement("span"); sep.className = "vct-param-crumb-sep"; sep.textContent = "\u203A"; bc.appendChild(sep); }
+            var el = document.createElement(i === parts.length - 1 ? "b" : "span");
+            el.textContent = p;
+            bc.appendChild(el);
+        });
     }
 
     function activateTopnav(root, cat) {
@@ -165,4 +172,81 @@
             });
         }).observe(document.documentElement, { childList: true, subtree: true });
     }
+})(window, document);
+
+/* ========================================================================
+   v3 - ACCIONES DE FILA EN MENU DE 3 PUNTOS (estandar de las grillas)
+   Los botones que arma el SP (editar / eliminar, segun permisos) quedan
+   intactos dentro de la celda, ocultos en .vctdg-rowmenu-items; el motor de
+   grilla (vct-datagrid.js) los muestra en el menu flotante y al elegir uno
+   dispara el boton original. Solo grillas de Parametria.
+   ======================================================================== */
+(function (window, document) {
+    "use strict";
+    /* v4: la conversion corre en CADA carga del script (la plataforma SPA reinyecta la
+       pantalla, p.ej. al volver del editor de Email) y ademas observa la grilla para
+       convertir filas nuevas; los listeners globales se registran una sola vez. */
+    var FIRST = !window.VCTParamRowMenuReady;
+    window.VCTParamRowMenuReady = true;
+
+    function convertRow(row) {
+        if (row.__paramMenu) return;
+        row.__paramMenu = true;
+        var cell = row.querySelector("td.vct-table-action-cell");
+        if (!cell || cell.querySelector("[data-vctdg-rowmenu]")) return;
+        var btns = Array.prototype.filter.call(cell.children, function (el) { return el.tagName === "BUTTON" || el.tagName === "A"; });
+        if (!btns.length) return;
+        var box = document.createElement("div");
+        box.className = "vctdg-rowmenu-items";
+        box.hidden = true;
+        btns.forEach(function (b) {
+            if (!b.getAttribute("data-vct-tooltip")) {
+                var t = b.getAttribute("title") || b.getAttribute("aria-label") || (b.className.indexOf("delete") >= 0 ? "Eliminar" : "Editar");
+                b.setAttribute("data-vct-tooltip", t);
+            }
+            box.appendChild(b);
+        });
+        var trg = document.createElement("button");
+        trg.type = "button";
+        trg.className = "vct-row-menu-trigger";
+        trg.setAttribute("data-vctdg-rowmenu", "");
+        trg.setAttribute("aria-label", "Acciones");
+        trg.title = "Acciones";
+        trg.innerHTML = '<span class="vct-row-menu-dots" aria-hidden="true">&#8942;</span>';
+        cell.appendChild(trg);
+        cell.appendChild(box);
+    }
+
+    function process(host) {
+        if (!host || !host.closest || !host.closest("[data-vct-param-root]")) return;
+        var tbody = host.querySelector("table tbody");
+        if (!tbody) return;
+        Array.prototype.forEach.call(tbody.querySelectorAll(":scope > tr[data-vct-row]"), convertRow);
+    }
+
+    if (FIRST) document.addEventListener("vctdg:render", function (e) {
+        var host = e.target && e.target.closest ? (e.target.closest("[data-vct-dg],[data-vct-dg-id]") || e.target) : null;
+        try { process(host); } catch (err) { /* noop */ }
+    });
+    function sweep() {
+        Array.prototype.forEach.call(document.querySelectorAll("[data-vct-param-root] [data-vct-dg],[data-vct-param-root] [data-vct-dg-id]"), function (h) {
+            try { process(h); } catch (err) { /* noop */ }
+        });
+    }
+    function watch() {
+        Array.prototype.forEach.call(document.querySelectorAll("[data-vct-param-root]"), function (root) {
+            if (root.__paramMenuObs || !window.MutationObserver) return;
+            var pending = false;
+            root.__paramMenuObs = new MutationObserver(function () {
+                if (pending) return;
+                pending = true;
+                setTimeout(function () { pending = false; sweep(); }, 30);
+            });
+            root.__paramMenuObs.observe(root, { childList: true, subtree: true });
+        });
+    }
+    function start() { sweep(); watch(); }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
+    setTimeout(start, 0);
+    setTimeout(start, 400);
 })(window, document);

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grillas de Reportes</title>
+<style>
+:root{--b:#66062D;--b1:#8C1D47;--b2:#CF6F92;--g1:#4A4849;--g2:#8E8C8D;--line:#E5E9F0;--txt:#334155;--mut:#64748b}
+*{box-sizing:border-box}
+body{margin:0;padding:24px;background:#f4f5f7;font-family:"Gotham","Gotham Book",-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--txt)}
+h1{font-size:18px;color:var(--b);margin:0 0 4px}
+h2{font-size:14px;margin:36px 0 4px;color:#25344C}
+p.n{font-size:12px;color:var(--mut);margin:0 0 12px;max-width:1100px}
+.rec{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:99px;font-size:10px;background:var(--b);color:#fff;vertical-align:middle}
+svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.page{max-width:1120px}
+/* ---- navegacion de reportes = barra de pestanas 360 con subopciones ---- */
+.bar{display:flex;align-items:center;gap:2px;padding:4px 6px;background:#E9EAEC;border:1px solid rgba(51,50,51,.075);border-radius:12px;margin-bottom:12px}
+.tab{position:relative;display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:0 11px;border-radius:9px;font-size:10px;font-weight:550;color:#52647D}
+.tab.on{background:#fff;color:var(--b);font-weight:700;box-shadow:0 2px 8px rgba(15,23,42,.07)}
+.tab.on::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:2px;border-radius:2px 2px 0 0;background:var(--b)}
+.tab .chev{width:11px;height:11px;opacity:.7;margin-left:-2px}
+.crumb{font-size:10px;color:var(--mut);margin:0 0 10px 2px}.crumb b{color:var(--b);font-weight:600}
+/* ---- KPIs de pantallas con grilla (vct-soft-kpi) ---- */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+.kpi{--c:#8C1D47;--s:#E7C9D5;display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--s);border-radius:12px;padding:10px 12px}
+.kpi:nth-child(2){--c:#4A4849;--s:#D9D8D8}.kpi:nth-child(3){--c:#CF6F92;--s:#F1D3DF}.kpi:nth-child(4){--c:#8E8C8D;--s:#E2E1E1}
+.kpi .i{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;background:var(--c);color:#fff}
+.kpi .t{flex:1;min-width:0}.kpi .t b{display:block;font-size:11.5px;color:#25344C;font-weight:600}.kpi .t span{font-size:10px;color:var(--mut)}
+.kpi .v{font-size:22px;font-weight:700;color:#1f2937}
+/* ---- tarjeta + toolbar estandar ---- */
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.head{display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px solid #EEF2F6;margin-bottom:14px}
+.head .ico{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;background:#F6EAEF;color:var(--b)}
+.head h3{margin:0;font-size:10.5px;font-weight:700;color:#1f2937}.head small{font-size:10px;color:var(--mut);margin-left:6px}
+.tool{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.in{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:10.5px;color:#94a3b8;background:#fff}
+.in.s{width:260px}.in.d{width:128px;color:#334155;justify-content:space-between}.in.f{width:150px;justify-content:space-between}
+.sp{flex:1}
+.btn{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border:1px solid #D7E0E9;border-radius:8px;background:#fff;font-size:10.5px;font-weight:600;color:#25344C}
+.btn .x{color:#16a34a}.btn .p{color:#dc2626}.btn .c{color:var(--b)}
+/* ---- tabla ---- */
+.tw{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th{background:#f8fafc;color:#475569;font-size:10.5px;font-weight:600;text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th .so{display:inline-block;width:10px;height:10px;margin-left:3px;opacity:.5;vertical-align:-1px}
+td{padding:9px 10px;border-bottom:1px solid #eef2f6;font-size:10px;vertical-align:middle;color:#334155}
+tr:last-child td{border-bottom:0}
+.c{text-align:center}.r{text-align:right}
+.ref{display:block;font-size:9px;color:var(--mut);margin-top:2px;line-height:1.35}
+.nm{font-weight:600;color:#1f2937;line-height:1.35}
+.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4}
+.svc{display:inline-flex;align-items:center;gap:6px}.svc i{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;color:#fff}
+.svc i svg{width:11px;height:11px}.co{background:#8C1D47}.au{background:#4A4849}.ca{background:#CF6F92}
+.bd{display:inline-flex;align-items:center;gap:5px;height:20px;padding:0 9px;border-radius:999px;font-size:10px;font-weight:600;border:1px solid}
+.bd::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.bd.pe{color:#92400E;background:#FFFBEB;border-color:#FDE68A}.bd.ok{color:#166534;background:#ECFDF3;border-color:#BBF7D0}
+.av{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;color:#4A4849;background:#EFEFEF}
+.xp{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;border:1px solid #D8E4EF;color:#475569;background:#fff}
+.xp.o{color:var(--b);border-color:rgba(102,6,45,.32);background:#FBF7F9}
+.det td{background:#FBF7F9;padding:0}
+.dg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:12px 14px 14px 48px}
+.dg div b{display:block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--b1);margin-bottom:4px}
+.dg div{font-size:10px;line-height:1.45;color:#334155}
+.ico-n{display:inline-flex;align-items:center;gap:4px;color:var(--b1);font-size:9px;font-weight:600}
+.foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:11px;color:var(--mut)}
+.pg{display:flex;gap:6px}.pg span{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:1px solid #D7E0E9;border-radius:8px;font-size:11px;color:#25344C;background:#fff}
+.pg span.on{background:var(--b);color:#fff;border-color:var(--b)}
+.sz{display:inline-flex;align-items:center;gap:8px}.sz span{display:inline-flex;align-items:center;justify-content:center;width:56px;height:30px;border:1px solid #cbd5e1;border-radius:8px;color:#334155}
+/* columnas */
+.colmenu{position:absolute;right:0;top:36px;width:210px;background:#fff;border:1px solid rgba(102,6,45,.22);border-radius:9px;box-shadow:0 14px 34px rgba(15,23,42,.14);padding:6px;z-index:3}
+.colmenu div{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:7px;font-size:10.5px}
+.colmenu div:hover{background:#F6E9EE}
+.ck{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:4px;border:1px solid #cbd5e1}
+.ck.on{background:var(--b);border-color:var(--b);color:#fff}.ck svg{width:9px;height:9px;stroke-width:3}
+.colmenu hr{border:0;border-top:1px solid #EEF2F6;margin:4px 2px}
+.colmenu small{display:block;padding:2px 8px 4px;font-size:9px;color:var(--mut)}
+/* drawer */
+.split{display:grid;grid-template-columns:1fr 320px;gap:12px}
+.drw{background:#fff;border:1px solid rgba(102,6,45,.22);border-radius:14px;box-shadow:0 14px 34px rgba(15,23,42,.12);padding:14px}
+.drw h4{margin:0 0 2px;font-size:11.5px;color:#1f2937}.drw .sub{font-size:10px;color:var(--mut);margin-bottom:12px}
+.drw .f{margin-bottom:10px}.drw .f b{display:block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--b1);margin-bottom:3px}
+.drw .f div{font-size:10px;line-height:1.45}
+tr.sel td{background:#F6E9EE}
+.cmp{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.mini{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:11px;color:var(--mut);line-height:1.45}
+.mini b{display:block;color:#25344C;font-size:12px;margin-bottom:4px}
+</style></head><body><div class="page">
+
+<h1>Reportes: diseño de pantalla y opciones de grilla</h1>
+<p class="n">La pantalla toma el mismo armado que las demás: navegación con pestañas de la 360 (cada categoría es una pestaña con flecha ▾ y sus reportes como subopciones, como Agenda), KPIs compactos en una línea con la paleta institucional, tarjeta con toolbar estándar (buscador primero, filtros y fechas de 30px, Excel / PDF / Gráficos a la derecha), datos 10px, encabezados 10,5px, badges unificados, paginado estándar y orden por columna. Lo que cambia es <b>cómo se muestran los textos largos</b> sin scroll horizontal: abajo, 4 opciones con el Parte de Actividades.</p>
+
+<!-- ======= ENCABEZADO COMUN ======= -->
+<h2>Encabezado común (para todas las opciones)</h2>
+<div class="bar">
+  <span class="tab on"><svg viewBox="0 0 24 24"><path d="M3 5h.01M3 12h.01M3 19h.01M8 5h13M8 12h13M8 19h13"/></svg>Actividad y proyectos<svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+  <span class="tab"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Personas<svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+  <span class="tab"><svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>Viáticos<svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+  <span class="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8M12 18V6"/></svg>Rentabilidad</span>
+</div>
+<div class="crumb">Reportes › Actividad y proyectos › <b>Parte de Actividades</b></div>
+<div class="kpis">
+  <div class="kpi"><span class="i"><svg viewBox="0 0 24 24"><path d="M3 5h.01M3 12h.01M3 19h.01M8 5h13M8 12h13M8 19h13"/></svg></span><span class="t"><b>Total actividades</b><span>en el período</span></span><span class="v">83</span></div>
+  <div class="kpi"><span class="i"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span><span class="t"><b>Consultoría</b><span>actividades</span></span><span class="v">54</span></div>
+  <div class="kpi"><span class="i"><svg viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></span><span class="t"><b>Auditoría</b><span>actividades</span></span><span class="v">28</span></div>
+  <div class="kpi"><span class="i"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="t"><b>Capacitación</b><span>actividades</span></span><span class="v">1</span></div>
+</div>
+
+<!-- ======= OPCION A ======= -->
+<h2>Opción A · Columnas clave + fila expandible con el detalle <span class="rec">recomendada</span></h2>
+<p class="n">La grilla muestra solo las columnas que se comparan y ordenan (Fecha, Cliente / Proyecto, Servicio, Consultor, Horas, Minuta). Los textos largos (Observaciones, Obs. Calificación, Obs. Hoja de ruta) van en un detalle que se abre con la flecha de la fila, en 3 bloques. Un ícono avisa si la fila tiene observaciones. Excel / PDF exportan todas las columnas. Sirve para cualquier reporte: cada uno define sus "columnas clave" y su "detalle".</p>
+<div class="card">
+  <div class="head"><span class="ico"><svg viewBox="0 0 24 24"><path d="M3 5h.01M3 12h.01M3 19h.01M8 5h13M8 12h13M8 19h13"/></svg></span><h3>Parte de Actividades</h3><small>Registro diario de actividades del equipo.</small></div>
+  <div class="tool"><span class="in s"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>Buscar cliente, consultor o descripción…</span><span class="in d">01/10/2026<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><span class="in d">12/10/2026<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><span class="in f">Todos los servicios<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span><span class="sp"></span><span class="btn"><svg class="x" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Excel</span><span class="btn"><svg class="p" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>PDF</span><span class="btn"><svg class="c" viewBox="0 0 24 24"><path d="M3 3v18h18M7 16v-3M12 16V8M17 16v-6"/></svg>Gráficos</span></div>
+  <div class="tw"><table>
+    <colgroup><col style="width:40px"><col style="width:84px"><col><col style="width:110px"><col style="width:150px"><col style="width:64px"><col style="width:110px"><col style="width:46px"></colgroup>
+    <thead><tr><th></th><th>Fecha<svg class="so" viewBox="0 0 24 24"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg></th><th>Cliente / Proyecto<svg class="so" viewBox="0 0 24 24"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg></th><th>Servicio</th><th>Consultor<svg class="so" viewBox="0 0 24 24"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg></th><th class="r">Horas</th><th class="c">Minuta</th><th class="c" title="Observaciones">Obs.</th></tr></thead>
+    <tbody>
+      <tr><td class="c"><span class="xp o"><svg viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg></span></td><td>01/10/2026</td><td><span class="nm">Coca Cola FEMSA</span><span class="ref">(1268) Kores Seguridad - Kores Seguridad</span></td><td><span class="svc"><i class="au"><svg viewBox="0 0 24 24"><path d="m9 14 2 2 4-4"/></svg></i>Auditoría</span></td><td>Nowak, Martin Adrián</td><td class="r">8,00</td><td class="c"><span class="bd pe">Pendiente</span></td><td class="c"><span class="ico-n"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>3</span></td></tr>
+      <tr class="det"><td colspan="8"><div class="dg"><div><b>Observaciones</b>Confirmado fecha con Valeria. Observa Agus el primer día y el segundo Juan.</div><div><b>Obs. calificación</b>Ok</div><div><b>Obs. hoja de ruta</b>El cliente es quien envía el plan de auditoría.</div></div></td></tr>
+      <tr><td class="c"><span class="xp"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span></td><td>01/10/2026</td><td><span class="nm">Coca Cola FEMSA</span><span class="ref">(1268) Kores Seguridad - Kores Seguridad</span></td><td><span class="svc"><i class="au"><svg viewBox="0 0 24 24"><path d="m9 14 2 2 4-4"/></svg></i>Auditoría</span></td><td>Rementeria, Lionel</td><td class="r">8,00</td><td class="c"><span class="bd pe">Pendiente</span></td><td class="c"><span class="ico-n"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>3</span></td></tr>
+      <tr><td class="c"><span class="xp"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span></td><td>02/10/2026</td><td><span class="nm">YPF S.A.</span><span class="ref">(1309) TRON</span></td><td><span class="svc"><i class="co"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/></svg></i>Consultoría</span></td><td>Alvarez, Paula Mariel</td><td class="r">4,50</td><td class="c"><span class="bd ok">Entregada</span></td><td class="c" style="color:#cbd5e1">–</td></tr>
+    </tbody></table></div>
+  <div class="foot"><span>Mostrando 1 a 10 de 83 registro(s)</span><span class="pg"><span>«</span><span>‹</span><span class="on">1</span><span>2</span><span>3</span><span>›</span><span>»</span></span><span class="sz">Registros por página: <span>10 ▾</span></span></div>
+</div>
+
+<!-- ======= OPCION B ======= -->
+<h2>Opción B · Columnas compuestas (2 renglones por celda)</h2>
+<p class="n">Se agrupan datos relacionados en una misma celda: arriba el dato principal y abajo el secundario en 9px ("Cliente" + proyecto, "Consultor" + servicio). Todas las observaciones van juntas en una sola columna, cortadas a 2 renglones con "ver más". Todo queda a la vista sin abrir nada, pero la fila es más alta y los textos largos igual se cortan.</p>
+<div class="card">
+  <div class="tw"><table>
+    <colgroup><col style="width:84px"><col style="width:26%"><col style="width:20%"><col style="width:64px"><col style="width:110px"><col></colgroup>
+    <thead><tr><th>Fecha</th><th>Cliente / Proyecto</th><th>Consultor / Servicio</th><th class="r">Horas</th><th class="c">Minuta</th><th>Observaciones</th></tr></thead>
+    <tbody>
+      <tr><td>01/10/2026</td><td><span class="nm">Coca Cola FEMSA</span><span class="ref">(1268) Kores Seguridad</span></td><td>Nowak, Martin Adrián<span class="ref"><span class="svc"><i class="au" style="width:14px;height:14px"></i>Auditoría</span></span></td><td class="r">8,00</td><td class="c"><span class="bd pe">Pendiente</span></td><td><span class="clamp"><b style="color:var(--b1);font-weight:600">Obs.:</b> Confirmado fecha con Valeria. Observa Agus el primer día y el segundo Juan. <b style="color:var(--b1);font-weight:600">Calif.:</b> Ok. <b style="color:var(--b1);font-weight:600">Hoja de ruta:</b> El cliente envía el plan…</span><span class="ref" style="color:var(--b);font-weight:600">ver más</span></td></tr>
+      <tr><td>02/10/2026</td><td><span class="nm">YPF S.A.</span><span class="ref">(1309) TRON</span></td><td>Alvarez, Paula Mariel<span class="ref"><span class="svc"><i class="co" style="width:14px;height:14px"></i>Consultoría</span></span></td><td class="r">4,50</td><td class="c"><span class="bd ok">Entregada</span></td><td style="color:#94a3b8">–</td></tr>
+    </tbody></table></div>
+</div>
+
+<!-- ======= OPCION C ======= -->
+<h2>Opción C · Selector de columnas</h2>
+<p class="n">La grilla abre con un set por defecto (6–7 columnas) y un botón "Columnas" en el toolbar deja agregar o quitar las demás; el motor recalcula los anchos para que nunca haya scroll (si se eligen demasiadas, las de texto largo se cortan a 1 renglón con tooltip). Flexible para quien analiza, pero cada usuario ve algo distinto y hay que recordarlo por usuario.</p>
+<div class="card">
+  <div class="tool" style="position:relative"><span class="in s"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>Buscar…</span><span class="sp"></span><span class="btn"><svg class="c" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>Columnas · 6/10</span><span class="btn">Excel</span><span class="btn">PDF</span>
+    <div class="colmenu"><small>Columnas visibles</small>
+      <div><span class="ck on"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Fecha</div><div><span class="ck on"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Cliente / Proyecto</div><div><span class="ck on"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Servicio</div><div><span class="ck on"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Consultor</div><div><span class="ck on"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Horas</div><div><span class="ck on"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Minuta / Informe</div><hr><div><span class="ck"></span>Observaciones</div><div><span class="ck"></span>Obs. calificación</div><div><span class="ck"></span>Obs. hoja de ruta</div></div>
+  </div>
+  <div style="height:250px"></div>
+</div>
+
+<!-- ======= OPCION D ======= -->
+<h2>Opción D · Grilla compacta + panel de detalle lateral</h2>
+<p class="n">Click en la fila abre a la derecha un panel con todos los datos del registro (incluidos los textos largos). La grilla queda siempre compacta y se recorre rápido, pero ocupa ancho al abrir el panel y no permite comparar textos de varias filas a la vez.</p>
+<div class="split">
+  <div class="card" style="padding:0"><div class="tw" style="border:0"><table>
+    <colgroup><col style="width:84px"><col><col style="width:150px"><col style="width:64px"><col style="width:110px"></colgroup>
+    <thead><tr><th>Fecha</th><th>Cliente / Proyecto</th><th>Consultor</th><th class="r">Horas</th><th class="c">Minuta</th></tr></thead>
+    <tbody>
+      <tr class="sel"><td>01/10/2026</td><td><span class="nm">Coca Cola FEMSA</span><span class="ref">(1268) Kores Seguridad</span></td><td>Nowak, Martin Adrián</td><td class="r">8,00</td><td class="c"><span class="bd pe">Pendiente</span></td></tr>
+      <tr><td>01/10/2026</td><td><span class="nm">Coca Cola FEMSA</span><span class="ref">(1268) Kores Seguridad</span></td><td>Rementeria, Lionel</td><td class="r">8,00</td><td class="c"><span class="bd pe">Pendiente</span></td></tr>
+      <tr><td>02/10/2026</td><td><span class="nm">YPF S.A.</span><span class="ref">(1309) TRON</span></td><td>Alvarez, Paula Mariel</td><td class="r">4,50</td><td class="c"><span class="bd ok">Entregada</span></td></tr>
+    </tbody></table></div></div>
+  <div class="drw"><h4>Coca Cola FEMSA · 01/10/2026</h4><div class="sub">(1268) Kores Seguridad · Auditoría · Nowak, Martin Adrián · 8,00 h</div>
+    <div class="f"><b>Observaciones</b><div>Confirmado fecha con Valeria. Observa Agus el primer día y el segundo Juan.</div></div>
+    <div class="f"><b>Obs. calificación</b><div>Ok</div></div>
+    <div class="f"><b>Obs. hoja de ruta</b><div>El cliente es quien envía el plan de auditoría.</div></div></div>
+</div>
+
+<h2>Comparación</h2>
+<div class="cmp">
+  <div class="mini"><b>A · Fila expandible</b>Grilla limpia, comparables a la vista, textos completos a un click. Patrón reutilizable para todos los reportes. Export completo.</div>
+  <div class="mini"><b>B · Columnas compuestas</b>Sin clicks, pero filas altas y textos cortados. Sirve para reportes con 1 solo texto largo.</div>
+  <div class="mini"><b>C · Selector de columnas</b>Máxima flexibilidad; más complejo y cada usuario ve distinto. Buen complemento de A a futuro.</div>
+  <div class="mini"><b>D · Panel lateral</b>Ideal para leer de a un registro; resta ancho y no compara filas.</div>
+</div>
+</div></body></html>

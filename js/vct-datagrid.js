@@ -1159,3 +1159,246 @@
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", syncTabGroups);
     else syncTabGroups();
 })(window, document);
+
+/* ========================================================================
+   VCT DATAGRID - COLUMNAS DE DETALLE / SUBLINEA / PERSONA / SERVICIO (v10)
+   ------------------------------------------------------------------------
+   Extension independiente (IIFE propia con su guarda, igual que el grupo de
+   pestañas): en la plataforma SPA el motor puede estar cargado de otra
+   pantalla y su guarda impide re-ejecutarlo; esto corre igual.
+   Es OPT-IN por atributos del <th>; una grilla sin estos atributos no cambia.
+     data-vct-detail="1"          la columna no se muestra en la grilla: su dato va al
+                                  detalle que se abre con la flecha de la fila.
+     data-vct-sub-of="Cliente"    la columna no se muestra: su dato va como 2do renglon
+                                  (gris, 9px) debajo de la columna con ese titulo.
+     data-vct-person="1"          "Apellido, Nombre" -> avatar con iniciales + nombre.
+     data-vct-svc="1"             Consultoria/Auditoria/Capacitacion -> icono + nombre.
+   Excel / PDF y el orden siguen usando el dato original de TODAS las columnas.
+   ======================================================================== */
+(function (window, document) {
+    "use strict";
+    if (window.VCTDetailReady) return;
+    window.VCTDetailReady = true;
+
+    var CHEV = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+    var SVC = {
+        consultoria: { cls: "is-co", label: "Consultoría", path: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>' },
+        auditoria: { cls: "is-au", label: "Auditoría", path: '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>' },
+        capacitacion: { cls: "is-ca", label: "Capacitación", path: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>' }
+    };
+
+    function clean(t) { return String(t == null ? "" : t).replace(/\s+/g, " ").trim(); }
+    function esc(t) { return String(t == null ? "" : t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+    function fold(t) { return clean(t).toLowerCase().normalize ? clean(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "") : clean(t).toLowerCase(); }
+    function isEmptyText(t) { t = clean(t); return t === "" || t === "-" || t === "–" || t === "—"; }
+
+    function cellPlain(cell) {
+        var c = cell.cloneNode(true);
+        Array.prototype.forEach.call(c.querySelectorAll(".vctdg-more, .vct-table-cell-expand, .vctdg-xbtn, .vctdg-sub"), function (n) { n.parentNode.removeChild(n); });
+        return clean(c.textContent);
+    }
+    function cellInner(cell) {
+        var src = cell.__dgClamp || cell;
+        var c = src.cloneNode(true);
+        Array.prototype.forEach.call(c.querySelectorAll(".vctdg-more, .vct-table-cell-expand, .vctdg-xbtn"), function (n) { n.parentNode.removeChild(n); });
+        return c.innerHTML;
+    }
+    function keepOriginal(cell) {
+        if (cell.__dgxKept) return;
+        cell.__dgxKept = true;
+        var txt = cellPlain(cell);
+        if (!cell.hasAttribute("data-vct-export-value")) cell.setAttribute("data-vct-export-value", txt);
+        if (!cell.hasAttribute("data-vct-sort-value")) cell.setAttribute("data-vct-sort-value", txt);
+    }
+
+    function initials(name) {
+        var n = clean(name);
+        if (!n) return "";
+        var ap = n, no = "";
+        if (n.indexOf(",") >= 0) { ap = n.split(",")[0]; no = n.split(",").slice(1).join(","); }
+        else { var w = n.split(" "); no = w[0]; ap = w.length > 1 ? w[w.length - 1] : ""; }
+        var a = clean(no).charAt(0), b = clean(ap).charAt(0);
+        return (a + b).toUpperCase() || n.charAt(0).toUpperCase();
+    }
+
+    /* ---------------------------------------------------- columnas (1 vez por grilla) */
+    function setup(host) {
+        var table = host.querySelector("table");
+        if (!table || !table.tHead) return null;
+        var heads = Array.prototype.slice.call(table.tHead.rows[0] ? table.tHead.rows[0].cells : []);
+        if (!heads.some(function (th) { return th.hasAttribute("data-vct-detail") || th.hasAttribute("data-vct-sub-of") || th.hasAttribute("data-vct-person") || th.hasAttribute("data-vct-svc"); })) return null;
+        if (host.__dgx) return host.__dgx;
+
+        var cfg = { table: table, heads: heads, detail: [], subs: [], person: [], svc: [], first: -1 };
+        var titles = heads.map(function (th) { return fold(th.textContent); });
+        heads.forEach(function (th, i) {
+            if (th.hasAttribute("data-vct-detail")) { cfg.detail.push(i); th.classList.add("vctdg-xhide"); }
+            if (th.hasAttribute("data-vct-sub-of")) {
+                var target = titles.indexOf(fold(th.getAttribute("data-vct-sub-of")));
+                if (target >= 0 && target !== i) { cfg.subs.push({ from: i, to: target }); th.classList.add("vctdg-xhide"); }
+            }
+            if (th.hasAttribute("data-vct-person")) cfg.person.push(i);
+            if (th.hasAttribute("data-vct-svc")) cfg.svc.push(i);
+        });
+        if (cfg.detail.length) {
+            for (var k = 0; k < heads.length; k++) if (!heads[k].classList.contains("vctdg-xhide")) { cfg.first = k; break; }
+            if (cfg.first >= 0) heads[cfg.first].classList.add("vctdg-xhead");
+            host.classList.add("has-xdetail");
+        }
+        cfg.hidden = [];
+        heads.forEach(function (th, i) { if (th.classList.contains("vctdg-xhide")) cfg.hidden.push(i); });
+        cfg.visible = heads.length - cfg.hidden.length;
+        host.__dgx = cfg;
+        return cfg;
+    }
+
+    /* columnas ocultas: se saca su <col> (el motor arma el colgroup al iniciar la grilla,
+       puede no existir todavia en la primera pasada). La primera columna visible suma el
+       ancho de la flecha. */
+    function fixCols(cfg) {
+        if (cfg.colsDone) return;
+        var cg = cfg.table.querySelector(":scope > colgroup");
+        if (!cg) return;
+        var cols = Array.prototype.slice.call(cg.children);
+        if (cols.length !== cfg.heads.length) return;
+        if (cfg.first >= 0 && cols[cfg.first]) {
+            var w = cols[cfg.first].style.width, n = parseFloat(w);
+            if (/%$/.test(w) && n > 0) cols[cfg.first].style.width = (n + 3) + "%";
+            else if (/px$/.test(w) && n > 0) cols[cfg.first].style.width = (n + 34) + "px";
+        }
+        /* servicio con icono: minimo 11% para que entre "Capacitacion" */
+        cfg.svc.forEach(function (i) {
+            var w = cols[i] ? cols[i].style.width : "", n = parseFloat(w);
+            if (/%$/.test(w) && n < 11) cols[i].style.width = "11%";
+        });
+        cfg.hidden.forEach(function (i) { if (cols[i] && cols[i].parentNode) cols[i].parentNode.removeChild(cols[i]); });
+        cfg.colsDone = true;
+    }
+
+    /* ---------------------------------------------------- filas (1 vez por fila) */
+    function decorate(cfg, row) {
+        if (row.__dgx) return;
+        row.__dgx = true;
+        var cells = row.cells;
+        if (!cells || cells.length < cfg.heads.length) return;
+        cfg.hidden.forEach(function (i) { if (cells[i]) cells[i].classList.add("vctdg-xhide"); });
+
+        cfg.person.forEach(function (i) {
+            var cell = cells[i];
+            if (!cell || cell.querySelector(".vctdg-person")) return;
+            var name = cellPlain(cell);
+            if (isEmptyText(name)) return;
+            keepOriginal(cell);
+            var box = cell.__dgClamp || cell;
+            box.innerHTML = '<span class="vctdg-person vctdg-xperson"><span class="vctdg-avatar is-a" title="' + esc(name) + '">' + esc(initials(name)) + '</span><span class="vctdg-person-name">' + esc(name) + "</span></span>";
+        });
+
+        cfg.svc.forEach(function (i) {
+            var cell = cells[i];
+            if (!cell || cell.querySelector(".vctdg-svc-item")) return;
+            var txt = cellPlain(cell), key = fold(txt), def = SVC[key];
+            if (!def) return;
+            keepOriginal(cell);
+            var box = cell.__dgClamp || cell;
+            box.innerHTML = '<span class="vctdg-svc-item"><span class="vctdg-svc is-on ' + def.cls + '"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + def.path + '</svg></span><span class="vctdg-svc-text">' + def.label + "</span></span>";
+        });
+
+        cfg.subs.forEach(function (s) {
+            var from = cells[s.from], to = cells[s.to];
+            if (!from || !to) return;
+            var txt = cellPlain(from);
+            if (isEmptyText(txt)) return;
+            keepOriginal(to);
+            var sub = document.createElement("div");
+            sub.className = "vctdg-sub";
+            sub.textContent = txt;
+            sub.title = txt;
+            var more = to.querySelector(":scope > .vctdg-more");
+            to.insertBefore(sub, more || null);
+        });
+
+        if (cfg.detail.length && cfg.first >= 0) {
+            var has = cfg.detail.some(function (i) { return cells[i] && !isEmptyText(cellPlain(cells[i])); });
+            var host = cells[cfg.first];
+            host.classList.add("vctdg-xcell");
+            var btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "vctdg-xbtn" + (has ? " has-data" : "");
+            btn.setAttribute("aria-expanded", "false");
+            btn.setAttribute("aria-label", has ? "Ver detalle" : "Sin detalle");
+            btn.title = has ? "Ver detalle" : "Sin detalle";
+            if (!has) btn.disabled = true;
+            btn.innerHTML = CHEV;
+            host.insertBefore(btn, host.firstChild);
+        }
+    }
+
+    function detailRow(cfg, row) {
+        var tr = document.createElement("tr");
+        tr.className = "vctdg-xrow";
+        var td = document.createElement("td");
+        td.colSpan = Math.max(1, cfg.visible);
+        var html = "";
+        cfg.detail.forEach(function (i) {
+            var cell = row.cells[i];
+            if (!cell || isEmptyText(cellPlain(cell))) return;
+            html += '<div class="vctdg-xblock"><div class="vctdg-xlabel">' + esc(clean(cfg.heads[i].textContent)) + '</div><div class="vctdg-xvalue">' + cellInner(cell) + "</div></div>";
+        });
+        td.innerHTML = '<div class="vctdg-xgrid">' + (html || '<div class="vctdg-xvalue">Sin datos adicionales.</div>') + "</div>";
+        tr.appendChild(td);
+        tr.__dgxOwner = row;
+        row.__dgxRow = tr;
+        return tr;
+    }
+
+    function setOpen(cfg, row, open) {
+        row.__dgxOpen = !!open;
+        row.classList.toggle("is-xopen", !!open);
+        var btn = row.querySelector(".vctdg-xbtn");
+        if (btn) { btn.setAttribute("aria-expanded", open ? "true" : "false"); btn.title = open ? "Ocultar detalle" : "Ver detalle"; }
+        var cur = row.nextElementSibling;
+        if (cur && cur.classList.contains("vctdg-xrow")) cur.parentNode.removeChild(cur);
+        if (open && row.parentNode) row.parentNode.insertBefore(detailRow(cfg, row), row.nextSibling);
+    }
+
+    function process(host) {
+        var cfg = setup(host);
+        if (!cfg) return;
+        fixCols(cfg);
+        var tbody = cfg.table.tBodies[0];
+        if (!tbody) return;
+        Array.prototype.forEach.call(tbody.querySelectorAll(":scope > tr.vctdg-xrow"), function (r) { tbody.removeChild(r); });
+        Array.prototype.forEach.call(tbody.querySelectorAll(":scope > tr[data-vct-row]"), function (row) {
+            decorate(cfg, row);
+            if (row.__dgxOpen) setOpen(cfg, row, true);
+        });
+    }
+
+    document.addEventListener("vctdg:render", function (e) {
+        var host = e.target && e.target.closest ? e.target.closest("[data-vct-dg],[data-vct-dg-id]") || e.target : null;
+        if (host) { try { process(host); } catch (err) { if (window.console) console.error("[VCTDetail]", err); } }
+    });
+
+    document.addEventListener("click", function (e) {
+        var btn = e.target.closest && e.target.closest(".vctdg-xbtn");
+        if (!btn || btn.disabled) return;
+        e.preventDefault();
+        e.stopPropagation();
+        var row = btn.closest("tr");
+        var host = row ? row.closest("[data-vct-dg],[data-vct-dg-id]") : null;
+        var cfg = host ? host.__dgx : null;
+        if (!cfg) return;
+        setOpen(cfg, row, !row.__dgxOpen);
+    }, true);
+
+    function sweep() {
+        Array.prototype.forEach.call(document.querySelectorAll("[data-vct-dg],[data-vct-dg-id]"), function (h) {
+            if (h.querySelector("table thead th[data-vct-detail], table thead th[data-vct-sub-of], table thead th[data-vct-person], table thead th[data-vct-svc]")) {
+                try { process(h); } catch (err) { /* noop */ }
+            }
+        });
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", sweep);
+    else sweep();
+    setTimeout(sweep, 0);
+})(window, document);

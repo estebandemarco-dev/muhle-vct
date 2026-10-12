@@ -68,7 +68,72 @@
         var parts = ["Reportes"];
         if (catLabel) parts.push(catLabel);
         if (groupLabel && groupLabel !== catLabel) parts.push(groupLabel);
-        bc.textContent = parts.join(" / ");
+        /* v15: mismo breadcrumb que la pestaña Agenda: separador y ultimo nivel en bordo */
+        bc.textContent = "";
+        parts.forEach(function (p, i) {
+            if (i) { var sep = document.createElement("span"); sep.className = "vct-report-crumb-sep"; sep.textContent = "\u203A"; bc.appendChild(sep); }
+            var el = document.createElement(i === parts.length - 1 ? "b" : "span");
+            el.textContent = p;
+            bc.appendChild(el);
+        });
+    }
+
+    /* ====================================================================
+       v16 - COLUMNAS "OPCION A" POR REPORTE (no depende del SP)
+       Marca los <th> de cada grilla con los atributos que lee la extension
+       de detalle de vct-datagrid.js (v10+):
+         detail -> columna que pasa al detalle de la fila (flecha)
+         sub    -> columna que va como 2do renglon de otra (Proyecto bajo Cliente)
+         person -> avatar con iniciales + nombre
+         svc    -> icono + nombre del servicio
+       Los titulos se comparan sin tildes ni mayusculas. Excel/PDF exportan todo.
+       ==================================================================== */
+    var VIAT = { sub: { "proyecto": "Cliente" }, svc: ["servicio"], person: ["huesped", "pasajero"],
+                 detail: ["nro factura", "fecha factura", "tipo huesped", "tipo pasajero", "forma pago", "desc. forma pago", "cuotas"] };
+    var REPORT_COLS = {
+        "reportes-parte-actividades": { sub: { "descripcion": "Cliente" }, svc: ["servicio"], person: ["consultor"],
+                                        detail: ["observaciones", "obs. calificacion", "obs. hoja ruta"] },
+        "reportes-seg-consultoria": { sub: { "proyecto": "Cliente" }, detail: ["personal afectado", "frec. envio plan", "observaciones"] },
+        "reportes-seg-auditoria": { sub: { "proyecto": "Cliente" }, detail: ["lugar", "auditores", "fecha pa", "fecha inf.", "tiempo inf."] },
+        "reportes-seg-capacitacion": { sub: { "proyecto": "Cliente" }, detail: ["instructores", "material", "recibido", "fecha inf.", "tiempo inf."] },
+        "reportes-calif-consultores": { person: ["consultor"], svc: ["tipo servicio", "servicio"] },
+        "reportes-indice-ocupacion": { person: ["consultor"] },
+        "reportes-seg-hoteles": VIAT,
+        "reportes-seg-pasajes": VIAT,
+        "reportes-seg-remis": VIAT,
+        "reportes-rentabilidad": { sub: { "proyecto": "Cliente" }, detail: ["costo estim.", "utilidad estim.", "compras acum."] }
+    };
+
+    function foldText(t) {
+        t = String(t == null ? "" : t).replace(/\s+/g, " ").trim().toLowerCase();
+        return t.normalize ? t.normalize("NFD").replace(/[̀-ͯ]/g, "") : t;
+    }
+
+    function applyReportColumns(scope) {
+        var hosts = [];
+        if (scope.matches && scope.matches("[data-vct-dg-id]")) hosts.push(scope);
+        Array.prototype.forEach.call(scope.querySelectorAll("[data-vct-dg-id]"), function (h) { hosts.push(h); });
+        var touched = [];
+        hosts.forEach(function (host) {
+            var cfg = REPORT_COLS[host.getAttribute("data-vct-dg-id")];
+            var thead = host.querySelector("table thead");
+            if (!cfg || !thead || host.__repCols) return;
+            host.__repCols = true;
+            Array.prototype.forEach.call(thead.querySelectorAll("th"), function (th) {
+                var t = foldText(th.textContent);
+                if ((cfg.detail || []).indexOf(t) >= 0 && !th.hasAttribute("data-vct-detail")) th.setAttribute("data-vct-detail", "1");
+                if (cfg.sub && cfg.sub[t] && !th.hasAttribute("data-vct-sub-of")) th.setAttribute("data-vct-sub-of", cfg.sub[t]);
+                if ((cfg.person || []).indexOf(t) >= 0 && !th.hasAttribute("data-vct-person")) th.setAttribute("data-vct-person", "1");
+                if ((cfg.svc || []).indexOf(t) >= 0 && !th.hasAttribute("data-vct-svc")) th.setAttribute("data-vct-svc", "1");
+            });
+            touched.push(host.getAttribute("data-vct-dg-id"));
+        });
+        return touched;
+    }
+
+    function rerender(ids) {
+        if (!window.VCTDataGrid || !window.VCTDataGrid.render) return;
+        ids.forEach(function (id) { try { window.VCTDataGrid.render(id); } catch (e) { /* noop */ } });
     }
 
     function activateTopnav(root, cat) {
@@ -222,9 +287,11 @@
            vct-main.js (~5 ms por nodo): con miles de filas, insertarlas "vivas" trababa la pantalla. */
         var frag = document.createDocumentFragment();
         while (freshPanel.firstChild) frag.appendChild(document.adoptNode(freshPanel.firstChild));
+        applyReportColumns(frag);
         if (window.VCTDataGrid) window.VCTDataGrid.init(frag);
         livePanel.textContent = "";
         livePanel.appendChild(frag);
+        rerender(Array.prototype.map.call(livePanel.querySelectorAll("[data-vct-dg-id]"), function (h) { return h.getAttribute("data-vct-dg-id"); }));
         hideEmptyExpandButtons(livePanel);
         hideEmptyCharts(livePanel);
         return true;
@@ -321,6 +388,7 @@
 
         hideEmptyExpandButtons(root);
         hideEmptyCharts(root);
+        rerender(applyReportColumns(root));
 
         var initial = root.getAttribute("data-vct-report-active") || "";
         if (!initial || !root.querySelector('[data-vct-report-group="' + initial + '"]')) {
