@@ -1,4 +1,4 @@
-/* vct-datagrid.js - v7 (grilla dentro de tarjeta 360: clase vctdg-in-box; menu de fila de 3 puntos declarativo; toolbar estandar: buscador primero, filtros y "Registros por pagina" con el combo propio;
+/* vct-datagrid.js - v9 (pestana con subopciones: data-vctdg-tabgroup, en un bloque propio que se carga aunque la grilla ya este cargada; grilla dentro de tarjeta 360: clase vctdg-in-box; menu de fila de 3 puntos declarativo; toolbar estandar: buscador primero, filtros y "Registros por pagina" con el combo propio;
    en una tarjeta 360 el boton de alta del encabezado pasa al toolbar como "Nuevo")
    
    ============================================================================
@@ -1045,4 +1045,117 @@
 
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
     else start();
+})(window, document);
+
+/* ============================================================================
+   Pestana con subopciones (v9). Bloque PROPIO: la plataforma no recarga la
+   pagina al navegar, y el motor de grilla de arriba no se vuelve a ejecutar si
+   ya estaba cargado (guarda VCTDataGrid). Este bloque tiene su propia guarda.
+   ============================================================================ */
+(function (window, document) {
+    "use strict";
+    if (window.VCTTabGroupReady) return;
+    window.VCTTabGroupReady = true;
+    function escA(v) { return String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+    /* ------------------------------------------------------------------
+       v8: Pestana con subopciones ("Agenda" con flecha y menu). Declarativo:
+         <button class="vctdg-tabgroup" data-vctdg-tabgroup data-vctdg-tabs="agenda,dias">
+             <span data-vct-icon="calendar"></span><span>Agenda</span>
+             <span class="vctdg-tabgroup-chev" data-vct-icon="chevron-down"></span></button>
+         <div class="vctdg-tabgroup-items" hidden>
+             <button data-vctdg-subtab="agenda">...</button>
+             <button data-vctdg-subtab="dias">... <small>12</small></button></div>
+       El boton no tiene data-vct-tab (no cambia de panel por si mismo); cada
+       subopcion activa su panel con VCT.Tabs.activate. El boton queda marcado
+       (is-active) mientras el panel activo sea uno de los suyos.
+       ------------------------------------------------------------------ */
+    var tabMenu = { el: null, trigger: null };
+    function tabRoot(btn) { return btn.closest("[data-vct-tabs]") || btn.closest("[data-vct-module]"); }
+    function syncTabGroups() {
+        var groups = document.querySelectorAll("[data-vctdg-tabgroup]");
+        for (var i = 0; i < groups.length; i++) {
+            var g = groups[i], root = tabRoot(g);
+            var active = root ? (root.getAttribute("data-vct-tabs-active") || "") : "";
+            var list = (g.getAttribute("data-vctdg-tabs") || "").split(",");
+            var on = false;
+            for (var k = 0; k < list.length; k++) if (String(list[k]).replace(/^\s+|\s+$/g, "") === active) on = true;
+            g.classList.toggle("is-active", on);
+        }
+    }
+    function closeTabMenu() {
+        if (tabMenu.el && tabMenu.el.parentNode) tabMenu.el.parentNode.removeChild(tabMenu.el);
+        if (tabMenu.trigger) tabMenu.trigger.classList.remove("is-open");
+        tabMenu.el = null; tabMenu.trigger = null;
+    }
+    function openTabMenu(btn) {
+        closeTabMenu();
+        var src = btn.nextElementSibling;
+        if (!src || !src.classList.contains("vctdg-tabgroup-items") || !src.children.length) return;
+        var root = tabRoot(btn);
+        var active = root ? (root.getAttribute("data-vct-tabs-active") || "") : "";
+        var menu = document.createElement("div");
+        menu.className = "vctdg-rowmenu is-tabgroup";
+        menu.setAttribute("role", "menu");
+        Array.prototype.forEach.call(src.children, function (orig) {
+            var name = orig.getAttribute("data-vctdg-subtab");
+            if (!name) return;
+            var icon = orig.querySelector("[data-vct-icon]");
+            var label = orig.querySelector("span:not([data-vct-icon])");
+            var count = orig.querySelector("small");
+            var item = document.createElement("button");
+            item.type = "button";
+            item.className = "vctdg-rowmenu-item" + (name === active ? " is-active" : "");
+            item.setAttribute("role", "menuitem");
+            item.setAttribute("data-vctdg-subtab", name);
+            item.innerHTML = (icon ? '<span class="vctdg-rowmenu-icon" data-vct-icon="' + escA(icon.getAttribute("data-vct-icon")) + '"></span>' : "") +
+                "<span>" + (label ? label.innerHTML : escA(name)) + "</span>" +
+                (count ? "<small>" + count.innerHTML + "</small>" : "");
+            menu.appendChild(item);
+        });
+        menu.addEventListener("click", function (e) {
+            var it = e.target.closest(".vctdg-rowmenu-item");
+            if (!it) return;
+            e.preventDefault();
+            e.stopPropagation();
+            var name = it.getAttribute("data-vctdg-subtab");
+            closeTabMenu();
+            if (root && name && window.VCT && VCT.Tabs && typeof VCT.Tabs.activate === "function") VCT.Tabs.activate(root, name);
+            syncTabGroups();
+        });
+        document.body.appendChild(menu);
+        if (window.VCT && VCT.Icon && typeof VCT.Icon.init === "function") VCT.Icon.init(menu);
+        var r = btn.getBoundingClientRect(), mw = menu.offsetWidth, mh = menu.offsetHeight;
+        var left = Math.max(8, Math.min(r.left, window.innerWidth - mw - 8));
+        var top = r.bottom + 4;
+        if (top + mh > window.innerHeight - 8 && r.top - mh - 4 > 8) top = r.top - mh - 4;
+        menu.style.left = left + "px";
+        menu.style.top = top + "px";
+        btn.classList.add("is-open");
+        tabMenu.el = menu; tabMenu.trigger = btn;
+    }
+    document.addEventListener("click", function (e) {
+        var btn = e.target.closest ? e.target.closest("[data-vctdg-tabgroup]") : null;
+        if (btn) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (tabMenu.trigger === btn) closeTabMenu(); else openTabMenu(btn);
+            return;
+        }
+        if (tabMenu.el && !tabMenu.el.contains(e.target)) closeTabMenu();
+    });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeTabMenu(); });
+    window.addEventListener("resize", closeTabMenu);
+    window.addEventListener("scroll", closeTabMenu, true);
+    if (window.MutationObserver) {
+        var tabSyncPending = false;
+        new MutationObserver(function () {
+            if (tabSyncPending) return;
+            tabSyncPending = true;
+            setTimeout(function () { tabSyncPending = false; syncTabGroups(); }, 0);
+        }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-vct-tabs-active"], childList: true, subtree: true });
+    }
+
+
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", syncTabGroups);
+    else syncTabGroups();
 })(window, document);

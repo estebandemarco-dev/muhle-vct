@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pestaña Agenda con subopciones</title>
+<style>
+:root{--b:#66062D;--b1:#8C1D47;--b2:#CF6F92;--g1:#4A4849;--line:#E5E9F0;--txt:#334155;--mut:#64748b}
+*{box-sizing:border-box}
+body{margin:0;padding:24px;background:#f4f5f7;font-family:"Gotham","Gotham Book",-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--txt)}
+h1{font-size:18px;color:var(--b);margin:0 0 4px}
+h2{font-size:14px;margin:34px 0 4px;color:#25344C}
+p.n{font-size:12px;color:var(--mut);margin:0 0 12px;max-width:1000px}
+.rec{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:99px;font-size:10px;background:var(--b);color:#fff;vertical-align:middle}
+svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+/* barra de pestañas como la 360 */
+.bar{display:flex;flex-wrap:wrap;gap:4px;padding:6px;background:rgba(255,255,255,.55);border:1px solid var(--line);border-radius:14px;max-width:1080px;position:relative}
+.tab{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:10px;font-size:10px;color:#25344C;background:transparent;border:0;cursor:pointer;position:relative}
+.tab:hover{background:#fff}
+.tab.on{background:#fff;color:var(--b);font-weight:600;box-shadow:0 2px 8px rgba(15,23,42,.08)}
+.tab.on::after{content:"";position:absolute;left:12px;right:12px;bottom:4px;height:2px;border-radius:2px;background:var(--b)}
+.tab .chev{width:12px;height:12px;margin-left:2px;opacity:.7}
+.tab .dots{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-left:2px;border-radius:5px;color:var(--mut)}
+.tab .dots:hover{background:#F6E9EE;color:var(--b)}
+.tab .cnt{font-size:9px;font-weight:700;color:var(--b);background:#F6EAEF;border-radius:99px;padding:1px 6px}
+/* menu desplegable (mismo estilo que el combo de filtros) */
+.menu{position:absolute;top:42px;min-width:190px;background:#fff;border:1px solid rgba(102,6,45,.22);border-radius:9px;box-shadow:0 14px 34px rgba(15,23,42,.14),0 3px 10px rgba(102,6,45,.08);padding:5px;z-index:3}
+.menu .it{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;font-size:10.5px;color:#334155;cursor:pointer}
+.menu .it:hover{background:#F6E9EE;color:var(--b)}
+.menu .it.on{background:var(--b);color:#fff;font-weight:600}
+.menu .it small{margin-left:auto;font-size:9px;opacity:.75}
+.menu .sep{height:1px;background:#EEF2F6;margin:4px 2px}
+.menu .soon{color:#94a3b8;cursor:default}
+.menu .soon:hover{background:transparent;color:#94a3b8}
+/* panel */
+.panel{max-width:1080px;margin-top:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid #EEF2F6;margin-bottom:12px}
+.head h3{margin:0;font-size:10.5px;font-weight:700;color:#1f2937;display:flex;align-items:center;gap:8px}
+.ico{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;background:#F6EAEF;color:var(--b)}
+.crumb{font-size:10px;color:var(--mut);font-weight:500}
+.crumb b{color:var(--b);font-weight:600}
+.btn{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border:1px solid #D7E0E9;border-radius:8px;background:#fff;font-size:10.5px;font-weight:600;color:#25344C}
+.btn.new{color:var(--b);border-color:rgba(102,6,45,.32);background:#FBF7F9}
+/* segmentado (opcion B) */
+.seg{display:inline-flex;gap:2px;padding:3px;background:#F3F3F3;border-radius:9px}
+.seg span{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 12px;border-radius:7px;font-size:10.5px;color:#4A4849;cursor:pointer}
+.seg span.on{background:#fff;color:var(--b);font-weight:600;box-shadow:0 1px 4px rgba(15,23,42,.10)}
+.seg span.soon{color:#B5B3B4;cursor:default}
+/* tabla de ejemplo */
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th{background:#f8fafc;color:#475569;font-size:10.5px;font-weight:600;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:8px 10px;border-bottom:1px solid #eef2f6;font-size:10px}
+.c{text-align:center}
+.card{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal div{height:44px;border:1px solid #EEF2F6;border-radius:8px;font-size:9px;color:var(--mut);padding:4px 6px}
+.cal div.ev{border-color:#E7C9D5;background:#FBF4F7}
+.cal div.ev i{display:block;margin-top:4px;height:6px;border-radius:3px;background:var(--b1);width:70%}
+.wrap{display:grid;grid-template-columns:1fr;gap:6px}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:1080px}
+.mini{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:11px;color:var(--mut)}
+.mini b{display:block;color:#25344C;font-size:12px;margin-bottom:4px}
+@media(max-width:860px){.cols{grid-template-columns:1fr}}
+</style></head><body>
+
+<h1>Pestaña "Agenda" con subopciones (Vista 360 de Consultor)</h1>
+<p class="n">Agenda pasa al lugar de "Días mensuales" (después de Normas) y "Días mensuales" queda como subopción de Agenda. Las subopciones futuras (p. ej. Visitas, Disponibilidad) se agregan en el mismo lugar. Mismo estilo de menú que los combos de filtros (opción elegida en bordó lleno, hover bordó claro).</p>
+
+<!-- ================= OPCION A ================= -->
+<h2>Opción A · Pestaña con flecha ▾ y menú <span class="rec">recomendada</span></h2>
+<p class="n">La pestaña dice "Agenda ▾". Un click abre el menú con las subvistas; la pestaña muestra la subvista elegida en el encabezado ("Agenda › Días mensuales"). Es el patrón que todos reconocen como "esto tiene más opciones" y ocupa el mismo lugar que una pestaña común.</p>
+<div class="bar">
+  <span class="tab"><svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="1"/></svg>Resumen</span>
+  <span class="tab">Servicios</span><span class="tab">Proyectos</span><span class="tab">Acciones</span><span class="tab">Normas</span>
+  <span class="tab on" id="tA"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Agenda<svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+    <div class="menu" style="left:0">
+      <div class="it"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Calendario</div>
+      <div class="it on"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>Días mensuales<small>12</small></div>
+      <div class="sep"></div>
+      <div class="it soon"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Próximamente…</div>
+    </div>
+  </span>
+  <span class="tab">Domicilios</span><span class="tab">Teléfonos</span><span class="tab">Emails</span><span class="tab">Documentos</span><span class="tab">Notas</span>
+</div>
+<div class="panel" style="margin-top:150px">
+  <div class="head"><h3><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>Agenda <span class="crumb">› <b>Días mensuales</b> (12)</span></h3><span class="btn new">+ Nuevo</span></div>
+  <div class="card"><table><thead><tr><th class="c" style="width:120px">Período</th><th>Proyecto</th><th class="c" style="width:90px">Días</th><th>Observaciones</th></tr></thead>
+  <tbody><tr><td class="c">09/2026</td><td>(1341) PRUEBA ALTA 3 - borrar</td><td class="c">4,00</td><td>-</td></tr><tr><td class="c">08/2026</td><td>(1309) TRON</td><td class="c">6,50</td><td>Visita a planta</td></tr></tbody></table></div>
+</div>
+
+<!-- ================= OPCION B ================= -->
+<h2>Opción B · Pestaña simple + selector segmentado dentro del panel</h2>
+<p class="n">La pestaña dice solo "Agenda". Adentro, a la izquierda del encabezado, un selector tipo "pastilla" cambia entre subvistas. Todo queda a la vista (no hay menú escondido); ocupa una línea más dentro del panel.</p>
+<div class="bar">
+  <span class="tab">Resumen</span><span class="tab">Servicios</span><span class="tab">Proyectos</span><span class="tab">Acciones</span><span class="tab">Normas</span>
+  <span class="tab on"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Agenda</span>
+  <span class="tab">Domicilios</span><span class="tab">Teléfonos</span><span class="tab">Emails</span><span class="tab">Documentos</span><span class="tab">Notas</span>
+</div>
+<div class="panel">
+  <div class="head"><h3><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>Agenda</h3>
+    <span class="seg"><span>Calendario</span><span class="on">Días mensuales · 12</span><span class="soon">Próximamente</span></span>
+    <span class="btn new">+ Nuevo</span></div>
+  <div class="cal"><div>1</div><div>2</div><div class="ev">3<i></i></div><div>4</div><div>5</div><div class="ev">6<i></i></div><div>7</div></div>
+  <p class="n" style="margin-top:8px">(con "Calendario" elegido se vería así; con "Días mensuales", la tabla de la opción A)</p>
+</div>
+
+<!-- ================= OPCION C ================= -->
+<h2>Opción C · Pestaña con tres puntos ⋮</h2>
+<p class="n">Click en "Agenda" entra a la vista principal (Calendario); los ⋮ al lado abren el menú de subvistas. Más compacta, pero las subopciones quedan menos visibles y los ⋮ ya los usamos para acciones de fila (puede confundirse).</p>
+<div class="bar">
+  <span class="tab">Resumen</span><span class="tab">Servicios</span><span class="tab">Proyectos</span><span class="tab">Acciones</span><span class="tab">Normas</span>
+  <span class="tab on"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Agenda<span class="dots"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></span>
+    <div class="menu" style="left:60px">
+      <div class="it"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Calendario</div>
+      <div class="it on"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg>Días mensuales<small>12</small></div>
+    </div>
+  </span>
+  <span class="tab">Domicilios</span><span class="tab">Teléfonos</span><span class="tab">Emails</span><span class="tab">Documentos</span><span class="tab">Notas</span>
+</div>
+<div style="height:110px"></div>
+
+<h2>Comparación rápida</h2>
+<div class="cols">
+  <div class="mini"><b>A · Flecha ▾</b>Patrón conocido, mismo ancho que una pestaña, escala a varias subvistas. El encabezado indica en cuál estás. Un click más para cambiar.</div>
+  <div class="mini"><b>B · Segmentado</b>Todo visible sin abrir nada; ideal con 2–3 subvistas. Con más de 4 se vuelve largo.</div>
+  <div class="mini"><b>C · Tres puntos ⋮</b>Lo más compacto, pero escondido y choca con el criterio de ⋮ = acciones de fila.</div>
+</div>
+</body></html>

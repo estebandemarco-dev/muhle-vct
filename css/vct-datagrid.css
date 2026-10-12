@@ -1,4 +1,4 @@
-/* vct-datagrid.css - v18 (badges azul/verde en Clientes y Consultores; filtros Estado y Eventual angostos; rentabilidad 360 institucional con mayor especificidad; tipografia y anillos del Inicio; tablas estaticas flexibles; rentabilidad institucional; encabezados centrados; normas en lista; KPIs del Inicio; escala tipografica general; columna Servicios sin recorte; kit de badges unificado, personas, tabla estatica; sin contador en el toolbar; separacion titulo/toolbar en tarjetas 360; servicios, normas, avance y menu de fila; ver al final: ESTANDAR DE TOOLBAR Y TIPOGRAFIA, KPIs de grillas y KPIs de Vista 360)
+/* vct-datagrid.css - v26 (flecha de la pestana con subopciones en SVG propio; pestana con subopciones; Resumen 360 Consultor con los mismos anchos que las pestanas Proyectos y Acciones; Resumen 360 Consultor: minimo para Normas y Proyecto; tablas estaticas del Resumen 360 de Consultor con ancho flexible aunque la tarjeta traiga anchos fijos; servicio con icono + descripcion; nombre del consultor sin negrita; badges azul/verde en Clientes y Consultores; filtros Estado y Eventual angostos; rentabilidad 360 institucional con mayor especificidad; tipografia y anillos del Inicio; tablas estaticas flexibles; rentabilidad institucional; encabezados centrados; normas en lista; KPIs del Inicio; escala tipografica general; columna Servicios sin recorte; kit de badges unificado, personas, tabla estatica; sin contador en el toolbar; separacion titulo/toolbar en tarjetas 360; servicios, normas, avance y menu de fila; ver al final: ESTANDAR DE TOOLBAR Y TIPOGRAFIA, KPIs de grillas y KPIs de Vista 360)
    ============================================================================
    Estilos del motor de grilla de MAIN (vct-datagrid.js). Autocontenido y
    namespaced .vctdg-*: no depende de las reglas de tablas/paginado de
@@ -1139,3 +1139,82 @@
     .vctdg.vctdg .vctdg-filters > select[data-vct-dg-filter="estado"] + .vct-custom-select,
     .vctdg.vctdg .vctdg-filters > select[data-vct-dg-filter="eventual"] + .vct-custom-select{flex:1 1 100%;width:100% !important;}
 }
+
+/* v19: grilla de Consultores - el nombre del consultor va sin negrita (10px normal) */
+/* el motor envuelve la celda en .vctdg-clamp: el strong no es hijo directo */
+.vctdg .vctdg-table td[data-label="Consultor"] strong{font-weight:400 !important;}
+
+/* v21: celda de servicio = circulo con el icono fijo + descripcion (pestana Servicios del consultor) */
+.vctdg-svc-item{display:inline-flex;align-items:center;gap:8px;min-width:0;}
+.vctdg-svc-item > .vctdg-svc{flex:0 0 auto;}
+.vctdg-svc-text{font-size:10px;font-weight:400;color:#334155;}
+
+/* v22 (solo Vista 360 de Consultor): tablas estaticas dentro de tarjetas 360 (Ultimos proyectos / Ultimas acciones):
+   vct-main.css fija anchos por posicion (.vct-360-recent-projects-box td:nth-child(n){width:..%})
+   y nowrap/ellipsis; aca se anulan para que cada columna tome el ancho que necesita. */
+.vct-consultor360-module .vct-360-box .vctdg-static .vctdg-table{table-layout:auto !important;width:100% !important;}
+.vct-consultor360-module .vct-360-box .vctdg-static .vctdg-table > thead > tr > th,
+.vct-consultor360-module .vct-360-box .vctdg-static .vctdg-table > tbody > tr > td{
+    width:auto !important;max-width:none !important;
+    white-space:normal !important;overflow:visible !important;text-overflow:clip !important;
+}
+.vct-consultor360-module .vct-360-box .vctdg-static .vctdg-table > tbody > tr > td.vct-text-center{text-align:center !important;}
+.vct-consultor360-module .vct-360-box .vctdg-static .vctdg-table td:has(> .vctdg-svc-set),
+.vct-consultor360-module .vct-360-box .vctdg-static .vctdg-table td:has(> .vctdg-progress){white-space:nowrap !important;}
+/* servicio: icono + descripcion centrados entre si */
+.vctdg-svc-item{display:inline-flex !important;align-items:center !important;gap:8px !important;}
+.vctdg-svc-text{line-height:1.2;}
+
+/* v23 (solo Vista 360 de Consultor): con ancho flexible, Normas y Proyecto no se achican de mas */
+.vct-consultor360-module .vct-360-box .vctdg-static .vctdg-table td:has(> .vctdg-list){min-width:170px !important;}
+.vct-consultor360-module .vct-360-box .vctdg-static .vctdg-table td:has(> .vct-360-project-name){min-width:220px !important;}
+.vct-consultor360-module .vct-360-box .vctdg-static .vctdg-li{overflow-wrap:normal !important;word-break:normal !important;}
+
+/* v24 (solo Vista 360 de Consultor): las tablas del Resumen usan el mismo diseno y anchos que las
+   pestanas (Proyectos: Cliente 14% | Proyecto resto | Servicios 96 | Normas 15% | Analista 80 |
+   Consultor 80 | Estado 112 | Avance 12% | menu 44; Acciones: Fecha 84 | Accion | Cliente 13% |
+   Proyecto | Servicios 96 | Normas 14% | Responsable 96 | Estado 112). Texto con corte por palabra. */
+.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table, .vct-consultor360-module .vct-360-recent-management-box.vct-360-box .vctdg-static .vctdg-table{table-layout:fixed !important;}
+.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > colgroup > col, .vct-consultor360-module .vct-360-recent-management-box.vct-360-box .vctdg-static .vctdg-table > colgroup > col{width:auto !important;}
+.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(1){width:14% !important;}
+.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(2){width:auto !important;}
+.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(3){width:96px !important;}
+.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(4){width:15% !important;}
+.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(5){width:80px !important;}
+.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(6){width:80px !important;}
+.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(7){width:112px !important;}
+.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(8){width:12% !important;}
+.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(9){width:44px !important;}
+.vct-consultor360-module .vct-360-recent-management-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(1){width:84px !important;}
+.vct-consultor360-module .vct-360-recent-management-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(2){width:auto !important;}
+.vct-consultor360-module .vct-360-recent-management-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(3){width:13% !important;}
+.vct-consultor360-module .vct-360-recent-management-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(4){width:auto !important;}
+.vct-consultor360-module .vct-360-recent-management-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(5){width:96px !important;}
+.vct-consultor360-module .vct-360-recent-management-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(6){width:14% !important;}
+.vct-consultor360-module .vct-360-recent-management-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(7){width:96px !important;}
+.vct-consultor360-module .vct-360-recent-management-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(8){width:112px !important;}
+.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table td, .vct-consultor360-module .vct-360-recent-management-box.vct-360-box .vctdg-static .vctdg-table td{min-width:0 !important;overflow-wrap:normal !important;word-break:normal !important;}
+
+/* v25: pestana con subopciones (Agenda > Calendario / Dias mensuales).
+   El boton usa el mismo estilo de pestana (activa = blanca con subrayado);
+   el menu usa el mismo estilo que los combos de filtros (elegida en bordo lleno). */
+.vctdg-tabgroup-items{display:none !important;}
+.vct-360-visual-final .vct-360-tabsbar button.vctdg-tabgroup > span.vctdg-tabgroup-chev,
+.vct-360-visual-final .vct-360-tabsbar button.vctdg-tabgroup > span.vctdg-tabgroup-chev svg{
+    width:12px !important;height:12px !important;min-width:12px !important;max-width:12px !important;
+    margin-left:-2px;opacity:.75;transition:transform .16s ease;
+}
+.vct-360-visual-final .vct-360-tabsbar button.vctdg-tabgroup.is-open > span.vctdg-tabgroup-chev{transform:rotate(180deg);}
+.vct-360-visual-final .vct-360-tabsbar button.vctdg-tabgroup.is-open:not(.is-active){background:rgba(255,255,255,.62) !important;}
+.vctdg-rowmenu.is-tabgroup{min-width:190px;}
+.vctdg-rowmenu.is-tabgroup .vctdg-rowmenu-item{font-size:10.5px;}
+.vctdg-rowmenu.is-tabgroup .vctdg-rowmenu-item small{margin-left:auto;padding-left:12px;font-size:9px;font-weight:600;opacity:.75;}
+.vctdg-rowmenu.is-tabgroup .vctdg-rowmenu-item.is-active{color:#fff;background:#66062D;font-weight:600;}
+.vctdg-rowmenu.is-tabgroup .vctdg-rowmenu-item.is-active .vctdg-rowmenu-icon{color:#fff;}
+/* encabezado de la subvista: "Agenda > Dias mensuales (12)" */
+.vctdg-crumb{margin-left:2px;font-size:10px;font-weight:500;color:#64748b;}
+.vctdg-crumb b{color:#66062D;font-weight:600;}
+.vct-360-visual-final .vct-360-tabsbar button.vctdg-tabgroup > span.vctdg-tabgroup-chev{display:inline-flex;}
+.vct-360-visual-final .vct-360-tabsbar button.vctdg-tabgroup > span.vctdg-tabgroup-chev svg{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.vct-360-visual-final .vct-360-tabsbar button.vctdg-tabgroup:focus,
+.vct-360-visual-final .vct-360-tabsbar button.vctdg-tabgroup:focus-visible{outline:none !important;}
