@@ -14400,3 +14400,11 @@ html body .vct-form-shell.vct-form-shell textarea.vct-textarea{
         grid-column:1 / -1 !important; grid-row:4 !important;
     }
 }
+/* ====== Color caracteristico por servicio (chip global) ======
+   Donde aparezca un servicio: 360 de consultor, 360 de proyecto, listas.
+   El SP emite <span class="vct-serv-chip is-consultoria|is-auditoria|is-capacitacion|is-neutral">. */
+.vct-serv-chip{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;line-height:1.6;border:1px solid transparent;white-space:nowrap;}
+.vct-serv-chip.is-consultoria{background:#E7F0FD;color:#1D63C7;border-color:#CFE0FB;}
+.vct-serv-chip.is-auditoria{background:#F3E8FB;color:#7F43C0;border-color:#E6D2F6;}
+.vct-serv-chip.is-capacitacion{background:#E3F6EC;color:#0E9F6E;border-color:#C7EBD8;}
+.vct-serv-chip.is-neutral{background:#EEF2F6;color:#64748B;border-color:#E2E8F0;}

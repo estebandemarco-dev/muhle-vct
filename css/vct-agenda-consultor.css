@@ -1,0 +1,112 @@
+/* vct-agenda-consultor.css - v1
+   ============================================================================
+   Agenda del consultor. Hereda la estructura del calendario (vct-agenda.css)
+   y agrega el color por ESTADO de disponibilidad. Paleta alineada con los
+   chips de servicio y las pills del 360:
+     LIBRE      verde   #0E9F6E
+     PARCIAL    ambar   #F59E0B
+     OCUPADO    bordo   #66062D  (marca)
+     BLOQUEADO  slate   #64748B  (rayado)
+     FERIADO    violeta #7F43C0
+     FINDE      gris    neutro
+   ============================================================================ */
+
+/* ---- layout: full-width (como el resto de la app) + celdas más bajas para
+   que el mes entre sin scroll, incluso meses de 6 filas ---- */
+.vct-agc-card { padding: 14px 18px 18px; }
+.vct-agc-table td.vct-agenda-cell { height: 72px; }
+.vct-agc-table .vct-agenda-daynum { font-size: 12px; }
+
+/* ---- toolbar: selector de consultor ---- */
+.vct-agc-toolbar { flex-wrap: wrap; gap: 10px; }
+.vct-agc-pick { display: flex; flex-direction: column; gap: 2px; min-width: 220px; }
+.vct-agc-pick-label { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: .03em; }
+.vct-agc-select-cons { height: 38px; min-width: 220px; }
+
+/* ---- stats ---- */
+.vct-agc-stats { margin: 4px 0 14px; }
+
+/* ---- leyenda ---- */
+.vct-agc-legend { gap: 16px; flex-wrap: wrap; }
+.vct-agc-dot { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.vct-agc-dot-libre     { background: #0E9F6E; }
+.vct-agc-dot-parcial   { background: #F59E0B; }
+.vct-agc-dot-ocupado   { background: #66062D; }
+.vct-agc-dot-bloqueado { background: #64748B; }
+.vct-agc-dot-feriado   { background: #7F43C0; }
+
+/* ---- celdas del mes: color por estado ---- */
+.vct-agc-table .vct-agenda-cell { position: relative; vertical-align: top; }
+.vct-agc-table .vct-agenda-cell[data-vct-agc-day] { cursor: pointer; border-left: 3px solid transparent; transition: background .12s ease; }
+.vct-agc-table .vct-agenda-cell[data-vct-agc-day]:hover { filter: brightness(.98); }
+.vct-agc-cell-note { display: block; margin-top: 2px; font-size: 10.5px; line-height: 1.25; font-weight: 600; opacity: .9; }
+
+/* estados (celda mes) */
+.vct-agenda-cell.vct-agc-libre     { background: #ECFBF4; border-left-color: #0E9F6E; }
+.vct-agenda-cell.vct-agc-libre     .vct-agc-cell-note { color: #0E7D57; }
+.vct-agenda-cell.vct-agc-parcial   { background: #FEF5E7; border-left-color: #F59E0B; }
+.vct-agenda-cell.vct-agc-parcial   .vct-agc-cell-note { color: #B5760A; }
+.vct-agenda-cell.vct-agc-ocupado   { background: #F8E8EF; border-left-color: #66062D; }
+.vct-agenda-cell.vct-agc-ocupado   .vct-agc-cell-note { color: #66062D; }
+.vct-agenda-cell.vct-agc-feriado   { background: #F3EBFB; border-left-color: #7F43C0; }
+.vct-agenda-cell.vct-agc-feriado   .vct-agc-cell-note { color: #6A32A8; }
+.vct-agenda-cell.vct-agc-finde     { background: #F1F5F9; }
+.vct-agenda-cell.vct-agc-finde     .vct-agenda-daynum { color: #94a3b8; }
+.vct-agenda-cell.vct-agc-bloqueado {
+    border-left-color: #64748B;
+    background-color: #EEF1F5;
+    background-image: repeating-linear-gradient(45deg, rgba(100,116,139,.12) 0 6px, transparent 6px 12px);
+}
+.vct-agenda-cell.vct-agc-bloqueado .vct-agc-cell-note { color: #475569; }
+
+/* hoy: aro por encima del color de estado */
+.vct-agc-table .vct-agenda-cell.vct-agenda-cell-today { outline: 2px solid #66062D; outline-offset: -2px; }
+
+/* ---- badges (semana / dia) ---- */
+.vct-agc-badge {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 700; line-height: 1.5;
+}
+.vct-agc-badge.vct-agc-libre     { background: #ECFBF4; color: #0E7D57; }
+.vct-agc-badge.vct-agc-parcial   { background: #FEF5E7; color: #B5760A; }
+.vct-agc-badge.vct-agc-ocupado   { background: #F8E8EF; color: #66062D; }
+.vct-agc-badge.vct-agc-bloqueado { background: #EEF1F5; color: #475569; }
+.vct-agc-badge.vct-agc-feriado   { background: #F3EBFB; color: #6A32A8; }
+.vct-agc-badge.vct-agc-finde     { background: #F1F5F9; color: #64748b; }
+
+.vct-agc-weekcard { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+/* barra lateral de color en la fila de semana */
+.vct-agenda-weekrow.vct-agc-libre     { border-left: 4px solid #0E9F6E; }
+.vct-agenda-weekrow.vct-agc-parcial   { border-left: 4px solid #F59E0B; }
+.vct-agenda-weekrow.vct-agc-ocupado   { border-left: 4px solid #66062D; }
+.vct-agenda-weekrow.vct-agc-bloqueado { border-left: 4px solid #64748B; }
+.vct-agenda-weekrow.vct-agc-feriado   { border-left: 4px solid #7F43C0; }
+.vct-agenda-weekrow.vct-agc-finde     { border-left: 4px solid #e2e8f0; }
+
+/* ---- vista dia ---- */
+.vct-agc-dayview { text-align: center; }
+.vct-agc-dayview-badge { margin: 10px 0 6px; }
+.vct-agc-dayview-note { color: #475569; font-weight: 600; }
+.vct-agc-dayview-hours { margin-top: 6px; color: #64748b; font-size: 13px; }
+
+/* ---- edición de bloqueo (vista día) ---- */
+.vct-agc-edit { margin-top: 18px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.vct-agc-edit .vct-agc-mot { width: 300px; max-width: 90%; height: 38px; padding: 0 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; }
+.vct-agc-edit .vct-btn { border: none; border-radius: 8px; padding: 9px 20px; font-weight: 600; font-size: 13px; cursor: pointer; }
+.vct-agc-btn-block { background: #64748B; color: #fff; }
+.vct-agc-btn-block:hover { background: #475569; }
+.vct-agc-btn-unblock { background: #0E9F6E; color: #fff; }
+.vct-agc-btn-unblock:hover { background: #0E7D57; }
+
+/* ---- estado vacio (sin consultor elegido) ---- */
+.vct-agc-empty { text-align: center; padding: 48px 20px; color: #64748b; }
+.vct-agc-empty-icon { display: inline-flex; width: 42px; height: 42px; color: #94a3b8; margin-bottom: 8px; }
+.vct-agc-empty p { margin: 0; font-size: 15px; }
+
+/* ---- responsive ---- */
+@media (max-width: 640px) {
+    .vct-agc-pick { min-width: 100%; }
+    .vct-agc-select-cons { min-width: 100%; }
+    .vct-agc-cell-note { font-size: 9.5px; }
+}
