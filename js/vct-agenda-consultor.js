@@ -59,20 +59,16 @@
         var btnNext  = root.querySelector("[data-vct-agc-next]");
         var viewBtns = root.querySelectorAll("[data-vct-agc-view]");
 
-        /* reload al cambiar de consultor (solo VE_TODO) */
+        /* reload al cambiar de consultor (solo VE_TODO): arranca una tarea nueva
+           con ACTION=AGENDA_CONSULTOR + el consultor elegido. El separador de
+           parametros de start_params es ';' (NO '||'). Es la misma via que usa
+           el menu lateral (newTaskForContactWithParams). */
         if (selCons){
             selCons.addEventListener("change", function(){
                 var id = selCons.value || "";
-                if (!window.VCT || !VCT.Action) { return; }
-                var guid = root.getAttribute("data-vct-agc-guid");
-                var b = document.createElement("button");
-                b.type="button"; b.hidden=true;
-                b.setAttribute("data-vct-command","grid-action");
-                b.setAttribute("data-vct-store","IDSELEC01");
-                b.setAttribute("data-vct-value", id);
-                b.setAttribute("data-vct-guid", guid);
-                root.appendChild(b);
-                Promise.resolve(wait(50)).then(function(){ VCT.Action.execute(b); });
+                if (typeof window.newTaskForContactWithParams !== "function") return;
+                if (typeof window.vctSetActiveModule === "function") { try { vctSetActiveModule("9"); } catch(e){} }
+                newTaskForContactWithParams("VOCATURO", "ACTION=AGENDA_CONSULTOR;IDSELEC01=" + id, "VCT_GESTION", "Agenda");
             });
         }
 

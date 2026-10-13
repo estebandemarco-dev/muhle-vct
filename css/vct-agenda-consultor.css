@@ -11,6 +11,12 @@
      FINDE      gris    neutro
    ============================================================================ */
 
+/* ---- layout: full-width (como el resto de la app) + celdas más bajas para
+   que el mes entre sin scroll, incluso meses de 6 filas ---- */
+.vct-agc-card { padding: 14px 18px 18px; }
+.vct-agc-table td.vct-agenda-cell { height: 72px; }
+.vct-agc-table .vct-agenda-daynum { font-size: 12px; }
+
 /* ---- toolbar: selector de consultor ---- */
 .vct-agc-toolbar { flex-wrap: wrap; gap: 10px; }
 .vct-agc-pick { display: flex; flex-direction: column; gap: 2px; min-width: 220px; }

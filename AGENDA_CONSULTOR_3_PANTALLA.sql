@@ -50,7 +50,7 @@ BEGIN
     SET @OUTPARAM3 = NULL;
 
     DECLARE @MODULE_CODE VARCHAR(50) = 'AGENDA_CONSULTOR';
-    DECLARE @GUID_SELF   VARCHAR(50) = 'D2F5BD3A-86F0-4855-A0D8-18466AC7C4A9'; /* SideBar Id=9 */
+    DECLARE @GUID_SELF   VARCHAR(50) = 'EE2B3F6F-4900-4C8C-A287-D4630D65B344'; /* estructura CALL_CONV_STRUCTURES "16 - Agenda" (reentrada p/ recarga) */
 
     DECLARE @HTML_SHELL VARCHAR(MAX) = '', @RES VARCHAR(20) = '',
             @PERFIL VARCHAR(100) = UPPER(LTRIM(RTRIM(ISNULL(@IUNIDAD,'')))),
@@ -61,7 +61,16 @@ BEGIN
             @HTML VARCHAR(MAX) = '', @MSG VARCHAR(MAX) = '',
             @SUBT VARCHAR(200) = '';
 
-    SET @VE_TODO = CASE WHEN @PERFIL IN ('GERENCIA','SQUAD','ADMINISTRACION','PROYECTOS') THEN 1 ELSE 0 END;
+    /* ¿el usuario logueado es un consultor? Su ficha MANDA sobre el perfil:
+       un consultor ve SOLO su propia agenda (sin select); solo un admin/comercial
+       que NO es consultor ve el select para elegir cualquiera. */
+    DECLARE @SELF_CONS INT = NULL;
+    SELECT TOP 1 @SELF_CONS = ID FROM dbo.VCT_CONSULTORES
+    WHERE LOWER(LTRIM(RTRIM(ISNULL(ID_USUARIO_SEGURIDAD,'')))) = @U
+      AND UPPER(ISNULL(ESTADO,'')) = 'ACTIVO'
+    ORDER BY ID DESC;
+
+    SET @VE_TODO = CASE WHEN @SELF_CONS IS NULL AND @PERFIL IN ('GERENCIA','SQUAD','ADMINISTRACION','PROYECTOS') THEN 1 ELSE 0 END;
     SET @SUBT = 'Disponibilidad por d' + CHAR(237) + 'a: libre, ocupado, bloqueado y feriados.';
 
     /* ---------- shell ---------- */
@@ -103,10 +112,7 @@ BEGIN
     END
     ELSE
     BEGIN
-        SELECT TOP 1 @CONS_ID = ID FROM dbo.VCT_CONSULTORES
-        WHERE LOWER(LTRIM(RTRIM(ISNULL(ID_USUARIO_SEGURIDAD,'')))) = @U
-          AND UPPER(ISNULL(ESTADO,'')) = 'ACTIVO'
-        ORDER BY ID DESC;
+        SET @CONS_ID = @SELF_CONS;   /* consultor: su propia agenda */
     END;
 
     IF @CONS_ID IS NOT NULL
@@ -130,7 +136,7 @@ BEGIN
             '<div class="vct-agc-pick">'
           + '<label class="vct-agc-pick-label">Consultor</label>'
           + '<select class="vct-select vct-agc-select-cons" data-vct-agc-select-cons aria-label="Consultor">'
-          + '<option value="">' + CHAR(8212) + ' Eleg' + CHAR(237) + ' un consultor ' + CHAR(8212) + '</option>'
+          + '<option value="">Eleg' + CHAR(237) + ' un consultor...</option>'
           + @OPTS + '</select></div>';
     END;
 
@@ -163,8 +169,8 @@ BEGIN
     SET @HTML =
         '<link rel="stylesheet" href="../css/vct-inicio.css?v=5">'
       + '<link rel="stylesheet" href="../css/vct-agenda.css?v=3">'
-      + '<link rel="stylesheet" href="../css/vct-agenda-consultor.css?v=1">'
-      + '<script src="../js/vct-agenda-consultor.js?v=1"></script>'
+      + '<link rel="stylesheet" href="../css/vct-agenda-consultor.css?v=4">'
+      + '<script src="../js/vct-agenda-consultor.js?v=4"></script>'
       + '<div class="vct-page vct-page-main vct-agc-page" data-vct-page'
       + ' data-vct-sidebar-id="' + CONVERT(VARCHAR(20),@SIDEBAR_ID) + '"'
       + ' data-vct-form-id="' + ISNULL(@FORM_ID,'') + '"'
