@@ -188,8 +188,20 @@
             bindDayClicks();
         }
 
+        /* ---- edición de bloqueos (solo con permiso EDIT) ---- */
+        var canEdit = root.getAttribute("data-vct-agc-can-edit")==="1";
+        var consId  = root.getAttribute("data-vct-agc-cons") || "";
+        function saveBlock(fecha, motivo, unblock){
+            if (typeof window.newTaskForContactWithParams !== "function") return;
+            if (typeof window.vctSetActiveModule === "function") { try { vctSetActiveModule("9"); } catch(e){} }
+            var mot = String(motivo||"").replace(/[;=+]/g," ").trim().slice(0,200);
+            var params = "ACTION=AGENDA_CONSULTOR;IDSELEC01=" + consId + ";TEXTO01=" + fecha
+                       + (unblock ? ";FLAG02=1" : (";FLAG01=1;TEXTO02=" + mot));
+            newTaskForContactWithParams("VOCATURO", params, "VCT_GESTION", "Agenda");
+        }
+
         function renderDay(){
-            var d=state.cursor, r=dayInfo(d);
+            var d=state.cursor, r=dayInfo(d), key=dateKey(d), past=d<today;
             titleEl.textContent=DIAS_LARGO[d.getDay()]+" "+d.getDate()+" de "+MESES[d.getMonth()]+" "+d.getFullYear();
             var html='<div class="vct-agenda-day vct-agc-dayview '+clsOf(r.e)+'">';
             html+='<div class="vct-agenda-day-num">'+d.getDate()+'</div>';
@@ -198,8 +210,27 @@
             if (r.m) html+='<div class="vct-agc-dayview-note">'+esc(r.m)+'</div>';
             if (r.e!=="FINDE" && r.e!=="FERIADO" && r.e!=="BLOQUEADO")
                 html+='<div class="vct-agc-dayview-hours">'+fmtH(r.d)+'h libres de '+fmtH(r.c)+'h ('+fmtH(r.o)+'h ocupadas)</div>';
+
+            if (canEdit && !past && r.e!=="FERIADO" && r.e!=="FINDE"){
+                if (r.e==="BLOQUEADO"){
+                    html+='<div class="vct-agc-edit"><button type="button" class="vct-btn vct-agc-btn-unblock" data-vct-agc-unblock>Quitar bloqueo (volver a disponible)</button></div>';
+                } else {
+                    html+='<div class="vct-agc-edit">'
+                        + '<input type="text" class="vct-input vct-agc-mot" placeholder="Motivo (vacaciones, licencia...)" maxlength="200">'
+                        + '<button type="button" class="vct-btn vct-agc-btn-block" data-vct-agc-block>Marcar no disponible</button>'
+                        + '</div>';
+                }
+            }
             html+='</div>';
             paneEl.innerHTML=html;
+
+            var bBtn=paneEl.querySelector("[data-vct-agc-block]");
+            if (bBtn) bBtn.addEventListener("click", function(){
+                var mot=(paneEl.querySelector(".vct-agc-mot")||{}).value||"";
+                saveBlock(key, mot, false);
+            });
+            var uBtn=paneEl.querySelector("[data-vct-agc-unblock]");
+            if (uBtn) uBtn.addEventListener("click", function(){ saveBlock(key, "", true); });
         }
 
         function estadoLabel(r){
