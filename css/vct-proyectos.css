@@ -1,0 +1,31 @@
+/* ========================================================================
+   VCT PROYECTOS                                                         v1
+   ------------------------------------------------------------------------
+   Pantalla Proyectos (opcion del sidebar, dbo.VCT_MAIN_PROYECTOS).
+   Base: KPIs .vct-soft-kpi y grilla estandar (vct-datagrid.css).
+   Aca solo lo propio: toolbar en una fila, Analista/Consultor como
+   iniciales centradas con tooltip y mensaje para el perfil Clientes.
+   Todo bajo .vct-proy-page: no afecta otras pantallas.
+   ======================================================================== */
+
+/* toolbar: buscador + 3 combos + Excel / PDF / Nuevo en una sola fila */
+@media (min-width:769px){
+    .vct-proy-page .vctdg-search{flex:0 1 240px !important;max-width:240px !important;min-width:170px !important;}
+    .vct-proy-page .vctdg-filters > select.vct-select,
+    .vct-proy-page .vctdg-filters > .vct-custom-select{flex:0 0 140px !important;width:140px !important;min-width:0 !important;}
+}
+
+/* Analista / Consultor: solo iniciales, centradas como el encabezado; nombre en el tooltip */
+.vct-proy-page .vctdg .vctdg-table td.vct-text-center .vctdg-person{justify-content:center;}
+.vct-proy-page .vctdg-avatar[title]{cursor:pointer;}
+
+/* Proyecto: nombre y referencia cortan por palabra (la columna toma el ancho libre) */
+.vct-proy-page .vctdg .vctdg-table td .vct-360-project-name,
+.vct-proy-page .vctdg .vctdg-table td .vct-360-project-ref{overflow-wrap:normal;word-break:normal;}
+
+/* perfil Clientes: mensaje del sistema */
+.vct-proy-page .vct-proy-msg{display:flex;align-items:center;gap:14px;max-width:680px;padding:18px 20px;}
+.vct-proy-page .vct-proy-msg-icon{display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:#F6EAEF;color:#66062D;}
+.vct-proy-page .vct-proy-msg-icon svg{width:20px;height:20px;}
+.vct-proy-page .vct-proy-msg b{display:block;margin-bottom:3px;font-size:12px;color:#1f2937;}
+.vct-proy-page .vct-proy-msg div span{font-size:10.5px;line-height:1.45;color:#64748b;}

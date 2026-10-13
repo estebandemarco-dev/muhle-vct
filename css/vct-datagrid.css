@@ -1,4 +1,4 @@
-/* vct-datagrid.css - v27 (360 Proveedor: barras de viaticos en bordo; flecha de la pestana con subopciones en SVG propio; pestana con subopciones; Resumen 360 Consultor con los mismos anchos que las pestanas Proyectos y Acciones; Resumen 360 Consultor: minimo para Normas y Proyecto; tablas estaticas del Resumen 360 de Consultor con ancho flexible aunque la tarjeta traiga anchos fijos; servicio con icono + descripcion; nombre del consultor sin negrita; badges azul/verde en Clientes y Consultores; filtros Estado y Eventual angostos; rentabilidad 360 institucional con mayor especificidad; tipografia y anillos del Inicio; tablas estaticas flexibles; rentabilidad institucional; encabezados centrados; normas en lista; KPIs del Inicio; escala tipografica general; columna Servicios sin recorte; kit de badges unificado, personas, tabla estatica; sin contador en el toolbar; separacion titulo/toolbar en tarjetas 360; servicios, normas, avance y menu de fila; ver al final: ESTANDAR DE TOOLBAR Y TIPOGRAFIA, KPIs de grillas y KPIs de Vista 360)
+/* vct-datagrid.css - v29 (Resumen 360 Cliente: anchos propios para Ultimos proyectos, Estado ya no se pisa con Avance; 360 Proveedor: barras de viaticos en bordo; flecha de la pestana con subopciones en SVG propio; pestana con subopciones; Resumen 360 Consultor con los mismos anchos que las pestanas Proyectos y Acciones; Resumen 360 Consultor: minimo para Normas y Proyecto; tablas estaticas del Resumen 360 de Consultor con ancho flexible aunque la tarjeta traiga anchos fijos; servicio con icono + descripcion; nombre del consultor sin negrita; badges azul/verde en Clientes y Consultores; filtros Estado y Eventual angostos; rentabilidad 360 institucional con mayor especificidad; tipografia y anillos del Inicio; tablas estaticas flexibles; rentabilidad institucional; encabezados centrados; normas en lista; KPIs del Inicio; escala tipografica general; columna Servicios sin recorte; kit de badges unificado, personas, tabla estatica; sin contador en el toolbar; separacion titulo/toolbar en tarjetas 360; servicios, normas, avance y menu de fila; ver al final: ESTANDAR DE TOOLBAR Y TIPOGRAFIA, KPIs de grillas y KPIs de Vista 360)
    ============================================================================
    Estilos del motor de grilla de MAIN (vct-datagrid.js). Autocontenido y
    namespaced .vctdg-*: no depende de las reglas de tablas/paginado de
@@ -1266,3 +1266,18 @@ tr.is-xopen .vctdg-xbtn svg{transform:rotate(180deg);}
     .vctdg .vctdg-table td.vctdg-xcell{padding-left:44px !important;}
     .vctdg .vctdg-table tr.vctdg-xrow > td{padding:10px 12px !important;}
 }
+
+/* v29 (solo Vista 360 de Cliente): el modulo de Cliente tambien lleva .vct-consultor360-module, asi
+   que heredaba los anchos de v24 pensados para la tabla del Consultor (9 columnas, con Cliente).
+   La de Cliente tiene 8: Proyecto resto | Servicios 96 | Normas 17% | Analista 80 | Consultor 80 |
+   Estado 112 | Avance 13% | menu 44. Con eso el badge de Estado no se monta sobre la barra de Avance. */
+.vct-cliente360-module.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(1){width:auto !important;}
+.vct-cliente360-module.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(2){width:96px !important;}
+.vct-cliente360-module.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(3){width:17% !important;}
+.vct-cliente360-module.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(4){width:80px !important;}
+.vct-cliente360-module.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(5){width:80px !important;}
+.vct-cliente360-module.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(6){width:112px !important;}
+.vct-cliente360-module.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(7){width:13% !important;}
+.vct-cliente360-module.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(8){width:44px !important;}
+.vct-cliente360-module.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(n+9){width:auto !important;}
+.vct-cliente360-module .vct-360-recent-projects-box .vctdg-static .vctdg-table td .vct-360-badge{max-width:100%;white-space:nowrap;}

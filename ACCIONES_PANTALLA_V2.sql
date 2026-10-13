@@ -45,6 +45,7 @@ CREATE OR ALTER PROCEDURE dbo.VCT_MAIN_ACCIONES
 AS
 BEGIN
     /* ACCIONES_PANTALLA_V2 */
+    /* AISLAR_AVANCE_V1: el EXEC de VCT_PROYECTO_AVANCE_SYNC tiene su propio TRY/CATCH */
     SET NOCOUNT ON;
     SET @OUTPARAM1 = '';
     SET @OUTPARAM2 = NULL;
@@ -190,8 +191,16 @@ BEGIN
                         CASE WHEN @NUEVO = 'CUMPLIDA' THEN 'Accion cumplida (pantalla Acciones).' ELSE 'Accion reabierta (pantalla Acciones).' END,
                         'USUARIO', GETDATE(), @IAGENTE);
             COMMIT TRANSACTION;
+            /* el recalculo de avance va aislado: si falla, el cambio de estado ya quedo grabado */
             IF @ID_PROY_AC IS NOT NULL AND OBJECT_ID('dbo.VCT_PROYECTO_AVANCE_SYNC') IS NOT NULL
-                EXEC dbo.VCT_PROYECTO_AVANCE_SYNC @ID_PROYECTO = @ID_PROY_AC;
+            BEGIN
+                BEGIN TRY
+                    EXEC dbo.VCT_PROYECTO_AVANCE_SYNC @ID_PROYECTO = @ID_PROY_AC;
+                END TRY
+                BEGIN CATCH
+                    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+                END CATCH;
+            END;
             SET @MSG = CASE WHEN @NUEVO = 'CUMPLIDA' THEN 'Acci' + CHAR(243) + 'n cumplida: ' ELSE 'Acci' + CHAR(243) + 'n reabierta: ' END + LEFT(ISNULL(@TIT_AC,''), 200);
         END TRY
         BEGIN CATCH
