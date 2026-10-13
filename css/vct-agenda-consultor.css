@@ -90,6 +90,15 @@
 .vct-agc-dayview-note { color: #475569; font-weight: 600; }
 .vct-agc-dayview-hours { margin-top: 6px; color: #64748b; font-size: 13px; }
 
+/* ---- edición de bloqueo (vista día) ---- */
+.vct-agc-edit { margin-top: 18px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.vct-agc-edit .vct-agc-mot { width: 300px; max-width: 90%; height: 38px; padding: 0 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; }
+.vct-agc-edit .vct-btn { border: none; border-radius: 8px; padding: 9px 20px; font-weight: 600; font-size: 13px; cursor: pointer; }
+.vct-agc-btn-block { background: #64748B; color: #fff; }
+.vct-agc-btn-block:hover { background: #475569; }
+.vct-agc-btn-unblock { background: #0E9F6E; color: #fff; }
+.vct-agc-btn-unblock:hover { background: #0E7D57; }
+
 /* ---- estado vacio (sin consultor elegido) ---- */
 .vct-agc-empty { text-align: center; padding: 48px 20px; color: #64748b; }
 .vct-agc-empty-icon { display: inline-flex; width: 42px; height: 42px; color: #94a3b8; margin-bottom: 8px; }

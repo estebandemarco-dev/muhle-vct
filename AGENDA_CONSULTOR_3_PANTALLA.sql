@@ -119,6 +119,36 @@ BEGIN
         SELECT @CONS_NOMBRE = LTRIM(RTRIM(ISNULL(APELLIDOS,'') + CASE WHEN ISNULL(NOMBRES,'')<>'' THEN ', '+NOMBRES ELSE '' END))
         FROM dbo.VCT_CONSULTORES WHERE ID = @CONS_ID;
 
+    /* ---------- alta/baja de bloqueo (dia NO disponible) ----------
+       Comando por buffer: TEXTO01=fecha(AAAA-MM-DD), TEXTO02=motivo,
+       FLAG01=1 marcar no disponible, FLAG02=1 quitar bloqueo. Solo con EDIT. */
+    IF @CAN_EDIT = 1 AND @CONS_ID IS NOT NULL
+    BEGIN
+        DECLARE @B_FECHA VARCHAR(20)='', @B_MOT VARCHAR(200)='', @B_SET VARCHAR(10)='0', @B_DEL VARCHAR(10)='0', @B_D DATE;
+        SELECT TOP 1
+            @B_FECHA = LTRIM(RTRIM(ISNULL(CONVERT(VARCHAR(20),  TEXTO01),''))),
+            @B_MOT   = LTRIM(RTRIM(ISNULL(CONVERT(VARCHAR(200), TEXTO02),''))),
+            @B_SET   = ISNULL(CONVERT(VARCHAR(10), FLAG01),'0'),
+            @B_DEL   = ISNULL(CONVERT(VARCHAR(10), FLAG02),'0')
+        FROM dbo.VCT_BUFFER WITH(NOLOCK) WHERE PAR_KEY = @IPKEYJOB;
+
+        IF ISDATE(@B_FECHA)=1 AND (@B_SET='1' OR @B_DEL='1')
+        BEGIN
+            SET @B_D = CONVERT(DATE, @B_FECHA, 120);
+            IF @B_DEL='1'
+                DELETE FROM dbo.VCT_PRM_AGENDA_CONSULTOR WHERE ID_CONSULTOR=@CONS_ID AND FECHA=@B_D;
+            ELSE IF EXISTS (SELECT 1 FROM dbo.VCT_PRM_AGENDA_CONSULTOR WHERE ID_CONSULTOR=@CONS_ID AND FECHA=@B_D)
+                UPDATE dbo.VCT_PRM_AGENDA_CONSULTOR
+                   SET DISPONIBLE=0, HORAS_CAPACIDAD=0, MOTIVO=NULLIF(@B_MOT,''), FECHA_UPD=GETDATE(), USUARIO_UPD=@U
+                 WHERE ID_CONSULTOR=@CONS_ID AND FECHA=@B_D;
+            ELSE
+                INSERT INTO dbo.VCT_PRM_AGENDA_CONSULTOR (ID_CONSULTOR,FECHA,HORAS_CAPACIDAD,DISPONIBLE,MOTIVO,FECHA_ALTA,USUARIO_ALTA)
+                VALUES (@CONS_ID,@B_D,0,0,NULLIF(@B_MOT,''),GETDATE(),@U);
+
+            UPDATE dbo.VCT_BUFFER SET TEXTO01=NULL, TEXTO02=NULL, FLAG01='0', FLAG02='0' WHERE PAR_KEY=@IPKEYJOB;
+        END;
+    END;
+
     /* ---------- select de consultor (solo VE_TODO) ---------- */
     DECLARE @SELECT_CONS VARCHAR(MAX) = '';
     IF @VE_TODO = 1
@@ -169,8 +199,8 @@ BEGIN
     SET @HTML =
         '<link rel="stylesheet" href="../css/vct-inicio.css?v=5">'
       + '<link rel="stylesheet" href="../css/vct-agenda.css?v=3">'
-      + '<link rel="stylesheet" href="../css/vct-agenda-consultor.css?v=4">'
-      + '<script src="../js/vct-agenda-consultor.js?v=4"></script>'
+      + '<link rel="stylesheet" href="../css/vct-agenda-consultor.css?v=5">'
+      + '<script src="../js/vct-agenda-consultor.js?v=5"></script>'
       + '<div class="vct-page vct-page-main vct-agc-page" data-vct-page'
       + ' data-vct-sidebar-id="' + CONVERT(VARCHAR(20),@SIDEBAR_ID) + '"'
       + ' data-vct-form-id="' + ISNULL(@FORM_ID,'') + '"'
