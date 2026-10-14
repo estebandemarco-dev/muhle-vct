@@ -3,9 +3,8 @@
    ------------------------------------------------------------------------
    Pantalla Proyectos (opcion del sidebar, ACTION=PROYECTOS) segun boceto v2.
    1) CREATE OR ALTER dbo.VCT_MAIN_PROYECTOS (si existe se reemplaza).
-   2) Parche en dbo.VCT_MAIN_DASHBOARD (marca PROYECTOS_RUTEO_V1): el menu
-      Proyectos hoy cae en el Inicio; el Inicio lo desvia a VCT_MAIN_PROYECTOS
-      (mismo mecanismo que Acciones).
+   2) No toca el ruteo: ACTION=PROYECTOS ya llega a este SP por el flujo
+      de la plataforma.
 
    Pantalla:
    - KPIs: Proyectos activos (avance promedio) | Terminan en 30 dias |
@@ -13,8 +12,12 @@
    - Grilla estandar: Cliente | Proyecto (codigo + nombre, referencia) |
      Servicios | Normas | Analista | Consultor (iniciales + tooltip) |
      Inicio | Fin | Estado | Avance | menu de 3 puntos.
-   - Filtros: Activos (por defecto) / Terminados / Cancelados / Todos,
-     Estado y Servicio (js/vct-proyectos.js resuelve varios servicios).
+   - Dos modos, mismo SP: VIGENTES (por defecto) = En curso + Confirmado;
+     OTROS = el resto de los estados. Boton "Otros estados" / "En curso y
+     confirmados" en el toolbar: guarda TEXTO30='PRY_MODO_OTROS'|'PRY_MODO_VIGENTES'
+     y refresca el mismo paso (VCT.Navigation.next); ACTION no se toca.
+   - Filtros: Estado (Todos los estados por defecto + los estados del modo)
+     y Servicio (js/vct-proyectos.js v3). KPIs siempre sobre los vigentes.
    - Alcance: GERENCIA, SQUAD, ADMINISTRACION y PROYECTOS ven todos;
      el resto solo los proyectos donde su usuario esta en el equipo o en
      visitas. Perfil CLIENTE*: solo mensaje del sistema.
@@ -22,8 +25,8 @@
        VIEW / EDIT -> menu de 3 puntos,  CREATE -> boton "Nuevo".
      Este script NO inserta ni modifica permisos. No crea vistas, funciones
      ni tablas. Sin caracteres no ASCII.
-   - Assets: css/vct-proyectos.css?v=1, js/vct-proyectos.js?v=1,
-             css/vct-datagrid.css?v=29, js/vct-datagrid.js?v=11.
+   - Assets: css/vct-proyectos.css?v=2, js/vct-proyectos.js?v=5,
+             css/vct-datagrid.css?v=30, js/vct-datagrid.js?v=12.
    ======================================================================== */
 SET NOCOUNT ON;
 IF OBJECT_ID('tempdb..#PRY_V1_RUN') IS NOT NULL DROP TABLE #PRY_V1_RUN;
@@ -47,7 +50,7 @@ CREATE OR ALTER PROCEDURE dbo.VCT_MAIN_PROYECTOS
 )
 AS
 BEGIN
-    /* PROYECTOS_PANTALLA_V1 */
+    /* PROYECTOS_PANTALLA_V1 (V1.2 14/10: modo VIGENTES = En curso + Confirmado / modo OTROS = el resto de los estados) */
     SET NOCOUNT ON;
     SET @OUTPARAM1 = '';
     SET @OUTPARAM2 = NULL;
@@ -65,13 +68,26 @@ BEGIN
             @SIDEBAR_ID INT = 0,
             @SUBT       VARCHAR(300),
             @ASSETS     VARCHAR(MAX),
-            @FORM_ESC   VARCHAR(200) = REPLACE(ISNULL(@FORM_ID,''),'"','');
+            @FORM_ESC   VARCHAR(200) = REPLACE(ISNULL(@FORM_ID,''),'"',''),
+            @MODO       VARCHAR(20)  = 'VIGENTES';
+
+    /* modo de la grilla: el boton "Otros estados" / "En curso y confirmados" guarda
+       TEXTO30='PRY_MODO_OTROS'|'PRY_MODO_VIGENTES' y refresca el MISMO paso (next),
+       sin tocar ACTION. Se lee y se limpia aca. */
+    DECLARE @B_CMD VARCHAR(100);
+    SELECT TOP 1 @B_CMD = UPPER(LTRIM(RTRIM(ISNULL(TEXTO30,'')))) FROM dbo.VCT_BUFFER WITH(NOLOCK) WHERE PAR_KEY = @IPKEYJOB;
+    IF @B_CMD IN ('PRY_MODO_OTROS','PRY_MODO_VIGENTES')
+    BEGIN
+        SET @MODO = CASE WHEN @B_CMD = 'PRY_MODO_OTROS' THEN 'OTROS' ELSE 'VIGENTES' END;
+        UPDATE dbo.VCT_BUFFER SET TEXTO30 = NULL WHERE PAR_KEY = @IPKEYJOB;
+    END;
 
     SET @ES_CLIENTE = CASE WHEN @PERFIL LIKE 'CLIENTE%' THEN 1 ELSE 0 END;
     SET @VE_TODO    = CASE WHEN @PERFIL IN ('GERENCIA','SQUAD','ADMINISTRACION','PROYECTOS') THEN 1 ELSE 0 END;
     SET @SUBT = CASE WHEN @ES_CLIENTE = 1 THEN ''
-                     WHEN @VE_TODO = 1 THEN 'Todos los proyectos: avance, equipo y fechas.'
-                     ELSE 'Los proyectos en los que particip' + CHAR(225) + 's.' END;
+                     WHEN @MODO = 'OTROS' THEN 'Proyectos en otros estados (pausados, terminados, cancelados...).'
+                     WHEN @VE_TODO = 1 THEN 'Proyectos en curso y confirmados: avance, equipo y fechas.'
+                     ELSE 'Tus proyectos en curso y confirmados.' END;
 
     BEGIN TRY
         EXEC dbo.VCT_GET_SHELL @IUNIDAD = @IUNIDAD, @IAGENTE = @IAGENTE, @FORM_ID = @FORM_ID,
@@ -84,10 +100,10 @@ BEGIN
 
     SET @ASSETS = CONVERT(VARCHAR(MAX), '')
         + '<link rel="stylesheet" href="../css/vct-datagrid.css?v=29">'
-        + '<link rel="stylesheet" href="../css/vct-proyectos.css?v=1">'
+        + '<link rel="stylesheet" href="../css/vct-proyectos.css?v=2">'
         + '<script src="../js/vct-export.js?v=1"></script>'
         + '<script src="../js/vct-datagrid.js?v=11"></script>'
-        + '<script src="../js/vct-proyectos.js?v=1"></script>';
+        + '<script src="../js/vct-proyectos.js?v=5"></script>';
 
     /* ==================================================================
        1. PERMISOS (solo lectura) + sidebar activo
@@ -188,7 +204,8 @@ BEGIN
                           INNER JOIN dbo.VCT_PROYECTOS_VISITAS_CONSULTORES VC WITH(NOLOCK) ON VC.ID_VISITA = V.ID
                           WHERE V.ID_PROYECTO = #P.ID AND VC.ID_CONSULTOR = @CONS_ID AND @CONS_ID IS NOT NULL);
 
-    UPDATE #P SET SIT = CASE WHEN EST_COD = 'TERMINADO' THEN 'TERMINADO' WHEN EST_COD = 'CANCELADO' THEN 'CANCELADO' ELSE 'ACTIVO' END;
+    /* SIT: V = en curso o confirmado (vigente) | O = cualquier otro estado */
+    UPDATE #P SET SIT = CASE WHEN EST_COD IN ('ENCURSO','EN_CURSO','CONFIRMADO') THEN 'V' ELSE 'O' END;
 
     /* analista: rol ANALISTA del equipo (empleado) */
     UPDATE P SET AN_ID = X.ID_EMPLEADO
@@ -225,6 +242,18 @@ BEGIN
         CO_NOM = LEFT(LTRIM(RTRIM(ISNULL(CO.APELLIDOS,'') + CASE WHEN ISNULL(CO.NOMBRES,'') <> '' THEN ', ' + CO.NOMBRES ELSE '' END)),500),
         CO_INI = UPPER(LEFT(LTRIM(ISNULL(CO.NOMBRES,'')),1) + LEFT(LTRIM(ISNULL(CO.APELLIDOS,'')),1))
     FROM #P P INNER JOIN dbo.VCT_CONSULTORES CO WITH(NOLOCK) ON CO.ID = P.CO_ID;
+
+    /* KPIs: siempre sobre los vigentes (en curso + confirmados) del alcance */
+    DECLARE @K_ACT INT = 0, @K_AVG INT = 0, @K_FIN30 INT = 0, @K_ATR INT = 0, @K_SINC INT = 0, @D30 DATE = DATEADD(DAY, 30, @HOY);
+    SELECT @K_ACT   = COUNT(*),
+           @K_AVG   = ISNULL(CONVERT(INT, ROUND(AVG(CONVERT(DECIMAL(9,2), AVANCE)), 0)), 0),
+           @K_FIN30 = ISNULL(SUM(CASE WHEN FIN >= @HOY AND FIN <= @D30 THEN 1 ELSE 0 END), 0),
+           @K_ATR   = ISNULL(SUM(CASE WHEN FIN < @HOY THEN 1 ELSE 0 END), 0),
+           @K_SINC  = ISNULL(SUM(CASE WHEN CO_ID IS NULL THEN 1 ELSE 0 END), 0)
+    FROM #P WHERE SIT = 'V';
+
+    /* la grilla solo lleva los proyectos del modo pedido */
+    DELETE FROM #P WHERE SIT <> CASE WHEN @MODO = 'OTROS' THEN 'O' ELSE 'V' END;
 
     /* servicios */
     UPDATE P SET
@@ -278,28 +307,23 @@ BEGIN
                      + ISNULL(AN_NOM,'') + ' ' + ISNULL(CO_NOM,'') + ' ' + ISNULL(SRV_TXT,'') + ' ' + ISNULL(EST_DESC,''),
                    '&','&amp;'),'<','&lt;'),'>','&gt;'),'"','&quot;');
 
-    /* menu de 3 puntos */
+    /* menu de 3 puntos: se arma una sola vez con una clave comodin y se reemplaza por fila */
+    DECLARE @MENU_TPL VARCHAR(MAX) = '';
     IF @MENU_OK = 1
-        UPDATE P SET MENU = ISNULL((
+    BEGIN
+        SELECT @MENU_TPL = ISNULL((
             SELECT dbo.VCT_MAIN_RENDER_ACTION(A.ACTION_ID, A.TITLE, A.ICON, A.STORAGE_KEY, A.TARGET_TAB, A.TARGET_GUID,
-                                              CONVERT(VARCHAR(20), P.ID), 'vctdg-menu-item', A.TITLE)
+                                              '__PRYKEY__', 'vctdg-menu-item', A.TITLE)
             FROM #ACT A
             WHERE A.ACTION_TYPE IN ('VIEW','EDIT')
             ORDER BY CASE A.ACTION_TYPE WHEN 'VIEW' THEN 0 ELSE 1 END, A.SORT_ORDER, A.ID_PRM
-            FOR XML PATH(''), TYPE).value('.','VARCHAR(MAX)'), '')
-        FROM #P P;
+            FOR XML PATH(''), TYPE).value('.','VARCHAR(MAX)'), '');
+        UPDATE #P SET MENU = REPLACE(@MENU_TPL, '__PRYKEY__', CONVERT(VARCHAR(20), ID));
+    END;
 
     /* ==================================================================
        5. KPIs (sobre los activos del alcance)
        ================================================================== */
-    DECLARE @K_ACT INT = 0, @K_AVG INT = 0, @K_FIN30 INT = 0, @K_ATR INT = 0, @K_SINC INT = 0, @D30 DATE = DATEADD(DAY, 30, @HOY);
-    SELECT @K_ACT   = COUNT(*),
-           @K_AVG   = ISNULL(CONVERT(INT, ROUND(AVG(CONVERT(DECIMAL(9,2), AVANCE)), 0)), 0),
-           @K_FIN30 = ISNULL(SUM(CASE WHEN FIN >= @HOY AND FIN <= @D30 THEN 1 ELSE 0 END), 0),
-           @K_ATR   = ISNULL(SUM(CASE WHEN FIN < @HOY THEN 1 ELSE 0 END), 0),
-           @K_SINC  = ISNULL(SUM(CASE WHEN CO_ID IS NULL THEN 1 ELSE 0 END), 0)
-    FROM #P WHERE SIT = 'ACTIVO';
-
     DECLARE @KPIS VARCHAR(MAX) = CONVERT(VARCHAR(MAX), '')
         + '<section class="vct-soft-kpi-grid" aria-label="Indicadores de proyectos">'
         + '<article class="vct-soft-kpi is-purple"><span class="vct-soft-kpi-icon" data-vct-icon="folder"></span><div class="vct-soft-kpi-copy">'
@@ -324,8 +348,8 @@ BEGIN
         SELECT
             '<tr data-vct-row data-vct-key="' + CONVERT(VARCHAR(20), P.ID) + '"'
           + ' data-vct-search="' + P.E_SEARCH + '"'
-          + ' data-vct-filter-sit="' + P.SIT + '"'
-          + ' data-vct-filter-estado="' + CONVERT(VARCHAR(12), ISNULL(P.ID_ESTADO,0)) + '"'
+          + ' data-vct-estado="' + P.EST_COD + '"'
+          + ' data-vct-filter-estado="' + P.EST_COD + '"'
           + ' data-vct-srv="' + ISNULL(P.SRV_LIST,'') + '" data-vct-filter-srv="-">'
           /* Cliente */
           + '<td data-label="Cliente" data-vct-sort-value="' + P.E_CLI + '">' + P.E_CLI + '</td>'
@@ -385,17 +409,15 @@ BEGIN
        ================================================================== */
     DECLARE @O_EST VARCHAR(MAX);
     SELECT @O_EST = ISNULL((
-        SELECT '<option value="' + CONVERT(VARCHAR(12), X.ID_ESTADO) + '">' + X.E_EST + '</option>'
-        FROM (SELECT DISTINCT ISNULL(ID_ESTADO,0) AS ID_ESTADO, E_EST FROM #P) X
+        SELECT '<option value="' + X.EST_COD + '">' + X.E_EST + '</option>'
+        FROM (SELECT DISTINCT EST_COD, E_EST FROM #P WHERE EST_COD <> '') X
         ORDER BY X.E_EST
         FOR XML PATH(''), TYPE).value('.','VARCHAR(MAX)'), '');
 
     DECLARE @FILTERS VARCHAR(MAX) = CONVERT(VARCHAR(MAX), '')
         + '<div data-vct-dg-slot="filters">'
-        + '<select class="vct-select vct-select-sm" data-vct-dg-filter="sit" aria-label="Situaci&oacute;n">'
-        +   '<option value="">Todos</option><option value="ACTIVO" selected>Activos</option>'
-        +   '<option value="TERMINADO">Terminados</option><option value="CANCELADO">Cancelados</option></select>'
-        + '<select class="vct-select vct-select-sm" data-vct-dg-filter="estado" aria-label="Estado"><option value="">Estado</option>' + @O_EST + '</select>'
+        + '<select class="vct-select vct-select-sm" data-vct-dg-filter="estado" aria-label="Estado">'
+        +   '<option value="">Todos los estados</option>' + @O_EST + '</select>'
         + '<select class="vct-select vct-select-sm" data-vct-dg-filter="srv" aria-label="Servicio"><option value="">Servicio</option>'
         +   '<option value="co">' + @E_SRV_CO + '</option><option value="au">' + @E_SRV_AU + '</option><option value="ca">' + @E_SRV_CA + '</option></select>'
         + '</div>';
@@ -404,13 +426,20 @@ BEGIN
        8. SALIDA
        ================================================================== */
     SET @OUTPARAM1 = ISNULL(@HTML_SHELL,'') + @ASSETS
-        + '<div class="vct-page vct-page-main vct-proy-page" data-vct-page data-vct-sidebar-id="' + CONVERT(VARCHAR(20), ISNULL(@SIDEBAR_ID,0)) + '" data-vct-form-id="' + @FORM_ESC + '">'
+        + '<div class="vct-page vct-page-main vct-proy-page" data-vct-page data-vct-sidebar-id="' + CONVERT(VARCHAR(20), ISNULL(@SIDEBAR_ID,0)) + '" data-vct-form-id="' + @FORM_ESC + '" data-vct-pry-modo-actual="' + @MODO + '">'
+        + '<input type="hidden" name="SP.TEXTO30" data-vct-field="TEXTO30" value="">'
         + @KPIS
         + '<section class="vct-card vct-grid-card"><div class="vct-card-body">'
         + '<div data-vct-dg data-vct-dg-id="proyectos" data-vct-dg-title="Proyectos" data-vct-dg-unit="proyecto(s)" data-vct-dg-page-size="10"'
         + ' data-vct-dg-search-placeholder="Buscar cliente, proyecto, norma..." data-vct-dg-density="compact" data-vct-dg-layout="fixed">'
         + @FILTERS
-        + '<div data-vct-dg-slot="actions">' + @BTN_NUEVO + '</div>'
+        + '<div data-vct-dg-slot="actions">'
+        +   '<button type="button" class="vct-btn vct-btn-sm vct-proy-modo"'
+        +   ' data-vct-pry-modo="' + CASE WHEN @MODO = 'OTROS' THEN 'PRY_MODO_VIGENTES' ELSE 'PRY_MODO_OTROS' END + '"'
+        +   ' data-vct-tooltip="' + CASE WHEN @MODO = 'OTROS' THEN 'Volver a los proyectos en curso y confirmados' ELSE 'Ver los proyectos pausados, terminados, cancelados...' END + '">'
+        +   '<span data-vct-icon="' + CASE WHEN @MODO = 'OTROS' THEN 'arrow-left' ELSE 'list-checks' END + '"></span>'
+        +   '<span>' + CASE WHEN @MODO = 'OTROS' THEN 'En curso y confirmados' ELSE 'Otros estados' END + '</span></button>'
+        +   @BTN_NUEVO + '</div>'
         + '<table><thead><tr>'
         +   '<th data-vct-width="12%" data-vct-sort="cliente" data-vct-sortable="true"><span>Cliente</span><span class="vct-sort-icon" data-vct-icon="chevrons-up-down"></span></th>'
         +   '<th data-vct-sort="proyecto" data-vct-sortable="true"><span>Proyecto</span><span class="vct-sort-icon" data-vct-icon="chevrons-up-down"></span></th>'
@@ -440,39 +469,8 @@ IF EXISTS (SELECT 1 FROM sys.procedures P CROSS JOIN #PRY_V1_RUN R
 IF @OK = 1 PRINT 'OK   dbo.VCT_MAIN_PROYECTOS creado/reemplazado (PROYECTOS_PANTALLA_V1).';
 ELSE PRINT 'FALLO dbo.VCT_MAIN_PROYECTOS no se actualizo: revisar el error del bloque anterior.';
 
-DECLARE @D NVARCHAR(MAX) = OBJECT_DEFINITION(OBJECT_ID('dbo.VCT_MAIN_DASHBOARD'));
-DECLARE @MK NVARCHAR(100) = N'/* INICIO_PERFIL_V1 */', @kp INT, @kpre NVARCHAR(60);
-IF @OK = 0
-    PRINT 'AVISO: no se aplica el ruteo porque el SP no se creo.';
-ELSE IF @D IS NULL
-    PRINT 'FALLO: no se encontro dbo.VCT_MAIN_DASHBOARD; no se aplico el ruteo.';
-ELSE IF CHARINDEX(N'PROYECTOS_RUTEO_V1', @D) > 0
-    PRINT 'OK   VCT_MAIN_DASHBOARD ya desviaba el menu Proyectos (PROYECTOS_RUTEO_V1).';
-ELSE IF CHARINDEX(@MK, @D) = 0
-    PRINT 'AVISO: VCT_MAIN_DASHBOARD no tiene la marca INICIO_PERFIL_V1; no se aplico el ruteo.';
-ELSE
-BEGIN
-    SET @D = REPLACE(@D, @MK, @MK + N'
-    /* PROYECTOS_RUTEO_V1: el menu Proyectos (ACTION=PROYECTOS) no tiene paso propio en la plataforma */
-    IF OBJECT_ID(''dbo.VCT_MAIN_PROYECTOS'') IS NOT NULL
-       AND EXISTS (SELECT 1 FROM dbo.VCT_BUFFER WITH(NOLOCK) WHERE PAR_KEY = @IPKEYJOB AND UPPER(LTRIM(RTRIM(ISNULL(ACTION,'''')))) = ''PROYECTOS'')
-    BEGIN
-        EXEC dbo.VCT_MAIN_PROYECTOS @IPKEYJOB = @IPKEYJOB, @FORM_ID = @FORM_ID, @IUNIDAD = @IUNIDAD, @IAGENTE = @IAGENTE,
-             @OUTPARAM1 = @OUTPARAM1 OUTPUT, @OUTPARAM2 = @OUTPARAM2 OUTPUT, @OUTPARAM3 = @OUTPARAM3 OUTPUT;
-        RETURN;
-    END;');
-    SET @kp = CHARINDEX(N'PROCEDURE', @D);
-    SET @kpre = SUBSTRING(@D, CASE WHEN @kp > 40 THEN @kp - 40 ELSE 1 END, CASE WHEN @kp > 40 THEN 40 ELSE @kp - 1 END);
-    IF CHARINDEX(N'OR ALTER', @kpre) = 0 AND CHARINDEX(N'CREATE', @kpre) > 0
-        SET @D = STUFF(@D, (CASE WHEN @kp > 40 THEN @kp - 40 ELSE 1 END) + CHARINDEX(N'CREATE', @kpre) - 1, 6, N'ALTER');
-    BEGIN TRY
-        EXEC sp_executesql @D;
-        PRINT 'OK   el Inicio desvia el menu Proyectos a VCT_MAIN_PROYECTOS.';
-    END TRY
-    BEGIN CATCH
-        PRINT 'FALLO ruteo: ' + ERROR_MESSAGE() + ' (VCT_MAIN_DASHBOARD sin cambios)';
-    END CATCH;
-END;
+/* Ruteo: el menu Proyectos (ACTION=PROYECTOS) ya esta cableado en el flujo de la plataforma
+   (STEP_TRANSACTION_FLOW). Este script NO toca VCT_MAIN_DASHBOARD. */
 
 IF EXISTS (SELECT 1 FROM #PRY_V1_RUN WHERE TRG_ON = 1)
 BEGIN

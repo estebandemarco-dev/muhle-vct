@@ -1,5 +1,5 @@
 /* ========================================================================
-   VCT ACCIONES                                                          v1
+   VCT ACCIONES                                                          v2
    ------------------------------------------------------------------------
    Pantalla Acciones (dbo.VCT_MAIN_ACCIONES, ACCIONES_PANTALLA_V2).
    Usa la barra de pestanas 360, las cards .vct-360-box y la grilla
@@ -42,11 +42,18 @@
 .vct-acc-module .vct-acc-view button:hover{color:var(--acc-b);}
 .vct-acc-module .vct-acc-view button.is-on{background:#fff;color:var(--acc-b);box-shadow:0 2px 6px rgba(15,23,42,.08);}
 
-/* ---------- Toolbar: buscador + hasta 5 combos + Excel/PDF/Nueva en una fila ---------- */
+/* ---------- Toolbar: buscador + hasta 4 combos + Excel/PDF/Nueva en UNA fila ----------
+   v2: sin filtro Proyecto. Combos con el estilo estandar de filtros (30px, 10,5px). */
 @media (min-width:769px){
-    .vct-acc-module .vctdg-search{flex:0 1 220px !important;max-width:220px !important;min-width:160px !important;}
+    .vct-acc-module .vctdg-toolbar{flex-wrap:nowrap !important;}
+    .vct-acc-module .vctdg-filters{flex:1 1 auto !important;flex-wrap:nowrap !important;min-width:0 !important;}
+    .vct-acc-module .vctdg-search{flex:0 1 230px !important;max-width:230px !important;min-width:170px !important;}
     .vct-acc-module .vctdg-filters > select.vct-select,
-    .vct-acc-module .vctdg-filters > .vct-custom-select{flex:0 0 122px !important;width:122px !important;min-width:0 !important;}
+    .vct-acc-module .vctdg-filters > .vct-custom-select{flex:0 0 130px !important;width:130px !important;min-width:0 !important;}
+    .vct-acc-module .vctdg-filters .vct-custom-select-trigger{height:30px !important;min-height:30px !important;font-size:10.5px !important;border-radius:8px !important;}
+    .vct-acc-module .vctdg-filters .vct-custom-select-value{font-size:10.5px !important;}
+    .vct-acc-module .vctdg-filters .vct-custom-select-option{font-size:10.5px !important;}
+    .vct-acc-module .vctdg-tools{flex:0 0 auto !important;flex-wrap:nowrap !important;}
 }
 
 /* ---------- Celdas ---------- */

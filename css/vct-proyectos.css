@@ -1,5 +1,5 @@
 /* ========================================================================
-   VCT PROYECTOS                                                         v1
+   VCT PROYECTOS                                                         v2
    ------------------------------------------------------------------------
    Pantalla Proyectos (opcion del sidebar, dbo.VCT_MAIN_PROYECTOS).
    Base: KPIs .vct-soft-kpi y grilla estandar (vct-datagrid.css).
@@ -29,3 +29,13 @@
 .vct-proy-page .vct-proy-msg-icon svg{width:20px;height:20px;}
 .vct-proy-page .vct-proy-msg b{display:block;margin-bottom:3px;font-size:12px;color:#1f2937;}
 .vct-proy-page .vct-proy-msg div span{font-size:10.5px;line-height:1.45;color:#64748b;}
+
+/* v2: boton de modo ("Otros estados" / "En curso y confirmados"), mismo look que Excel / PDF */
+.vct-proy-page .vctdg-tools .vct-proy-modo{
+    display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border:1px solid #D7E0E9;border-radius:8px;
+    background:#fff;color:#25344C;font-size:10.5px !important;font-weight:600;white-space:nowrap;cursor:pointer;
+}
+.vct-proy-page .vctdg-tools .vct-proy-modo svg{width:14px;height:14px;color:#66062D;}
+.vct-proy-page .vctdg-tools .vct-proy-modo:hover{border-color:#66062D;color:#66062D;}
+.vct-proy-page .vctdg-tools .vct-proy-modo.is-loading{opacity:.6;cursor:wait;}
+.vct-proy-page[data-vct-pry-modo-actual="OTROS"] .vctdg-tools .vct-proy-modo{border-color:rgba(102,6,45,.35);background:#FBF7F9;color:#66062D;}

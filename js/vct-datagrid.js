@@ -1402,3 +1402,169 @@
     else sweep();
     setTimeout(sweep, 0);
 })(window, document);
+
+/* ============================================================================
+   v12 - ESTANDAR DE COLUMNAS DE LAS TABLAS DE LAS VISTAS 360 (VCTColStd)
+   ----------------------------------------------------------------------------
+   Regla: una columna con el mismo nombre tiene el mismo ancho, alineacion y
+   diseno en cualquier pestana y en cualquier 360 (Cliente, Consultor,
+   Empleado, Proveedor). Se aplica a las tablas que NO maneja el motor de
+   grillas (Resumen: "Ultimos proyectos", "Ultimas acciones", tablas del
+   Proveedor...). Las grillas de las pestanas ya traen su ancho desde el SP.
+   - Identifica cada columna por el texto del encabezado (sin tildes).
+   - Rehace el <colgroup> con el ancho del catalogo (estilo en linea con
+     !important: le gana a los anchos por posicion de vct-main.css).
+   - Marca th/td con .vct-col-<clave> y la tabla con .vct-std-table (el
+     css v30 pone tipografia, alineacion y la celda de proyecto).
+   - Nombre de proyecto y referencia: tooltip con el texto completo.
+   Guarda propia: corre aunque vct-datagrid.js ya estuviera cargado.
+   ============================================================================ */
+(function (window, document) {
+    "use strict";
+    if (window.VCTColStd && window.VCTColStd.version >= 1) return;
+
+    /* clave -> ancho (null = flexible) y alineacion */
+    var CAT = {
+        "cliente":     { w: "13%",   a: "left" },
+        "proyecto":    { w: null,    a: "left" },
+        "servicios":   { w: "96px",  a: "center" },
+        "servicio":    { w: "130px", a: "left" },
+        "normas":      { w: "15%",   a: "left" },
+        "analista":    { w: "76px",  a: "center", avatar: true },
+        "consultor":   { w: "80px",  a: "center", avatar: true },
+        "responsable": { w: "96px",  a: "center", avatar: true },
+        "estado":      { w: "112px", a: "center" },
+        "avance":      { w: "12%",   a: "left" },
+        "inicio":      { w: "84px",  a: "center" },
+        "fin":         { w: "84px",  a: "center" },
+        "fecha":       { w: "84px",  a: "center" },
+        "vence":       { w: "84px",  a: "center" },
+        "accion":      { w: null,    a: "left" },
+        "viaticos":    { w: "130px", a: "right" },
+        "menu":        { w: "44px",  a: "center" }
+    };
+
+    function norm(s) {
+        s = String(s || "").replace(/\s+/g, " ").trim().toLowerCase();
+        if (s.normalize) s = s.normalize("NFD").replace(/[̀-ͯ]/g, "");
+        return s;
+    }
+    function headerCells(table) {
+        var tr = table.tHead ? table.tHead.rows[0] : null;
+        return tr ? Array.prototype.slice.call(tr.cells) : [];
+    }
+    function colHasAvatar(table, idx) {
+        var rows = table.tBodies[0] ? table.tBodies[0].rows : [];
+        for (var i = 0; i < rows.length && i < 30; i++) {
+            var c = rows[i].cells[idx];
+            if (c && c.querySelector(".vctdg-avatar,.vctdg-none")) return true;
+        }
+        return false;
+    }
+    function colHasMenu(table, idx) {
+        var rows = table.tBodies[0] ? table.tBodies[0].rows : [];
+        for (var i = 0; i < rows.length && i < 30; i++) {
+            var c = rows[i].cells[idx];
+            if (c && c.querySelector(".vct-row-menu-trigger,[data-vctdg-rowmenu],.vct-table-action-cell")) return true;
+            if (c && c.classList.contains("vct-table-action-cell")) return true;
+        }
+        return false;
+    }
+    function setImp(el, prop, val) { if (el) el.style.setProperty(prop, val, "important"); }
+
+    function apply(table) {
+        if (!table || table.closest("[data-vct-dg],[data-vct-dg-id]")) return;
+        if (!table.closest(".vct-360-module")) return;
+        var ths = headerCells(table);
+        if (!ths.length) return;
+        if (table.__stdRows === (table.tBodies[0] ? table.tBodies[0].rows.length : 0) && table.getAttribute("data-vct-std") === "1") return;
+
+        var keys = ths.map(function (th, i) {
+            var t = norm(th.textContent);
+            if (!t && (i === ths.length - 1 || colHasMenu(table, i))) return "menu";
+            if (CAT[t]) {
+                if (CAT[t].avatar && !colHasAvatar(table, i)) return t + "-txt";
+                return t;
+            }
+            return "";
+        });
+        /* sin columnas conocidas: no es una tabla de este catalogo */
+        if (!keys.some(function (k) { return k && k !== "menu"; })) return;
+
+        table.classList.add("vct-std-table");
+        table.setAttribute("data-vct-std", "1");
+        setImp(table, "table-layout", "fixed");
+        setImp(table, "width", "100%");
+        setImp(table, "min-width", "0");
+
+        /* colgroup nuevo, una columna por encabezado */
+        Array.prototype.forEach.call(table.querySelectorAll(":scope > colgroup"), function (cg) { cg.parentNode.removeChild(cg); });
+        var cg = document.createElement("colgroup");
+        var desktop = !window.matchMedia || window.matchMedia("(min-width: 769px)").matches;
+        keys.forEach(function (k, i) {
+            var col = document.createElement("col");
+            var def = CAT[k];
+            var w = def ? def.w : null;
+            if (desktop && w) setImp(col, "width", w); else setImp(col, "width", "auto");
+            cg.appendChild(col);
+            var th = ths[i];
+            th.classList.add("vct-std-th");
+            if (k) th.classList.add("vct-col-" + k);
+            if (desktop) setImp(th, "width", w || "auto");
+            setImp(th, "text-align", def ? (def.a === "right" ? "right" : def.a) : "left");
+        });
+        table.insertBefore(cg, table.firstChild);
+
+        Array.prototype.forEach.call(table.tBodies, function (tb) {
+            Array.prototype.forEach.call(tb.rows, function (tr) {
+                Array.prototype.forEach.call(tr.cells, function (td, i) {
+                    var k = keys[i];
+                    if (td.colSpan > 1) return;
+                    td.classList.add("vct-std-td");
+                    if (k) td.classList.add("vct-col-" + k);
+                    var def = CAT[k];
+                    if (def) setImp(td, "text-align", def.a);
+                    if (desktop) setImp(td, "width", "auto");
+                });
+            });
+        });
+        /* el contenedor no debe generar scroll horizontal en escritorio */
+        var wrap = table.parentNode;
+        for (var n = 0; wrap && n < 3; n++, wrap = wrap.parentNode) {
+            if (!wrap.classList || wrap.classList.contains("vct-360-box")) break;
+            if (desktop) setImp(wrap, "overflow-x", "hidden");
+        }
+        table.__stdRows = table.tBodies[0] ? table.tBodies[0].rows.length : 0;
+    }
+
+    /* tooltip con el texto completo en nombre / referencia de proyecto (todas las tablas 360) */
+    function titles(scope) {
+        Array.prototype.forEach.call(scope.querySelectorAll(".vct-360-module .vct-360-project-name:not([title]), .vct-360-module .vct-360-project-ref:not([title])"), function (el) {
+            var t = String(el.textContent || "").replace(/\s+/g, " ").trim();
+            if (t) el.setAttribute("title", t);
+        });
+    }
+
+    function sweep() {
+        try {
+            Array.prototype.forEach.call(document.querySelectorAll(".vct-360-module table"), apply);
+            titles(document);
+        } catch (err) { if (window.console) console.error("[VCTColStd]", err); }
+    }
+
+    var pending = false;
+    function schedule() {
+        if (pending) return;
+        pending = true;
+        setTimeout(function () { pending = false; sweep(); }, 60);
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", sweep); else sweep();
+    if (window.MutationObserver) new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
+    document.addEventListener("vctdg:render", schedule);
+    window.addEventListener("resize", function () {
+        Array.prototype.forEach.call(document.querySelectorAll("table.vct-std-table"), function (t) { t.removeAttribute("data-vct-std"); });
+        schedule();
+    });
+
+    window.VCTColStd = { version: 1, apply: apply, sweep: sweep, catalog: CAT };
+})(window, document);

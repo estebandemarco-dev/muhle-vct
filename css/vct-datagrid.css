@@ -1,4 +1,4 @@
-/* vct-datagrid.css - v29 (Resumen 360 Cliente: anchos propios para Ultimos proyectos, Estado ya no se pisa con Avance; 360 Proveedor: barras de viaticos en bordo; flecha de la pestana con subopciones en SVG propio; pestana con subopciones; Resumen 360 Consultor con los mismos anchos que las pestanas Proyectos y Acciones; Resumen 360 Consultor: minimo para Normas y Proyecto; tablas estaticas del Resumen 360 de Consultor con ancho flexible aunque la tarjeta traiga anchos fijos; servicio con icono + descripcion; nombre del consultor sin negrita; badges azul/verde en Clientes y Consultores; filtros Estado y Eventual angostos; rentabilidad 360 institucional con mayor especificidad; tipografia y anillos del Inicio; tablas estaticas flexibles; rentabilidad institucional; encabezados centrados; normas en lista; KPIs del Inicio; escala tipografica general; columna Servicios sin recorte; kit de badges unificado, personas, tabla estatica; sin contador en el toolbar; separacion titulo/toolbar en tarjetas 360; servicios, normas, avance y menu de fila; ver al final: ESTANDAR DE TOOLBAR Y TIPOGRAFIA, KPIs de grillas y KPIs de Vista 360)
+/* vct-datagrid.css - v30 (ESTANDAR DE COLUMNAS 360: tablas del Resumen con el mismo diseno que las pestanas, ver final; Resumen 360 Cliente: anchos propios para Ultimos proyectos, Estado ya no se pisa con Avance; 360 Proveedor: barras de viaticos en bordo; flecha de la pestana con subopciones en SVG propio; pestana con subopciones; Resumen 360 Consultor con los mismos anchos que las pestanas Proyectos y Acciones; Resumen 360 Consultor: minimo para Normas y Proyecto; tablas estaticas del Resumen 360 de Consultor con ancho flexible aunque la tarjeta traiga anchos fijos; servicio con icono + descripcion; nombre del consultor sin negrita; badges azul/verde en Clientes y Consultores; filtros Estado y Eventual angostos; rentabilidad 360 institucional con mayor especificidad; tipografia y anillos del Inicio; tablas estaticas flexibles; rentabilidad institucional; encabezados centrados; normas en lista; KPIs del Inicio; escala tipografica general; columna Servicios sin recorte; kit de badges unificado, personas, tabla estatica; sin contador en el toolbar; separacion titulo/toolbar en tarjetas 360; servicios, normas, avance y menu de fila; ver al final: ESTANDAR DE TOOLBAR Y TIPOGRAFIA, KPIs de grillas y KPIs de Vista 360)
    ============================================================================
    Estilos del motor de grilla de MAIN (vct-datagrid.js). Autocontenido y
    namespaced .vctdg-*: no depende de las reglas de tablas/paginado de
@@ -1281,3 +1281,79 @@ tr.is-xopen .vctdg-xbtn svg{transform:rotate(180deg);}
 .vct-cliente360-module.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(8){width:44px !important;}
 .vct-cliente360-module.vct-consultor360-module .vct-360-recent-projects-box.vct-360-box .vctdg-static .vctdg-table > thead > tr > th:nth-child(n+9){width:auto !important;}
 .vct-cliente360-module .vct-360-recent-projects-box .vctdg-static .vctdg-table td .vct-360-badge{max-width:100%;white-space:nowrap;}
+
+/* ============================================================================
+   v30 - ESTANDAR DE COLUMNAS DE LAS VISTAS 360 (ver CLAUDE.md, regla 15)
+   Mismo nombre de columna = misma data, mismo ancho y mismo diseno en cualquier
+   pestana y en cualquier 360. js/vct-datagrid.js (VCTColStd) marca las tablas
+   del Resumen (.vct-std-table) y les pone el ancho del catalogo; aca va la
+   tipografia (encabezado 10,5px seminegrita, datos 10px) y la celda de
+   proyecto (codigo + nombre hasta 2 renglones, referencia debajo en 9px,
+   tooltip con el texto completo). Selectores con #mainContainer para ganarle
+   a las capas viejas de vct-main.css.
+   ============================================================================ */
+@media (min-width:769px){
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table{border-collapse:collapse !important;}
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table > thead > tr > th,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table > thead > tr > th{
+    padding:8px 6px !important;font-family:inherit !important;font-size:10.5px !important;font-weight:600 !important;line-height:1.25 !important;
+    color:#475569 !important;background:#F8FAFC !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;
+    vertical-align:middle !important;border-bottom:1px solid #E5E9F0 !important;
+}
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table > tbody > tr > td,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table > tbody > tr > td{
+    padding:8px 6px !important;font-family:inherit !important;font-size:10px !important;font-weight:400 !important;line-height:1.35 !important;color:#334155 !important;
+    white-space:normal !important;overflow:hidden !important;text-overflow:clip !important;vertical-align:middle !important;
+    overflow-wrap:normal !important;word-break:normal !important;max-width:none !important;min-width:0 !important;
+    border-bottom:1px solid #EEF2F6 !important;
+}
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table > tbody > tr:last-child > td,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table > tbody > tr:last-child > td{border-bottom:0 !important;}
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-servicios,
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-avance,
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-menu,
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-estado,
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-inicio,
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-fin,
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-fecha,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-servicios,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-avance,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-menu,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-estado,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-inicio,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-fin,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-fecha{white-space:nowrap !important;overflow:visible !important;}
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-analista .vctdg-person,
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-consultor .vctdg-person,
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-responsable .vctdg-person,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-analista .vctdg-person,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-consultor .vctdg-person,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table td.vct-col-responsable .vctdg-person{justify-content:center !important;}
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table .vctdg-progress,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table .vctdg-progress{display:flex !important;align-items:center !important;gap:8px !important;}
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table .vct-360-badge,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table .vct-360-badge{font-size:10px !important;}
+}
+
+/* Celda de proyecto: igual en el Resumen y en las pestanas de todas las 360 */
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table .vct-360-project-name,
+html body #mainContainer .vct-360-module .vctdg .vctdg-table .vct-360-project-name,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table .vct-360-project-name,
+html body .vct-360-module .vctdg .vctdg-table .vct-360-project-name{
+    display:-webkit-box !important;-webkit-box-orient:vertical !important;-webkit-line-clamp:2 !important;line-clamp:2 !important;overflow:hidden !important;
+    white-space:normal !important;overflow-wrap:normal !important;word-break:normal !important;
+    font-size:10px !important;font-weight:600 !important;line-height:1.35 !important;color:#1f2937 !important;
+}
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table .vct-360-project-ref,
+html body #mainContainer .vct-360-module .vctdg .vctdg-table .vct-360-project-ref,
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table .vct-360-project-ref,
+html body .vct-360-module .vctdg .vctdg-table .vct-360-project-ref{
+    display:-webkit-box !important;-webkit-box-orient:vertical !important;-webkit-line-clamp:2 !important;line-clamp:2 !important;overflow:hidden !important;
+    margin-top:2px !important;white-space:normal !important;overflow-wrap:normal !important;word-break:normal !important;
+    font-size:9px !important;font-weight:400 !important;line-height:1.35 !important;color:#64748b !important;
+}
+html body #mainContainer .vct-360-module table.vct-std-table.vct-std-table.vct-std-table .vct-360-project-name[title],
+html body #mainContainer .vct-360-module .vctdg .vctdg-table .vct-360-project-name[title],
+html body .vct-360-module table.vct-std-table.vct-std-table.vct-std-table .vct-360-project-name[title],
+html body .vct-360-module .vctdg .vctdg-table .vct-360-project-name[title]{cursor:default;}

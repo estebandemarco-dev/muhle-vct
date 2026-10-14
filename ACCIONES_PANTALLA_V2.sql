@@ -20,7 +20,7 @@
        PROYECTOS VIEW          -> "Ver proyecto"
    - Comando ACC_ESTADO (cumplir / reabrir) por buffer, igual que antes.
    - No crea vistas, funciones ni tablas. No usa caracteres no ASCII.
-   - Assets: css/vct-acciones.css?v=1 y js/vct-acciones.js?v=1
+   - Assets: css/vct-acciones.css?v=2 y js/vct-acciones.js?v=1
    ======================================================================== */
 SET NOCOUNT ON;
 IF OBJECT_ID('tempdb..#ACC_V2_RUN') IS NOT NULL DROP TABLE #ACC_V2_RUN;
@@ -44,7 +44,7 @@ CREATE OR ALTER PROCEDURE dbo.VCT_MAIN_ACCIONES
 )
 AS
 BEGIN
-    /* ACCIONES_PANTALLA_V2 */
+    /* ACCIONES_PANTALLA_V2 (14/10: sin filtro Proyecto, toolbar en una fila) */
     /* AISLAR_AVANCE_V1: el EXEC de VCT_PROYECTO_AVANCE_SYNC tiene su propio TRY/CATCH */
     SET NOCOUNT ON;
     SET @OUTPARAM1 = '';
@@ -80,7 +80,7 @@ BEGIN
 
     SET @ASSETS = CONVERT(VARCHAR(MAX), '')
         + '<link rel="stylesheet" href="../css/vct-datagrid.css?v=28">'
-        + '<link rel="stylesheet" href="../css/vct-acciones.css?v=1">'
+        + '<link rel="stylesheet" href="../css/vct-acciones.css?v=2">'
         + '<script src="../js/vct-export.js?v=1"></script>'
         + '<script src="../js/vct-datagrid.js?v=11"></script>'
         + '<script src="../js/vct-acciones.js?v=1"></script>';
@@ -378,7 +378,7 @@ BEGIN
     DECLARE @TABS VARCHAR(MAX) = '', @PANELS VARCHAR(MAX) = '', @ORD INT = 1,
             @P_CODE VARCHAR(20), @P_SIT CHAR(1), @P_NOM VARCHAR(60), @P_TIT VARCHAR(120), @P_ICON VARCHAR(40),
             @P_CNT INT, @P_CLS VARCHAR(20), @P_SUBT VARCHAR(400), @P_CAL BIT,
-            @ROWS VARCHAR(MAX), @O_RESP VARCHAR(MAX), @O_TIPO VARCHAR(MAX), @O_PRIO VARCHAR(MAX), @O_PROY VARCHAR(MAX), @FILTERS VARCHAR(MAX);
+            @ROWS VARCHAR(MAX), @O_RESP VARCHAR(MAX), @O_TIPO VARCHAR(MAX), @O_PRIO VARCHAR(MAX), @FILTERS VARCHAR(MAX);
 
     WHILE @ORD <= 5
     BEGIN
@@ -473,19 +473,10 @@ BEGIN
                   FROM #A WHERE SIT <> 'C' AND (@P_SIT = 'T' OR SIT = @P_SIT)) X
             ORDER BY X.O, X.E
             FOR XML PATH(''), TYPE).value('.','VARCHAR(MAX)'), '');
-        SELECT @O_PROY = ISNULL((
-            SELECT '<option value="' + CONVERT(VARCHAR(12), X.ID_PROYECTO) + '">' + X.E + '</option>'
-            FROM (SELECT DISTINCT ISNULL(ID_PROYECTO,0) AS ID_PROYECTO,
-                         CASE WHEN ID_PROYECTO IS NULL THEN 'Sin proyecto' ELSE LEFT(E_PROY, 60) END AS E
-                  FROM #A WHERE SIT <> 'C' AND (@P_SIT = 'T' OR SIT = @P_SIT)) X
-            ORDER BY CASE WHEN X.ID_PROYECTO = 0 THEN 1 ELSE 0 END, X.E
-            FOR XML PATH(''), TYPE).value('.','VARCHAR(MAX)'), '');
-
         SET @FILTERS = '<div data-vct-dg-slot="filters">'
             + CASE WHEN @VE_TODO = 1 THEN '<select class="vct-select vct-select-sm" data-vct-dg-filter="resp" aria-label="Responsable"><option value="">Responsable</option>' + @O_RESP + '</select>' ELSE '' END
             + '<select class="vct-select vct-select-sm" data-vct-dg-filter="tipo" aria-label="Tipo"><option value="">Tipo</option>' + @O_TIPO + '</select>'
             + CASE WHEN @HAS_PRIO = 1 THEN '<select class="vct-select vct-select-sm" data-vct-dg-filter="prio" aria-label="Prioridad"><option value="">Prioridad</option>' + @O_PRIO + '</select>' ELSE '' END
-            + '<select class="vct-select vct-select-sm" data-vct-dg-filter="proy" aria-label="Proyecto"><option value="">Proyecto</option>' + @O_PROY + '</select>'
             + CASE WHEN @VE_TODO = 1 THEN '<select class="vct-select vct-select-sm" data-vct-dg-filter="mia" aria-label="Asignaci&oacute;n"><option value="">Todas</option><option value="1">A mi cargo</option></select>' ELSE '' END
             + '</div>';
 
@@ -506,7 +497,7 @@ BEGIN
             +   '<div class="vct-acc-list">'
             +   '<div data-vct-dg data-vct-dg-id="acc-' + @P_CODE + '" data-vct-dg-title="Acciones - ' + @P_TIT + '"'
             +   ' data-vct-dg-unit="acci&oacute;n(es)" data-vct-dg-page-size="10"'
-            +   ' data-vct-dg-search-placeholder="Buscar acci&oacute;n, cliente, proyecto o fecha..." data-vct-dg-density="compact" data-vct-dg-layout="fixed">'
+            +   ' data-vct-dg-search-placeholder="Buscar acci&oacute;n, cliente, fecha..." data-vct-dg-density="compact" data-vct-dg-layout="fixed">'
             +   @FILTERS
             +   '<table><thead><tr>'
             +     '<th data-vct-width="' + CASE WHEN @VE_TODO = 1 THEN '12%' ELSE '13%' END + '" data-vct-sort="vence" data-vct-sortable="true"><span>Vence</span><span class="vct-sort-icon" data-vct-icon="chevrons-up-down"></span></th>'
